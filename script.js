@@ -15,7 +15,7 @@ const $ = (id) => document.getElementById(id);
 const reais = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 const m2 = (v) => v.toLocaleString("pt-BR", { maximumFractionDigits: 0 }) + " m²";
 const escapar = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const idRegiao = (r) => "regiao-" + r.normalize("NFD").replace(/[^\w]+/g, "-").toLowerCase();
+const idAncora = (prefixo, r) => prefixo + "-" + r.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]+/g, "-").toLowerCase();
 
 function linkWhats(imovel) {
   let msg = "Olá! Vim pelo site da EVI Imóveis e gostaria de mais informações";
@@ -99,6 +99,13 @@ function filtrar() {
 }
 
 /* ---------- Cards ---------- */
+function htmlCaracteristicas(i, limite) {
+  if (!i.beneficios.length) return "";
+  const lista = limite ? i.beneficios.slice(0, limite) : i.beneficios;
+  const resto = i.beneficios.length - lista.length;
+  return `<ul class="beneficios${limite ? " beneficios--card" : ""}">${lista.map((b) => `<li>✓ ${escapar(b)}</li>`).join("")}${resto > 0 ? `<li class="mais">+ ${resto}</li>` : ""}</ul>`;
+}
+
 function htmlPrecos(i) {
   let h = "";
   if (i.venda) h += `<div class="preco">${reais(i.venda)} <small>venda</small></div>`;
@@ -146,6 +153,7 @@ function criarCard(i) {
     <h3 class="card__titulo">${escapar(i.titulo)}</h3>
     <div class="precos">${htmlPrecos(i)}</div>
     <div class="infos">${htmlInfos(i)}</div>
+    ${htmlCaracteristicas(i, 4)}
     <div class="card__acoes">
       <button class="botao botao--detalhes">Ver detalhes</button>
       <a class="botao botao--whats" href="${linkWhats(i)}" target="_blank" rel="noopener">Tenho interesse</a>
@@ -172,9 +180,11 @@ function renderizar() {
   const porRegiao = {};
   lista.forEach((i) => ((porRegiao[i.regiao] ||= {})[i.bairro] ||= []).push(i));
   const regioes = Object.keys(porRegiao).sort((a, b) => ORDEM_REGIOES.indexOf(a) - ORDEM_REGIOES.indexOf(b));
+  const bairrosEmOrdem = regioes.flatMap((r) => Object.keys(porRegiao[r]).sort());
 
-  $("atalhos").innerHTML = regioes.length > 1
-    ? regioes.map((r) => `<a href="#${idRegiao(r)}">${escapar(r)}</a>`).join("")
+  // Menu "Ir para" com os bairros
+  $("atalhos").innerHTML = bairrosEmOrdem.length > 1
+    ? `<span class="atalhos__rotulo">Ir para:</span>` + bairrosEmOrdem.map((b) => `<a href="#${idAncora("bairro", b)}">${escapar(b)}</a>`).join("")
     : "";
 
   if (!lista.length) {
@@ -185,18 +195,8 @@ function renderizar() {
   regioes.forEach((r) => {
     const sec = document.createElement("section");
     sec.className = "regiao";
-    sec.id = idRegiao(r);
-    const total = Object.values(porRegiao[r]).flat().length;
-    sec.innerHTML = `<h2 class="regiao__titulo">📍 ${escapar(r)} <small>${total} imóve${total === 1 ? "l" : "is"}</small></h2>`;
-    Object.keys(porRegiao[r]).sort().forEach((b) => {
-      const h = document.createElement("h3");
-      h.className = "bairro__titulo";
-      h.textContent = `${b} — ${porRegiao[r][b][0].cidade}`;
-      const grade = document.createElement("div");
-      grade.className = "grade";
-      porRegiao[r][b].forEach((i) => grade.append(criarCard(i)));
-      sec.append(h, grade);
-    });
+    sec.innerHTML = `<h2 class="regiao__titulo">${escapar(r)}</h2>`;
+    Object.keys(porRegiao[r]).sort().forEach((b) => sec.append(criarBairro(b, porRegiao[r][b])));
     area.append(sec);
   });
 
@@ -211,6 +211,40 @@ function renderizar() {
       area.append(p);
     }
   }
+}
+
+/* ---------- Bairro: grade de 2 em 2 com "Ver mais" ---------- */
+const MOSTRAR_POR_BAIRRO = 4; // quantos imóveis aparecem antes do botão "Ver mais"
+
+function criarBairro(nome, imoveis) {
+  const bloco = document.createElement("div");
+  bloco.className = "bairro";
+  bloco.id = idAncora("bairro", nome);
+  const qtd = imoveis.length;
+  bloco.innerHTML = `
+    <h3 class="bairro__titulo">
+      <span class="bairro__nome">📍 ${escapar(nome)}</span>
+      <span class="bairro__info">${escapar(imoveis[0].cidade)} · ${qtd} imóve${qtd === 1 ? "l" : "is"}</span>
+    </h3>
+    <div class="grade grade--bairro"></div>`;
+  const grade = bloco.querySelector(".grade");
+  imoveis.forEach((i, n) => {
+    const card = criarCard(i);
+    if (n >= MOSTRAR_POR_BAIRRO) card.hidden = true;
+    grade.append(card);
+  });
+  const escondidos = qtd - MOSTRAR_POR_BAIRRO;
+  if (escondidos > 0) {
+    const botao = document.createElement("button");
+    botao.className = "botao botao--ver-mais";
+    botao.textContent = `Ver mais ${escondidos} imóve${escondidos === 1 ? "l" : "is"} em ${nome} ▾`;
+    botao.onclick = () => {
+      grade.querySelectorAll(".card[hidden]").forEach((c) => (c.hidden = false));
+      botao.remove();
+    };
+    bloco.append(botao);
+  }
+  return bloco;
 }
 
 /* ---------- Janela de detalhes ---------- */
@@ -239,9 +273,9 @@ function abrirDetalhe(i) {
     <div class="precos">${htmlPrecos(i)}</div>
     <div class="infos">${htmlInfos(i)}</div>
     <a class="botao botao--whats" href="${linkWhats(i)}" target="_blank" rel="noopener">Tenho interesse – chamar no WhatsApp</a>
-    <h3>Descrição</h3>
-    <p class="descricao">${escapar(i.descricao)}</p>
-    ${i.beneficios.length ? `<h3>Características</h3><ul class="beneficios">${i.beneficios.map((b) => `<li>${escapar(b)}</li>`).join("")}</ul>` : ""}`;
+    ${i.beneficios.length ? `<h3 class="detalhe__secao">Características (${i.beneficios.length})</h3>${htmlCaracteristicas(i)}` : ""}
+    <h3 class="detalhe__secao">Descrição</h3>
+    <p class="descricao">${escapar(i.descricao)}</p>`;
   c.append(corpo);
   $("detalhe").showModal();
   $("detalhe").scrollTop = 0;

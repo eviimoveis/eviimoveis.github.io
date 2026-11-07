@@ -13,6 +13,7 @@
   --aluguel: #0f9d6b;
   --ambos: #8a4bd6;
   --raio: 12px;
+  --h-atalhos: 54px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,23 +80,54 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--borda); border-radius: 8px; background: #fff; width: 100%;
 }
 
-/* Atalhos de região */
-.atalhos { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+/* Menu de bairros (fixo no topo) */
+.atalhos {
+  position: sticky; top: 64px; z-index: 15; height: var(--h-atalhos);
+  display: flex; align-items: center; gap: 8px; overflow-x: auto; white-space: nowrap;
+  background: var(--fundo); margin: 0 -16px; padding: 0 16px;
+  border-bottom: 1px solid var(--borda); scrollbar-width: none;
+}
+.atalhos:empty { display: none; }
+.atalhos::-webkit-scrollbar { display: none; }
+.atalhos__rotulo { font-size: .8rem; font-weight: 700; color: var(--cinza); text-transform: uppercase; letter-spacing: .5px; }
 .atalhos a {
-  font-size: .85rem; padding: 6px 12px; border-radius: 999px;
-  background: #e6ecf3; color: var(--azul); font-weight: 600;
+  font-size: .85rem; padding: 6px 13px; border-radius: 999px; font-weight: 600;
+  background: #e6ecf3; color: var(--azul); flex-shrink: 0;
 }
 .atalhos a:hover { background: var(--azul); color: #fff; }
 .resultado { color: var(--cinza); font-size: .9rem; margin: 8px 0 4px; }
 
-/* Região */
-.regiao { margin: 28px 0 8px; scroll-margin-top: 80px; }
+/* Zona: título discreto */
+.regiao { margin-top: 28px; }
 .regiao__titulo {
-  font-size: 1.4rem; color: var(--azul); display: flex; align-items: center; gap: 10px;
-  border-bottom: 3px solid var(--dourado); padding-bottom: 6px; margin-bottom: 4px;
+  font-size: .85rem; font-weight: 700; color: var(--cinza);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
 }
-.regiao__titulo small { font-size: .85rem; color: var(--cinza); font-weight: 500; }
-.bairro__titulo { font-size: 1rem; color: var(--azul-claro); margin: 18px 0 10px; }
+
+/* Bairro em destaque + espaço grande entre bairros */
+.bairro { margin-bottom: 64px; scroll-margin-top: calc(64px + var(--h-atalhos) + 12px); }
+.bairro__titulo {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  background: var(--azul); color: #fff; border-radius: var(--raio);
+  border-left: 8px solid var(--dourado);
+  padding: 16px 22px; margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(15,42,68,.15);
+}
+.bairro__nome { font-size: clamp(1.3rem, 3.2vw, 1.9rem); font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.bairro__info {
+  font-size: .85rem; font-weight: 600; color: var(--azul);
+  background: var(--dourado); color: #fff; padding: 4px 12px; border-radius: 999px;
+}
+
+/* Bairro: 2 imóveis por linha */
+.grade.grade--bairro { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.grade--bairro .foto { aspect-ratio: 16 / 10; }
+.card[hidden] { display: none; }
+.botao--ver-mais {
+  display: block; margin: 22px auto 0; background: #fff; color: var(--azul);
+  border: 2px solid var(--azul); padding: 12px 26px;
+}
+.botao--ver-mais:hover { background: var(--azul); color: #fff; }
 
 /* Grade de cards */
 .grade { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
@@ -151,19 +183,22 @@ a { color: inherit; text-decoration: none; }
 }
 .detalhe::backdrop { background: rgba(10,20,35,.6); }
 .detalhe__fechar {
-  position: sticky; top: 8px; float: right; margin: 8px 8px 0 0; z-index: 3;
+  position: sticky; top: 8px; float: right; margin: 8px 8px -44px 0; z-index: 3;
   width: 36px; height: 36px; border-radius: 50%; border: none; background: #fff; font-size: 1.5rem;
   cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.2);
 }
 .galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px; background: #dde5ee; }
 .galeria .foto { cursor: default; }
-.galeria .foto:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+.galeria .foto:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; max-height: 340px; width: 100%; }
 .detalhe__corpo { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 14px; }
 .detalhe__corpo h2 { color: var(--azul); font-size: 1.3rem; line-height: 1.3; }
 .detalhe__corpo h3 { font-size: 1rem; color: var(--azul); }
 .descricao { white-space: pre-line; font-size: .95rem; color: #3a4652; }
 .beneficios { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
-.beneficios li { background: #eef2f7; padding: 4px 10px; border-radius: 999px; font-size: .8rem; }
+.beneficios li { background: #eef2f7; color: var(--azul); padding: 5px 11px; border-radius: 999px; font-size: .82rem; font-weight: 500; }
+.beneficios--card li { font-size: .75rem; padding: 3px 9px; }
+.beneficios .mais { background: var(--dourado); color: #fff; font-weight: 700; }
+.detalhe__secao { border-top: 1px solid var(--borda); padding-top: 14px; }
 
 /* Contato e rodapé */
 .contato { background: var(--azul); color: #fff; text-align: center; padding: 56px 0; margin-top: 56px; }
@@ -181,9 +216,14 @@ a { color: inherit; text-decoration: none; }
 .whats-fixo:hover { transform: scale(1.08); }
 
 @media (max-width: 600px) {
+  .grade.grade--bairro { grid-template-columns: 1fr; gap: 18px; }
+  .botao--ver-mais { width: 100%; }
   .menu a { margin-left: 14px; font-size: .9rem; }
   .banner { padding: 40px 0 60px; }
   .aba { padding: 10px 14px; font-size: .9rem; }
   .filtros { grid-template-columns: 1fr 1fr; padding: 14px; }
   .botao--limpar { grid-column: 1 / -1; }
+  .bairro { margin-bottom: 48px; }
+  .bairro__titulo { padding: 12px 14px; border-left-width: 6px; }
+  .bairro__info { font-size: .75rem; }
 }
