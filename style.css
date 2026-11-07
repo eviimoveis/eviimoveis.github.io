@@ -1,0 +1,189 @@
+/* ===== EVI Imóveis - estilos ===== */
+:root {
+  --azul: #0f2a44;
+  --azul-claro: #1d4e7a;
+  --dourado: #c9a14a;
+  --fundo: #f4f6f9;
+  --branco: #ffffff;
+  --texto: #1f2933;
+  --cinza: #6b7785;
+  --borda: #dfe4ea;
+  --verde: #25d366;
+  --venda: #1d6fd1;
+  --aluguel: #0f9d6b;
+  --ambos: #8a4bd6;
+  --raio: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+.oculto { display: none !important; }
+
+/* Topo */
+.topo { background: var(--azul); color: #fff; position: sticky; top: 0; z-index: 20; }
+.topo__conteudo { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.logo { font-size: 1.4rem; font-weight: 800; letter-spacing: .5px; }
+.logo span { color: var(--dourado); font-weight: 600; }
+.menu a { margin-left: 20px; font-weight: 500; opacity: .9; }
+.menu a:hover { opacity: 1; color: var(--dourado); }
+
+/* Banner */
+.banner {
+  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-claro) 100%);
+  color: #fff; padding: 56px 0 72px; text-align: center;
+}
+.banner h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); margin-bottom: 10px; }
+.banner p { opacity: .9; max-width: 600px; margin: 0 auto 24px; }
+
+/* Botões */
+.botao {
+  display: inline-block; border: none; cursor: pointer; font: inherit; font-weight: 600;
+  padding: 12px 22px; border-radius: 999px; transition: transform .15s, opacity .15s;
+}
+.botao:hover { transform: translateY(-1px); opacity: .92; }
+.botao--whats { background: var(--verde); color: #fff; }
+.botao--limpar { background: transparent; color: var(--azul-claro); border: 1px solid var(--borda); align-self: end; padding: 10px 16px; }
+.botao--zap { background: var(--azul); color: #fff; }
+
+/* Abas */
+.abas {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  margin-top: -26px; position: relative; z-index: 2;
+}
+.aba {
+  background: var(--branco); border: 1px solid var(--borda); color: var(--azul);
+  padding: 12px 20px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15,42,68,.08);
+}
+.aba .contador { font-weight: 500; color: var(--cinza); font-size: .85em; }
+.aba.ativa { background: var(--dourado); border-color: var(--dourado); color: #fff; }
+.aba.ativa .contador { color: #fff; }
+
+/* Filtros */
+.filtros {
+  background: var(--branco); border: 1px solid var(--borda); border-radius: var(--raio);
+  padding: 18px; margin: 20px 0 12px;
+  display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+.filtros label { display: flex; flex-direction: column; font-size: .8rem; font-weight: 600; color: var(--cinza); gap: 4px; }
+.filtros select, .filtros input {
+  font: inherit; font-size: .95rem; color: var(--texto); padding: 9px 10px;
+  border: 1px solid var(--borda); border-radius: 8px; background: #fff; width: 100%;
+}
+
+/* Atalhos de região */
+.atalhos { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.atalhos a {
+  font-size: .85rem; padding: 6px 12px; border-radius: 999px;
+  background: #e6ecf3; color: var(--azul); font-weight: 600;
+}
+.atalhos a:hover { background: var(--azul); color: #fff; }
+.resultado { color: var(--cinza); font-size: .9rem; margin: 8px 0 4px; }
+
+/* Região */
+.regiao { margin: 28px 0 8px; scroll-margin-top: 80px; }
+.regiao__titulo {
+  font-size: 1.4rem; color: var(--azul); display: flex; align-items: center; gap: 10px;
+  border-bottom: 3px solid var(--dourado); padding-bottom: 6px; margin-bottom: 4px;
+}
+.regiao__titulo small { font-size: .85rem; color: var(--cinza); font-weight: 500; }
+.bairro__titulo { font-size: 1rem; color: var(--azul-claro); margin: 18px 0 10px; }
+
+/* Grade de cards */
+.grade { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.card {
+  background: var(--branco); border-radius: var(--raio); overflow: hidden;
+  border: 1px solid var(--borda); display: flex; flex-direction: column;
+  transition: box-shadow .2s, transform .2s;
+}
+.card:hover { box-shadow: 0 10px 28px rgba(15,42,68,.12); transform: translateY(-2px); }
+
+/* Foto (com imagem padrão quando não há foto) */
+.foto {
+  position: relative; aspect-ratio: 4 / 3; background: #dde5ee;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;
+}
+.foto img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.foto__padrao { text-align: center; color: #8a9bb0; font-size: .8rem; font-weight: 600; }
+.foto__padrao svg { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
+.selo {
+  position: absolute; top: 10px; left: 10px; z-index: 1; color: #fff;
+  font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+}
+.selo--venda { background: var(--venda); }
+.selo--aluguel { background: var(--aluguel); }
+.selo--ambos { background: var(--ambos); }
+.codigo {
+  position: absolute; bottom: 10px; right: 10px; z-index: 1;
+  background: rgba(15,42,68,.85); color: #fff; font-size: .75rem; font-weight: 700;
+  padding: 3px 9px; border-radius: 6px; letter-spacing: .5px;
+}
+
+.card__corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.card__local { font-size: .8rem; color: var(--cinza); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+.card__titulo { font-size: 1rem; line-height: 1.35; color: var(--azul); }
+.precos { display: flex; flex-direction: column; gap: 2px; }
+.preco { font-size: 1.2rem; font-weight: 800; color: var(--texto); }
+.preco small { font-size: .75rem; font-weight: 600; color: var(--cinza); }
+.taxas { font-size: .8rem; color: var(--cinza); }
+.infos { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .85rem; color: var(--texto); }
+.infos span { white-space: nowrap; }
+.card__acoes { display: flex; gap: 8px; margin-top: auto; padding-top: 6px; }
+.card__acoes .botao { flex: 1; text-align: center; padding: 10px 12px; font-size: .9rem; }
+.botao--detalhes { background: #e6ecf3; color: var(--azul); }
+
+.vazio { text-align: center; padding: 48px 16px; color: var(--cinza); }
+.veja-tambem { text-align: center; margin: 28px 0 0; color: var(--cinza); }
+.veja-tambem button { background: none; border: none; color: var(--ambos); font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; }
+
+/* Janela de detalhes */
+.detalhe {
+  border: none; border-radius: var(--raio); padding: 0; width: min(860px, 94vw); max-height: 90vh;
+  margin: auto; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.detalhe::backdrop { background: rgba(10,20,35,.6); }
+.detalhe__fechar {
+  position: sticky; top: 8px; float: right; margin: 8px 8px 0 0; z-index: 3;
+  width: 36px; height: 36px; border-radius: 50%; border: none; background: #fff; font-size: 1.5rem;
+  cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px; background: #dde5ee; }
+.galeria .foto { cursor: default; }
+.galeria .foto:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+.detalhe__corpo { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+.detalhe__corpo h2 { color: var(--azul); font-size: 1.3rem; line-height: 1.3; }
+.detalhe__corpo h3 { font-size: 1rem; color: var(--azul); }
+.descricao { white-space: pre-line; font-size: .95rem; color: #3a4652; }
+.beneficios { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
+.beneficios li { background: #eef2f7; padding: 4px 10px; border-radius: 999px; font-size: .8rem; }
+
+/* Contato e rodapé */
+.contato { background: var(--azul); color: #fff; text-align: center; padding: 56px 0; margin-top: 56px; }
+.contato h2 { margin-bottom: 8px; }
+.contato p { opacity: .9; margin-bottom: 22px; }
+.rodape { background: #0a1d30; color: #9fb0c3; font-size: .85rem; text-align: center; padding: 18px 0; }
+
+/* WhatsApp fixo */
+.whats-fixo {
+  position: fixed; right: 18px; bottom: 18px; z-index: 30;
+  width: 60px; height: 60px; border-radius: 50%; background: var(--verde);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25); transition: transform .2s;
+}
+.whats-fixo:hover { transform: scale(1.08); }
+
+@media (max-width: 600px) {
+  .menu a { margin-left: 14px; font-size: .9rem; }
+  .banner { padding: 40px 0 60px; }
+  .aba { padding: 10px 14px; font-size: .9rem; }
+  .filtros { grid-template-columns: 1fr 1fr; padding: 14px; }
+  .botao--limpar { grid-column: 1 / -1; }
+}

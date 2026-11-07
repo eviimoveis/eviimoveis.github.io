@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EVI Imóveis | Venda e Aluguel em São Paulo</title>
+  <meta name="description" content="EVI Imóveis: imóveis para venda e aluguel em São Paulo, separados por região. Fale conosco pelo WhatsApp.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- TOPO -->
+  <header class="topo">
+    <div class="container topo__conteudo">
+      <a href="#" class="logo">EVI <span>Imóveis</span></a>
+      <nav class="menu">
+        <a href="#imoveis">Imóveis</a>
+        <a href="#contato">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- BANNER -->
+  <section class="banner">
+    <div class="container">
+      <h1>Encontre o imóvel certo em São Paulo</h1>
+      <p>Casas, apartamentos, lojas e terrenos para venda e aluguel, organizados por região.</p>
+      <a class="botao botao--whats" href="#" data-whats>Falar no WhatsApp</a>
+    </div>
+  </section>
+
+  <main id="imoveis" class="container">
+
+    <!-- ABAS: VENDA / ALUGUEL / ALUGUEL-VENDA -->
+    <div class="abas" role="tablist">
+      <button class="aba ativa" data-negocio="todos">Todos <span class="contador"></span></button>
+      <button class="aba" data-negocio="venda">Venda <span class="contador"></span></button>
+      <button class="aba" data-negocio="aluguel">Aluguel <span class="contador"></span></button>
+      <button class="aba" data-negocio="ambos">Aluguel/Venda <span class="contador"></span></button>
+    </div>
+
+    <!-- FILTROS -->
+    <form class="filtros" id="filtros" onsubmit="return false">
+      <label>Região
+        <select id="f-regiao"><option value="">Todas</option></select>
+      </label>
+      <label>Bairro
+        <select id="f-bairro"><option value="">Todos</option></select>
+      </label>
+      <label>Tipo
+        <select id="f-tipo"><option value="">Todos</option></select>
+      </label>
+      <label id="campo-valor-de" class="oculto">Preço de
+        <select id="f-valor-de">
+          <option value="aluguel">Aluguel</option>
+          <option value="venda">Venda</option>
+        </select>
+      </label>
+      <label>Preço mín. (R$)
+        <input type="number" id="f-preco-min" min="0" step="100" placeholder="0">
+      </label>
+      <label>Preço máx. (R$)
+        <input type="number" id="f-preco-max" min="0" step="100" placeholder="Sem limite">
+      </label>
+      <label>Área mín. (m²)
+        <input type="number" id="f-area-min" min="0" placeholder="0">
+      </label>
+      <label>Área máx. (m²)
+        <input type="number" id="f-area-max" min="0" placeholder="Sem limite">
+      </label>
+      <label>Ordenar
+        <select id="f-ordem">
+          <option value="">Padrão</option>
+          <option value="menor">Menor preço</option>
+          <option value="maior">Maior preço</option>
+          <option value="area">Maior área</option>
+        </select>
+      </label>
+      <button type="button" class="botao botao--limpar" id="limpar">Limpar filtros</button>
+    </form>
+
+    <!-- ATALHOS DE REGIÃO -->
+    <nav class="atalhos" id="atalhos"></nav>
+
+    <p class="resultado" id="resultado"></p>
+
+    <!-- LISTA (separada por região) -->
+    <div id="lista"></div>
+  </main>
+
+  <!-- CONTATO -->
+  <section id="contato" class="contato">
+    <div class="container">
+      <h2>Fale com a EVI Imóveis</h2>
+      <p>Gostou de algum imóvel ou procura algo específico? Chame no WhatsApp que a gente te ajuda.</p>
+      <a class="botao botao--whats" href="#" data-whats>WhatsApp (11) 91129-7820</a>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    <div class="container">
+      <p>© <span id="ano"></span> EVI Imóveis · Site informativo. Valores e disponibilidade sujeitos a alteração sem aviso prévio.</p>
+    </div>
+  </footer>
+
+  <!-- DETALHES DO IMÓVEL (janela) -->
+  <dialog id="detalhe" class="detalhe">
+    <button class="detalhe__fechar" aria-label="Fechar" onclick="this.closest('dialog').close()">×</button>
+    <div id="detalhe-conteudo"></div>
+  </dialog>
+
+  <!-- BOTÃO FIXO DO WHATSAPP -->
+  <a class="whats-fixo" href="#" data-whats aria-label="Falar no WhatsApp">
+    <svg viewBox="0 0 32 32" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M16 3C9 3 3.3 8.7 3.3 15.7c0 2.2.6 4.4 1.7 6.3L3 29l7.2-1.9c1.8 1 3.9 1.5 5.9 1.5 7 0 12.7-5.7 12.7-12.7S23 3 16 3zm0 23.2c-1.9 0-3.7-.5-5.3-1.5l-.4-.2-4.3 1.1 1.1-4.2-.3-.4c-1.1-1.7-1.6-3.6-1.6-5.5C5.2 9.9 10 5.1 16 5.1s10.8 4.8 10.8 10.7S21.9 26.2 16 26.2zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.6 5.8 5 .8.4 1.4.6 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+  </a>
+
+  <script src="imoveis.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

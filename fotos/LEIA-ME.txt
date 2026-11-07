@@ -1,0 +1,7 @@
+COLOQUE AQUI AS FOTOS DOS IMÓVEIS
+
+O nome do arquivo deve ser o CÓDIGO do imóvel (aparece no canto da foto no site).
+  Foto principal:  CA0002.jpg
+  Fotos extras:    CA0002-2.jpg, CA0002-3.jpg ... CA0002-9.jpg
+
+A lista completa de códigos está no arquivo README.md (pasta principal).

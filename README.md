@@ -1,0 +1,55 @@
+# EVI Imóveis — site
+
+Site informativo com os imóveis da EVI Imóveis, separados por região, com filtros e botão de WhatsApp.
+
+## Como abrir
+Dê dois cliques no arquivo `index.html`.
+
+## Como colocar as FOTOS (passo a passo)
+1. Cada imóvel no site mostra o **código** no canto da foto (ex.: `Cód. CA0002`).
+2. Salve a foto do imóvel dentro da pasta **`fotos/`**.
+3. Renomeie o arquivo com o **código exato** do imóvel. Exemplo: `CA0002.jpg`. Também aceita `.jpeg`, `.png` e `.webp`.
+4. Fotos extras (aparecem ao clicar em "Ver detalhes"): `CA0002-2.jpg`, `CA0002-3.jpg`, ... até `CA0002-9.jpg`.
+5. Recarregue o site. A foto aparece sozinha.
+
+> Atenção: maiúsculas e minúsculas importam. `CA0002.jpg` ≠ `ca0002.jpg`.
+
+### Lista de imóveis e nome de cada foto
+
+| Código | Nome do arquivo da foto | Imóvel | Bairro | Negócio |
+|---|---|---|---|---|
+| 12DBSNT | `fotos/12DBSNT.jpg` | Comercial, 52 m² | Perdizes (São Paulo) | Aluguel |
+| 745SNT | `fotos/745SNT.jpg` | Casa, 250 m² | Perdizes (São Paulo) | Aluguel |
+| AF7SNT | `fotos/AF7SNT.jpg` | Comercial, 510 m² | Perdizes (São Paulo) | Aluguel |
+| 1O8TSNT | `fotos/1O8TSNT.jpg` | Comercial, 64 m² | Pinheiros (São Paulo) | Aluguel |
+| 2OG383 | `fotos/2OG383.jpg` | Terreno, 250 m² | Sumarezinho (São Paulo) | Venda |
+| CA0001 | `fotos/CA0001.jpg` | Casa, 180 m² | Sumarezinho (São Paulo) | Venda |
+| R66383 | `fotos/R66383.jpg` | Comercial, 192 m² | Sumarezinho (São Paulo) | Aluguel/Venda |
+| N8BSNT | `fotos/N8BSNT.jpg` | Apartamento, 45 m² | Sumaré (São Paulo) | Venda |
+| 6OFSNT | `fotos/6OFSNT.jpg` | Casa, 490 m² | Vila Ida (São Paulo) | Venda |
+| 1E0Q383 | `fotos/1E0Q383.jpg` | Comercial, 3000 m² | Vila Pompéia (São Paulo) | Aluguel |
+| 1K4FSNT | `fotos/1K4FSNT.jpg` | Comercial, 250 m² | Vila Pompéia (São Paulo) | Aluguel/Venda |
+| 1K5TSNT | `fotos/1K5TSNT.jpg` | Comercial, 373 m² | Vila Pompéia (São Paulo) | Aluguel/Venda |
+| 2TFSNT | `fotos/2TFSNT.jpg` | Comercial, 1218 m² | Vila Pompéia (São Paulo) | Aluguel/Venda |
+| 72Q383 | `fotos/72Q383.jpg` | Casa, 180 m² | Vila Pompéia (São Paulo) | Aluguel |
+| LO003 | `fotos/LO003.jpg` | Comercial, 125 m² | Vila Pompéia (São Paulo) | Aluguel |
+| LO006 | `fotos/LO006.jpg` | Comercial, 125 m² | Vila Pompéia (São Paulo) | Aluguel |
+| K6O383 | `fotos/K6O383.jpg` | Casa, 284 m² | Cerqueira César (São Paulo) | Aluguel |
+| 1MM6383 | `fotos/1MM6383.jpg` | Comercial, 100 m² | Consolação (São Paulo) | Aluguel |
+| IC1SNT | `fotos/IC1SNT.jpg` | Comercial, 200 m² | Consolação (São Paulo) | Aluguel |
+| 8N0383 | `fotos/8N0383.jpg` | Apartamento, 95 m² | Jardim Paulista (São Paulo) | Aluguel |
+| CA0002 | `fotos/CA0002.jpg` | Casa, 456 m² | Pacaembu (São Paulo) | Aluguel/Venda |
+| SI0001 | `fotos/SI0001.jpg` | Sítio / Terreno, 150000 m² | Alto Da Serra (Mailasqui) (São Roque) | Venda |
+| 1KMDSNT | `fotos/1KMDSNT.jpg` | Casa, 244 m² | Condominio Parque das Vertentes (Serra Negra) | Aluguel/Venda |
+
+## Como adicionar ou editar um imóvel
+Abra o arquivo `imoveis.js`. Cada imóvel é um bloco `{ ... }` com um comentário em cima (`// ===== CÓDIGO - tipo - bairro =====`).
+- Para **editar**: troque os valores entre aspas ou os números.
+- Para **adicionar**: copie um bloco inteiro (do `{` até o `},`), cole abaixo e troque os dados.
+- Para **remover**: apague o bloco inteiro.
+- `negocio`: use `"venda"`, `"aluguel"` ou `"ambos"` (Aluguel/Venda).
+- `regiao`: `"Zona Oeste"`, `"Centro / Jardins"`, `"Zona Sul"`, `"Zona Norte"`, `"Zona Leste"` ou `"Interior de SP"`.
+- Valores sem pontos ou vírgulas: `1850000` = R$ 1.850.000. Use `0` quando não houver.
+
+## WhatsApp
+O número fica no início do arquivo `script.js` (`WHATSAPP = "5511911297820"`).
