@@ -259,6 +259,7 @@ function abrirDetalhe(i) {
   for (let n = 2; n <= FOTOS_EXTRAS + 1; n++) {
     const extra = criarFoto(i, `${i.codigo}-${n}`, false);
     extra.div.classList.add("oculto");
+    extra.img.loading = "eager"; // escondida até carregar; "lazy" impediria o carregamento
     extra.img.onload = () => extra.div.classList.remove("oculto");
     carregarFoto(extra.img, `${i.codigo}-${n}`, () => extra.div.remove());
     galeria.append(extra.div);
