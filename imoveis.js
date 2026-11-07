@@ -11,6 +11,7 @@ const IMOVEIS = [
   // ===== 12DBSNT - Comercial - Perdizes =====
   {
     "codigo": "12DBSNT",
+    "fotos": 7,
     "titulo": "Loja Comercial com Área Externa e Vagas em Perdizes – Excelente Localização na Rua Minerva",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -60,6 +61,7 @@ const IMOVEIS = [
   // ===== 745SNT - Casa - Perdizes =====
   {
     "codigo": "745SNT",
+    "fotos": 28,
     "titulo": "Sobrado comercial reformado para aluguel com 250 m2 em Perdizes - 2 vagas pronto para o comércio",
     "negocio": "aluguel",
     "tipo": "Casa",
@@ -100,6 +102,7 @@ const IMOVEIS = [
   // ===== AF7SNT - Comercial - Perdizes =====
   {
     "codigo": "AF7SNT",
+    "fotos": 8,
     "titulo": "Loja Comercial de Esquina com 2 Pavimentos, 500m2, 8 Vagas e Grande Visibilidade na Sumaré",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -158,6 +161,7 @@ const IMOVEIS = [
   // ===== 1O8TSNT - Comercial - Pinheiros =====
   {
     "codigo": "1O8TSNT",
+    "fotos": 7,
     "titulo": "Galeria para aluguel com 64 metros quadrados em Pinheiros - São Paulo - SP",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -187,6 +191,7 @@ const IMOVEIS = [
   // ===== 2OG383 - Terreno - Sumarezinho =====
   {
     "codigo": "2OG383",
+    "fotos": 10,
     "titulo": "Terreno de vila para venda, 250 metros quadrados em Sumarezinho/ Vila Madalena - São Paulo - SP",
     "negocio": "venda",
     "tipo": "Terreno",
@@ -219,7 +224,7 @@ const IMOVEIS = [
   // ===== CA0001 - Casa - Sumarezinho =====
   {
     "codigo": "CA0001",
-    "fotos": 9,
+    "fotos": 40,
     "titulo": "Casa de vila à Venda, Sumarezinho, São Paulo, SP",
     "negocio": "venda",
     "tipo": "Casa",
@@ -241,6 +246,7 @@ const IMOVEIS = [
   // ===== R66383 - Comercial - Sumarezinho =====
   {
     "codigo": "R66383",
+    "fotos": 17,
     "titulo": "Loja de esquina icônica(alto fluxo) com vitrine total e pé-direito alto | Nurban Vila Madalena",
     "negocio": "ambos",
     "tipo": "Comercial",
@@ -302,6 +308,7 @@ const IMOVEIS = [
   // ===== N8BSNT - Apartamento - Sumaré =====
   {
     "codigo": "N8BSNT",
+    "fotos": 29,
     "titulo": "Apartamento a VENDA, mobiliado a 100m do Metrô Vila Madalena, Investimento com estrutura completa",
     "negocio": "venda",
     "tipo": "Apartamento",
@@ -390,6 +397,7 @@ const IMOVEIS = [
   // ===== 6OFSNT - Casa - Vila Ida =====
   {
     "codigo": "6OFSNT",
+    "fotos": 40,
     "titulo": "Casa impecável com elevador, piscina e jardim exuberante em Alto de Pinheiros, vigia, casa segura",
     "negocio": "venda",
     "tipo": "Casa",
@@ -475,6 +483,7 @@ const IMOVEIS = [
   // ===== 1E0Q383 - Comercial - Vila Pompéia =====
   {
     "codigo": "1E0Q383",
+    "fotos": 12,
     "titulo": "Imóvel Corporativo Premium na Pompéia com 3.000m² e acesso por duas ruas, 400m metro Vila Madalena",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -522,6 +531,7 @@ const IMOVEIS = [
   // ===== 1K4FSNT - Comercial - Vila Pompéia =====
   {
     "codigo": "1K4FSNT",
+    "fotos": 11,
     "titulo": "Loja pronta com elevador, ar-condicionado central e 2 vagas no Botaní Gamaro | Av. Pompeia",
     "negocio": "ambos",
     "tipo": "Comercial",
@@ -591,6 +601,7 @@ const IMOVEIS = [
   // ===== 1K5TSNT - Comercial - Vila Pompéia =====
   {
     "codigo": "1K5TSNT",
+    "fotos": 24,
     "titulo": "Loja de 370m² com elevador para o mezanino e fachada ativa no Condominio Botaní Gamaro |Av. Pompeia",
     "negocio": "ambos",
     "tipo": "Comercial",
@@ -650,6 +661,7 @@ const IMOVEIS = [
   // ===== 2TFSNT - Comercial - Vila Pompéia =====
   {
     "codigo": "2TFSNT",
+    "fotos": 27,
     "titulo": "O Maior Espaço Comercial Disponível na Av. Pompéia com 1.213 m²",
     "negocio": "ambos",
     "tipo": "Comercial",
@@ -715,6 +727,7 @@ const IMOVEIS = [
   // ===== 72Q383 - Casa - Vila Pompéia =====
   {
     "codigo": "72Q383",
+    "fotos": 19,
     "titulo": "Casa comercial com salão amplo, 3 vagas, excelente potencial comercial, em avenida de grande fluxo",
     "negocio": "aluguel",
     "tipo": "Casa",

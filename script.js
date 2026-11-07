@@ -134,6 +134,13 @@ function criarFoto(i, nomeBase, comSelos) {
   const img = document.createElement("img");
   img.alt = `${i.tipo} em ${i.bairro}`;
   img.loading = "lazy";
+  // Foto vertical: mostra inteira, com a própria foto desfocada preenchendo as laterais
+  img.addEventListener("load", () => {
+    if (img.naturalHeight > img.naturalWidth) {
+      div.classList.add("foto--vertical");
+      div.style.setProperty("--foto-fundo", `url("${img.src}")`);
+    }
+  });
   div.prepend(img);
   return { div, img, nomeBase };
 }

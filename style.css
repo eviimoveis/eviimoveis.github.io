@@ -144,6 +144,11 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;
 }
 .foto img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.foto--vertical::before {
+  content: ""; position: absolute; inset: -24px;
+  background: var(--foto-fundo) center / cover; filter: blur(18px) brightness(.85);
+}
+.foto--vertical img { object-fit: contain; }
 .foto__padrao { text-align: center; color: #8a9bb0; font-size: .8rem; font-weight: 600; }
 .foto__padrao svg { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
 .selo {
