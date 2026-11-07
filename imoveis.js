@@ -3,7 +3,8 @@
   Para adicionar um imóvel: copie um bloco { ... }, cole no final e troque os dados.
   negocio: "venda", "aluguel" ou "ambos" (aluguel/venda).
   FOTO: coloque o arquivo na pasta fotos/ com o nome do CÓDIGO. Ex.: fotos/CA0002.jpg
-  Fotos extras (aparecem ao abrir o imóvel): fotos/CA0002-2.jpg, fotos/CA0002-3.jpg ...
+  Fotos extras (aparecem ao abrir o imóvel): fotos/CA0002-2.jpg, fotos/CA0002-3.jpg ... até CA0002-40
+  "fotos": quantidade total de fotos do imóvel (deixa o site mais rápido). Sem esse campo, o site procura sozinho.
 */
 
 const IMOVEIS = [
@@ -218,6 +219,7 @@ const IMOVEIS = [
   // ===== CA0001 - Casa - Sumarezinho =====
   {
     "codigo": "CA0001",
+    "fotos": 9,
     "titulo": "Casa de vila à Venda, Sumarezinho, São Paulo, SP",
     "negocio": "venda",
     "tipo": "Casa",

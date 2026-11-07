@@ -9,7 +9,7 @@ Dê dois cliques no arquivo `index.html`.
 1. Cada imóvel no site mostra o **código** no canto da foto (ex.: `Cód. CA0002`).
 2. Salve a foto do imóvel dentro da pasta **`fotos/`**.
 3. Renomeie o arquivo com o **código exato** do imóvel. Exemplo: `CA0002.jpg`. Também aceita `.jpeg`, `.png` e `.webp`.
-4. Fotos extras (aparecem ao clicar em "Ver detalhes"): `CA0002-2.jpg`, `CA0002-3.jpg`, ... até `CA0002-9.jpg`.
+4. Fotos extras (aparecem ao clicar em "Ver detalhes"): `CA0002-2.jpg`, `CA0002-3.jpg`, ... até `CA0002-40.jpg`.
 5. Recarregue o site. A foto aparece sozinha.
 
 > Atenção: maiúsculas e minúsculas importam. `CA0002.jpg` ≠ `ca0002.jpg`.

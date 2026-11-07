@@ -2,8 +2,8 @@
 
 const WHATSAPP = "5511911297820"; // (11) 91129-7820
 const PASTA_FOTOS = "fotos/";
-const EXTENSOES = ["jpg", "jpeg", "png", "webp"];
-const FOTOS_EXTRAS = 8; // procura até CODIGO-2 ... CODIGO-9
+const EXTENSOES = ["webp", "jpg", "jpeg", "png"]; // .webp primeiro: é o formato das fotos do ZAP
+const MAX_FOTOS = 40; // até CODIGO, CODIGO-2 ... CODIGO-40
 
 const ORDEM_REGIOES = ["Zona Oeste", "Centro / Jardins", "Zona Sul", "Zona Norte", "Zona Leste", "Interior de SP", "Outras regiões"];
 const NOME_NEGOCIO = { venda: "Venda", aluguel: "Aluguel", ambos: "Aluguel/Venda" };
@@ -256,13 +256,27 @@ function abrirDetalhe(i) {
   const principal = criarFoto(i, i.codigo, true);
   carregarFoto(principal.img, i.codigo);
   galeria.append(principal.div);
-  for (let n = 2; n <= FOTOS_EXTRAS + 1; n++) {
-    const extra = criarFoto(i, `${i.codigo}-${n}`, false);
-    extra.div.classList.add("oculto");
-    extra.img.loading = "eager"; // escondida até carregar; "lazy" impediria o carregamento
-    extra.img.onload = () => extra.div.classList.remove("oculto");
-    carregarFoto(extra.img, `${i.codigo}-${n}`, () => extra.div.remove());
-    galeria.append(extra.div);
+  const total = Math.min(i.fotos || 0, MAX_FOTOS);
+  if (total) {
+    // Quantidade conhecida (campo "fotos" em imoveis.js): carrega só essas, conforme rola a tela
+    for (let n = 2; n <= total; n++) {
+      const extra = criarFoto(i, `${i.codigo}-${n}`, false);
+      extra.img.loading = "lazy";
+      carregarFoto(extra.img, `${i.codigo}-${n}`, () => extra.div.remove());
+      galeria.append(extra.div);
+    }
+  } else {
+    // Quantidade não informada: procura CODIGO-2, CODIGO-3... e para na primeira que não existir
+    const procurar = (n) => {
+      if (n > MAX_FOTOS) return;
+      const extra = criarFoto(i, `${i.codigo}-${n}`, false);
+      extra.div.classList.add("oculto");
+      extra.img.loading = "eager";
+      extra.img.onload = () => { extra.div.classList.remove("oculto"); procurar(n + 1); };
+      carregarFoto(extra.img, `${i.codigo}-${n}`, () => extra.div.remove());
+      galeria.append(extra.div);
+    };
+    procurar(2);
   }
   c.append(galeria);
 
