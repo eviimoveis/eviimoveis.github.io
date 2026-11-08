@@ -761,6 +761,7 @@ const IMOVEIS = [
   // ===== LO003 - Comercial - Vila Pompéia =====
   {
     "codigo": "LO003",
+    "fotos": 13,
     "titulo": "Loja Comercial nova, vaga rotativa, fachada ativa, prédio novo, próximo ao metro -Pompeia/Perdizes",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -808,6 +809,7 @@ const IMOVEIS = [
   // ===== LO006 - Comercial - Vila Pompéia =====
   {
     "codigo": "LO006",
+    "fotos": 14,
     "titulo": "Loja Comercial nova, vaga rotativa, fachada ativa, prédio novo, próximo ao metro -Pompeia/Perdizes",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -859,6 +861,7 @@ const IMOVEIS = [
   // ===== K6O383 - Casa - Cerqueira César =====
   {
     "codigo": "K6O383",
+    "fotos": 40,
     "titulo": "Sobrado para aluguel com 284 metros quadrados com 8 quartos em Cerqueira César - São Paulo - SP",
     "negocio": "aluguel",
     "tipo": "Casa",
@@ -898,6 +901,7 @@ const IMOVEIS = [
   // ===== 1MM6383 - Comercial - Consolação =====
   {
     "codigo": "1MM6383",
+    "fotos": 17,
     "titulo": "Imóvel para aluguel tem 100 metros quadrados em Consolação - São Paulo - SP",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -943,6 +947,7 @@ const IMOVEIS = [
   // ===== IC1SNT - Comercial - Consolação =====
   {
     "codigo": "IC1SNT",
+    "fotos": 17,
     "titulo": "Imóvel para aluguel possui 200 metros quadrados em Consolação - São Paulo - SP",
     "negocio": "aluguel",
     "tipo": "Comercial",
@@ -988,6 +993,7 @@ const IMOVEIS = [
   // ===== 8N0383 - Apartamento - Jardim Paulista =====
   {
     "codigo": "8N0383",
+    "fotos": 29,
     "titulo": "Apartamento Reformado na localização mais desejada de São Paulo, Jardim Paulista, Oscar Freire",
     "negocio": "aluguel",
     "tipo": "Apartamento",
@@ -1086,6 +1092,7 @@ const IMOVEIS = [
   // ===== CA0002 - Casa - Pacaembu =====
   {
     "codigo": "CA0002",
+    "fotos": 28,
     "titulo": "Sobrado para aluguel e venda tem 456 metros quadrados com 5 quartos em Pacaembu - São Paulo - SP",
     "negocio": "ambos",
     "tipo": "Casa",
@@ -1155,6 +1162,7 @@ const IMOVEIS = [
   // ===== SI0001 - Sítio / Terreno - Alto Da Serra (Mailasqui) =====
   {
     "codigo": "SI0001",
+    "fotos": 24,
     "titulo": "Terreno / Sítio ideal para investimentos em São Roque - São Paulo (Mailasqui) - São Roque - SP",
     "negocio": "venda",
     "tipo": "Sítio / Terreno",
@@ -1240,6 +1248,7 @@ const IMOVEIS = [
   // ===== 1KMDSNT - Casa - Condominio Parque das Vertentes =====
   {
     "codigo": "1KMDSNT",
+    "fotos": 40,
     "titulo": "Casa térrea de 600 m² com 4 quartos, piscinas e lazer completo em Condominio Vertentes - Serra Negra",
     "negocio": "ambos",
     "tipo": "Casa",
