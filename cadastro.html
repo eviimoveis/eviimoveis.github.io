@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro | EVI Imóveis</title>
+  <meta name="description" content="Cadastre-se na EVI Imóveis: encontre seu imóvel ou seja um corretor parceiro.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#0f2a44">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="crm/crm.css">
+</head>
+<body>
+
+  <header class="topo">
+    <div class="container topo__conteudo">
+      <a href="index.html" class="logo">EVI <span>Imóveis</span></a>
+      <nav class="menu"><a href="index.html">Ver imóveis</a></nav>
+    </div>
+  </header>
+
+  <main class="container crm-publico">
+
+    <!-- PASSO 1: escolha -->
+    <section id="passo-escolha">
+      <h1>Como podemos te ajudar?</h1>
+      <p class="crm-sub">Escolha uma opção para continuar.</p>
+      <div class="crm-escolhas">
+        <button class="crm-escolha" data-perfil="lead">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 30 32 10l24 20v24H40V40H24v14H8z"/></svg>
+          <strong>Quero encontrar um imóvel</strong>
+          <span>Conte o que procura e um corretor da região fala com você.</span>
+        </button>
+        <button class="crm-escolha" data-perfil="corretor">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8a12 12 0 1 1 0 24 12 12 0 0 1 0-24zM10 56c0-11 10-18 22-18s22 7 22 18z"/></svg>
+          <strong>Sou corretor</strong>
+          <span>Seja parceiro e receba clientes da sua região de atuação.</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PASSO 2: formulário -->
+    <section id="passo-form" class="oculto">
+      <button type="button" class="crm-voltar" id="voltar">← Voltar</button>
+      <h1 id="form-titulo"></h1>
+      <p class="crm-sub" id="form-sub"></p>
+      <form id="form" class="crm-form" novalidate>
+        <div id="campos" class="crm-grade-campos"></div>
+        <!-- campo invisível contra robôs: pessoas não preenchem -->
+        <input type="text" name="site" class="crm-mel" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="crm-erro oculto" id="erro" role="alert"></p>
+        <button type="submit" class="botao botao--zap" id="enviar">Enviar cadastro</button>
+        <p class="crm-aviso-legal">Ao enviar, você concorda em ser contatado pela EVI Imóveis e por corretores parceiros pelo WhatsApp, telefone ou e-mail.</p>
+      </form>
+    </section>
+
+    <!-- PASSO 3: confirmação -->
+    <section id="passo-ok" class="oculto crm-ok">
+      <div class="crm-ok__icone">✓</div>
+      <h1>Cadastro recebido!</h1>
+      <p class="crm-sub" id="ok-texto"></p>
+      <a class="botao botao--zap" href="index.html">Ver imóveis disponíveis</a>
+    </section>
+
+    <!-- CRM ainda não configurado -->
+    <section id="passo-config" class="oculto crm-ok">
+      <h1>Cadastro indisponível</h1>
+      <p class="crm-sub">Esta página ainda está sendo configurada. Tente novamente mais tarde.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="crm/config.js"></script>
+  <script src="crm/comum.js"></script>
+  <script src="crm/cadastro.js"></script>
+</body>
+</html>

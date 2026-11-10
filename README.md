@@ -53,3 +53,52 @@ Abra o arquivo `imoveis.js`. Cada imóvel é um bloco `{ ... }` com um comentár
 
 ## WhatsApp
 O número fica no início do arquivo `script.js` (`WHATSAPP = "5511911297820"`).
+
+---
+
+# CRM (corretores parceiros + leads)
+
+Duas páginas novas, que não mudam o site de imóveis:
+
+| Página | Quem usa | O que faz |
+|---|---|---|
+| `cadastro.html` | Qualquer pessoa com o link | Escolhe **"Quero encontrar um imóvel"** ou **"Sou corretor"** e preenche o cadastro. |
+| `painel.html` | Só os 2 usuários autorizados (login) | Leads, corretores, sugestão de corretor para cada lead, mensagem pronta de WhatsApp, follow-ups e relatórios. |
+
+Links úteis para divulgar:
+- `cadastro.html?perfil=corretor` abre direto o cadastro de corretor.
+- `cadastro.html?perfil=cliente` abre direto o cadastro de cliente.
+- `cadastro.html?origem=Instagram` marca de onde o lead veio (aparece nos relatórios).
+
+## Como ligar o CRM (uma vez só)
+
+1. Crie uma conta gratuita em **supabase.com** e um projeto novo (região: São Paulo).
+2. No projeto, abra **SQL Editor > New query**, cole todo o conteúdo de `supabase/schema.sql` e clique em **Run**.
+3. Em **Authentication > Sign In / Providers**, desligue **"Allow new users to sign up"** (assim ninguém cria conta sozinho).
+4. Em **Authentication > Users > Add user**, crie os 2 usuários (e-mail e senha), marcando **Auto Confirm User**.
+5. Volte ao **SQL Editor** e rode, trocando pelos dois e-mails:
+   ```sql
+   insert into public.crm_admins (user_id)
+   select id from auth.users
+   where email in ('voce@exemplo.com', 'socio@exemplo.com')
+   on conflict do nothing;
+   ```
+6. Em **Project Settings > API**, copie a **Project URL** e a chave **anon public** e cole em `crm/config.js`.
+   Nunca use a chave `service_role` no site.
+7. Publique o site como já faz hoje. O CRM funciona em qualquer hospedagem de site estático.
+
+## Segurança
+- O visitante do link público só consegue **enviar** um cadastro. Ele não lê, não altera e não apaga nada.
+- Só quem está na tabela `crm_admins` vê os dados no painel. Outra conta, mesmo logada, é barrada.
+- A chave `anon public` pode ficar no código: quem protege os dados são as regras do `schema.sql`.
+
+## WhatsApp
+No painel, abra um lead e clique em **WhatsApp** ao lado do corretor sugerido. O texto vem pronto e pode ser editado;
+ao confirmar, o WhatsApp (ou WhatsApp Business) do aparelho abre com a mensagem para o corretor, o lead é atribuído
+a ele e o envio fica no histórico. Não usa a API paga da Meta.
+
+## Como o CRM sugere corretores
+Para cada lead, os corretores ativos são ordenados por: atua na **região** pedida (3 pontos), atende o **tipo de imóvel**
+(2 pontos), trabalha com **venda/aluguel** conforme o interesse (1 ponto). No empate, vem primeiro quem tem menos leads em aberto.
+
+Para mudar regiões, tipos de imóvel ou etapas do funil, edite o início de `crm/comum.js` (as etapas também ficam em `supabase/schema.sql`).
