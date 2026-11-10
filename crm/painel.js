@@ -2,30 +2,58 @@
 
 const $ = (id) => document.getElementById(id);
 const sb = criarCliente();
-const D = { leads: [], corretores: [], tarefas: [], interacoes: [] };
-const filtros = { etapa: "", buscaLead: "", buscaCorretor: "" };
+const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [] };
+const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando" };
+const TOP = 5;            // quantos corretores sugerir
+const DIAS_COBRANCA = 2;  // cobrar o corretor depois de quantos dias
 let aba = "leads";
 let usuario = null;
-let aberto = null; // { tipo: "lead" | "corretor", id }
+let aberto = null;        // { tipo: "lead" | "corretor", id }
+let verMais = false;      // mostrar além do top 5
+let msgEditada = null;    // { leadId, texto } enquanto a janela do lead está aberta
 
-/* Campos extras que só existem no painel */
+/* No painel, o que é obrigatório só no cadastro público fica opcional. */
+const paraPainel = (campos) => campos.map((c) => (c.soPublico ? { ...c, obrig: false } : c));
 const CAMPOS_LEAD_PAINEL = [
-  ...CAMPOS_LEAD.map((c) => (c.id === "observacoes" ? { ...c, rotulo: "Observações" } : c)),
-  { id: "origem", rotulo: "Origem", tipo: "text", max: 60, dica: "Ex.: Instagram, indicação" },
+  ...paraPainel(CAMPOS_LEAD),
+  { id: "origem", rotulo: "Origem", tipo: "text", max: 60, dica: "Ex.: Instagram, indicação, placa" },
   { id: "etapa", rotulo: "Etapa", tipo: "select", opcoes: ETAPAS },
+  { id: "observacao_interna", rotulo: "Observação interna (não vai na mensagem)", tipo: "textarea", max: 2000 },
 ];
-const CAMPOS_CORRETOR_PAINEL = [
-  ...CAMPOS_CORRETOR,
-  { id: "ativo", rotulo: "Situação", tipo: "select", opcoes: [["sim", "Ativo (recebe leads)"], ["nao", "Inativo"]] },
-];
+const CAMPOS_CORRETOR_PAINEL = (() => {
+  const base = paraPainel(CAMPOS_CORRETOR);
+  const i = base.findIndex((c) => c.id === "bairro2");
+  base.splice(i + 1, 0, { id: "bairro3", rotulo: "3º bairro (só pelo painel)", tipo: "select", opcoes: LISTA_BAIRROS, vazio: "Nenhum" });
+  return [...base, { id: "status", rotulo: "Situação", tipo: "select", opcoes: STATUS_CORRETOR }];
+})();
 
 /* ---------- Utilidades ---------- */
-const ETAPAS_ABERTAS = ["novo", "em_atendimento", "visita", "proposta"];
+const ETAPAS_FINAIS = ["Fechado", "Pausado", "Perdido"];
 const corretorPorId = (id) => D.corretores.find((c) => c.id === id);
 const leadPorId = (id) => D.leads.find((l) => l.id === id);
-const leadsDoCorretor = (id) => D.leads.filter((l) => l.corretor_id === id);
-const semAcento = (t) => String(t ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-const primeiroNome = (n) => String(n || "").trim().split(/\s+/)[0] || "";
+const envioPorId = (id) => D.envios.find((e) => e.id === id);
+const enviosDoLead = (id) => D.envios.filter((e) => e.lead_id === id);
+const enviosDoCorretor = (id) => D.envios.filter((e) => e.corretor_id === id);
+const slug = (t) => semAcento(t).replace(/[^a-z0-9]+/g, "-");
+const selo = (texto) => `<span class="crm-selo crm-selo--${slug(texto)}">${escapar(texto)}</span>`;
+const cobrancaVencida = (e) => e.status === "Aguardando" && e.proxima_cobranca && e.proxima_cobranca <= hojeISO();
+const bairrosDe = (x) => [x.bairro1, x.bairro2, x.bairro3].filter(Boolean);
+
+function primeiroNome(nome) {
+  const p = String(nome || "").trim().split(/\s+/)[0] || "";
+  return p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+}
+function saudacao() {
+  const h = new Date().getHours();
+  return h < 12 ? "bom dia" : h < 18 ? "boa tarde" : "boa noite";
+}
+function valorLead(l) {
+  const partes = [];
+  if (l.valor_locacao) partes.push((l.valor_compra ? "Locação até " : "") + reais(l.valor_locacao));
+  if (l.valor_compra) partes.push((l.valor_locacao ? "Compra até " : "") + reais(l.valor_compra));
+  return partes.join(" | ");
+}
+const resumoLead = (l) => [l.operacao, l.tipo || l.categoria].filter(Boolean).join(" · ");
 
 function mostrarTela(id) {
   ["v-config", "v-login", "v-app"].forEach((v) => $(v).classList.toggle("oculto", v !== id));
@@ -48,13 +76,67 @@ async function gravar(consulta) {
   if (error) { console.error(error); aviso("Erro ao salvar: " + error.message, true); return false; }
   return true;
 }
+const anotar = (leadId, texto) => gravar(sb.from("interacoes").insert({ lead_id: leadId, texto, autor: usuario?.email }));
 
-function resumoLead(l) {
-  const partes = [NOME_INTERESSE[l.interesse] || l.interesse];
-  if (l.tipo) partes.push(l.tipo);
-  return partes.join(" · ");
+/* ---------- Mensagens (mesmo formato da planilha) ---------- */
+function mensagemLead(l) {
+  const metragem = l.metragem ? l.metragem + (/m²|m2|metro/i.test(l.metragem) ? "" : " m²") : "";
+  const perfil = l.categoria === "Comercial"
+    ? [l.tipo, metragem, l.atividade && "Atividade: " + l.atividade]
+    : [l.tipo, l.dormitorios && l.dormitorios + " dorm.", metragem,
+       l.vagas && (l.vagas === "Não preciso" ? "sem vaga" : l.vagas + " vaga(s)")];
+  const linhas = [`${(l.operacao || "").toUpperCase()} — ${(l.tipo || l.categoria || "IMÓVEL").toUpperCase()}`];
+  if (l.bairro1) linhas.push("📍 " + [l.bairro1, l.bairro2].filter(Boolean).join(" / "));
+  if (valorLead(l)) linhas.push("💰 " + valorLead(l));
+  if (perfil.some(Boolean)) linhas.push("🔎 " + perfil.filter(Boolean).join(" | "));
+  if (l.essencial) linhas.push("✅ Essencial: " + l.essencial);
+  if (l.diferencial) linhas.push("⭐ Seria um diferencial: " + l.diferencial);
+  if (l.prazo) linhas.push(`⏱️ ${l.prazo} para mudança`);
+  linhas.push("🤝 Parceria");
+  return linhas.join("\n");
 }
-const seloEtapa = (e) => `<span class="crm-selo crm-selo--${e}">${escapar(NOME_ETAPA[e] || e)}</span>`;
+const textoEnvio = (corretor, corpo) =>
+  `Oi, ${primeiroNome(corretor.nome)}, ${saudacao()}. Tudo certo? Estou com um cliente dentro da sua área de atuação. ` +
+  `Você tem algum imóvel no perfil que ele está procurando?\n\n${corpo}`;
+const textoCobranca = (corretor, lead) =>
+  `Oi, ${primeiroNome(corretor.nome)}, ${saudacao()}. Tudo certo? Conseguiu ver algum imóvel para aquele cliente que te enviei?\n\n` +
+  mensagemLead(lead).split("\n").slice(0, 3).join("\n");
+
+/* ---------- Match lead x corretor (mesmas regras da planilha) ---------- */
+function pontuar(lead, c) {
+  const meus = [c.bairro1, c.bairro2, c.bairro3].map(semAcento);
+  const minhasZonas = [c.bairro1, c.bairro2, c.bairro3].map(zonaDe).filter(Boolean);
+  const parte = (bairro, pontos, pontosZona) => {
+    if (!bairro) return 0;
+    const i = meus.indexOf(semAcento(bairro));
+    if (i >= 0) return pontos[i];
+    const z = zonaDe(bairro);
+    return z && minhasZonas.includes(z) ? pontosZona : 0;
+  };
+  const regiao = parte(lead.bairro1, [50, 40, 30], 5) + parte(lead.bairro2, [25, 20, 15], 3);
+
+  const categoriaOk = c.categoria === lead.categoria || c.categoria === "Ambos";
+  const operacaoOk = lead.operacao === "Compra ou locação" || c.operacao === "Ambos" ||
+    (lead.operacao === "Compra" && c.operacao === "Venda") || (lead.operacao === "Locação" && c.operacao === "Locação");
+  if (c.status !== "Ativo" || regiao === 0 || !categoriaOk || !operacaoOk) return null;
+
+  // Faixa de valor: +15 se o orçamento cabe numa faixa do corretor, -15 se não cabe, 0 se ele não informou.
+  const valor = lead.operacao === "Locação" ? lead.valor_locacao : lead.operacao === "Compra" ? lead.valor_compra : 0;
+  const limites = ((lead.operacao === "Locação" ? c.faixas_locacao : c.faixas_venda) || []).map((f) => LIMITES_FAIXA[f]).filter(Boolean);
+  let faixa = "";
+  if (valor && limites.length) faixa = limites.some(([min, max]) => valor >= min && valor <= max) ? "Dentro" : "Fora";
+  const bonus = faixa === "Dentro" ? 15 : faixa === "Fora" ? -15 : 0;
+
+  const nivel = regiao >= 50 ? "Excelente" : regiao >= 30 ? "Boa" : "Possível";
+  const compat = nivel + (faixa === "Dentro" ? " · na faixa ✓" : faixa === "Fora" ? " · fora da faixa" : "");
+  return { c, score: regiao + bonus, nivel, compat };
+}
+
+function rankear(lead) {
+  return D.corretores.map((c) => pontuar(lead, c)).filter(Boolean)
+    .map((r) => ({ ...r, recebidos: enviosDoCorretor(r.c.id).length }))
+    .sort((a, b) => b.score - a.score || a.recebidos - b.recebidos || a.c.nome.localeCompare(b.c.nome, "pt-BR"));
+}
 
 /* ---------- Login ---------- */
 async function iniciar() {
@@ -97,7 +179,7 @@ $("form-login").addEventListener("submit", async (e) => {
 
 /* ---------- Dados ---------- */
 async function carregar() {
-  const tabelas = ["leads", "corretores", "tarefas", "interacoes"];
+  const tabelas = Object.keys(D);
   const respostas = await Promise.all(tabelas.map((t) => sb.from(t).select("*").order("criado_em", { ascending: false })));
   const falha = respostas.find((r) => r.error);
   if (falha) { console.error(falha.error); aviso("Erro ao carregar dados: " + falha.error.message, true); return; }
@@ -109,21 +191,20 @@ async function carregar() {
 /* ---------- Abas ---------- */
 function desenhar() {
   const hoje = hojeISO();
-  $("n-leads").textContent = `(${D.leads.filter((l) => l.etapa === "novo").length} novos)`;
-  $("n-corretores").textContent = `(${D.corretores.filter((c) => c.ativo).length})`;
-  const pend = D.tarefas.filter((t) => !t.concluida && t.vence_em <= hoje).length;
-  $("n-tarefas").textContent = pend ? `(${pend})` : "";
+  $("n-leads").textContent = `(${D.leads.filter((l) => l.etapa === "Novo").length} novos)`;
+  $("n-corretores").textContent = `(${D.corretores.filter((c) => c.status === "Ativo").length})`;
+  const pend = D.envios.filter(cobrancaVencida).length + D.tarefas.filter((t) => !t.concluida && t.vence_em <= hoje).length;
+  $("n-envios").textContent = pend ? `(${pend} a cobrar)` : "";
   document.querySelectorAll(".crm-aba").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
-  ({ leads: abaLeads, corretores: abaCorretores, tarefas: abaTarefas, relatorios: abaRelatorios })[aba]();
+  ({ leads: abaLeads, corretores: abaCorretores, envios: abaEnvios, relatorios: abaRelatorios })[aba]();
 }
 
 /* ----- Leads ----- */
 function abaLeads() {
-  const opcoes = ETAPAS.map(([id, nome]) => `<option value="${id}"${filtros.etapa === id ? " selected" : ""}>${nome}</option>`).join("");
   $("conteudo").innerHTML = `
     <div class="crm-barra">
       <input type="search" id="busca-lead" placeholder="Buscar por nome, telefone, bairro..." value="${escapar(filtros.buscaLead)}">
-      <select id="filtro-etapa"><option value="">Todas as etapas</option>${opcoes}</select>
+      <select id="filtro-etapa">${htmlOpcoes(ETAPAS, filtros.etapa, "Todas as etapas")}</select>
       <button class="botao botao--zap" data-acao="novo-lead">+ Novo lead</button>
     </div>
     <div id="lista"></div>`;
@@ -134,22 +215,23 @@ function listaLeads() {
   const termo = semAcento(filtros.buscaLead);
   const itens = D.leads.filter((l) =>
     (!filtros.etapa || l.etapa === filtros.etapa) &&
-    (!termo || semAcento([l.nome, l.telefone, l.email, l.bairros, l.regiao, l.tipo].join(" ")).includes(termo)));
+    (!termo || semAcento([l.nome, l.telefone, l.bairro1, l.bairro2, l.tipo, l.categoria, l.origem].join(" ")).includes(termo)));
   if (!itens.length) {
     $("lista").innerHTML = `<p class="vazio">${D.leads.length ? "Nenhum lead com esses filtros." : "Nenhum lead ainda. Envie o link de cadastro ou clique em “+ Novo lead”."}</p>`;
     return;
   }
   $("lista").innerHTML = `<div class="crm-tabela-wrap"><table class="crm-tabela">
-    <thead><tr><th>Cliente</th><th>Procura</th><th>Região</th><th>Valor máx.</th><th>Etapa</th><th>Corretor</th><th>Entrada</th></tr></thead>
+    <thead><tr><th>Cliente</th><th>Procura</th><th>Bairros</th><th>Valor máx.</th><th>Etapa</th><th>Enviado para</th><th>Entrada</th></tr></thead>
     <tbody>${itens.map((l) => {
-      const c = corretorPorId(l.corretor_id);
+      const env = enviosDoLead(l.id);
+      const nomes = env.map((e) => primeiroNome(corretorPorId(e.corretor_id)?.nome)).filter(Boolean);
       return `<tr data-acao="abrir-lead" data-id="${l.id}" tabindex="0">
         <td><strong>${escapar(l.nome)}</strong><small>${escapar(formatarTelefone(l.telefone))}</small></td>
-        <td>${escapar(resumoLead(l))}</td>
-        <td>${escapar(l.regiao || "—")}<small>${escapar(l.bairros || "")}</small></td>
-        <td>${l.valor_max ? reais(l.valor_max) : "—"}</td>
-        <td>${seloEtapa(l.etapa)}</td>
-        <td>${c ? escapar(c.nome) : '<span class="crm-pendente">Sem corretor</span>'}</td>
+        <td>${escapar(resumoLead(l))}<small>${escapar(l.categoria || "")}</small></td>
+        <td>${escapar([l.bairro1, l.bairro2].filter(Boolean).join(" / ") || "—")}</td>
+        <td>${escapar(valorLead(l) || "—")}</td>
+        <td>${selo(l.etapa)}</td>
+        <td>${env.length ? `${env.length} corretor(es)<small>${escapar(nomes.join(", "))}</small>` : '<span class="crm-pendente">Não enviado</span>'}</td>
         <td>${dataBR(l.criado_em)}<small>${escapar(l.origem || "")}</small></td>
       </tr>`;
     }).join("")}</tbody></table></div>`;
@@ -159,7 +241,7 @@ function listaLeads() {
 function abaCorretores() {
   $("conteudo").innerHTML = `
     <div class="crm-barra">
-      <input type="search" id="busca-corretor" placeholder="Buscar por nome, região, imobiliária..." value="${escapar(filtros.buscaCorretor)}">
+      <input type="search" id="busca-corretor" placeholder="Buscar por nome, bairro, imobiliária..." value="${escapar(filtros.buscaCorretor)}">
       <button class="botao botao--zap" data-acao="novo-corretor">+ Novo corretor</button>
     </div>
     <div id="lista"></div>`;
@@ -169,30 +251,53 @@ function abaCorretores() {
 function listaCorretores() {
   const termo = semAcento(filtros.buscaCorretor);
   const itens = D.corretores.filter((c) =>
-    !termo || semAcento([c.nome, c.telefone, c.imobiliaria, c.creci, ...(c.regioes || []), ...(c.tipos || [])].join(" ")).includes(termo));
+    !termo || semAcento([c.nome, c.telefone, c.imobiliaria, c.creci, ...bairrosDe(c)].join(" ")).includes(termo));
   if (!itens.length) {
     $("lista").innerHTML = `<p class="vazio">${D.corretores.length ? "Nenhum corretor encontrado." : "Nenhum corretor ainda. Envie o link de cadastro ou clique em “+ Novo corretor”."}</p>`;
     return;
   }
+  const vezes = {};
+  D.corretores.forEach((c) => { const k = soDigitos(c.telefone).slice(-8); vezes[k] = (vezes[k] || 0) + 1; });
   $("lista").innerHTML = `<div class="crm-tabela-wrap"><table class="crm-tabela">
-    <thead><tr><th>Corretor</th><th>Regiões</th><th>Atende</th><th>Leads em aberto</th><th>Fechados</th><th>Situação</th></tr></thead>
-    <tbody>${itens.map((c) => {
-      const meus = leadsDoCorretor(c.id);
-      return `<tr data-acao="abrir-corretor" data-id="${c.id}" tabindex="0">
-        <td><strong>${escapar(c.nome)}</strong><small>${escapar([formatarTelefone(c.telefone), c.imobiliaria].filter(Boolean).join(" · "))}</small></td>
-        <td>${escapar((c.regioes || []).join(", ") || "—")}</td>
-        <td>${escapar((c.tipos || []).join(", ") || "—")}</td>
-        <td>${meus.filter((l) => ETAPAS_ABERTAS.includes(l.etapa)).length}</td>
-        <td>${meus.filter((l) => l.etapa === "fechado").length}</td>
-        <td>${c.ativo ? '<span class="crm-selo crm-selo--fechado">Ativo</span>' : '<span class="crm-selo crm-selo--perdido">Inativo</span>'}</td>
-      </tr>`;
-    }).join("")}</tbody></table></div>`;
+    <thead><tr><th>Corretor</th><th>Bairros</th><th>Atende</th><th>Faixas</th><th>Leads recebidos</th><th>Situação</th></tr></thead>
+    <tbody>${itens.map((c) => `<tr data-acao="abrir-corretor" data-id="${c.id}" tabindex="0">
+        <td><strong>${escapar(c.nome)}</strong><small>${escapar([formatarTelefone(c.telefone), c.imobiliaria].filter(Boolean).join(" · "))}</small>
+          ${vezes[soDigitos(c.telefone).slice(-8)] > 1 ? '<small class="crm-pendente">⚠ telefone repetido em outro cadastro</small>' : ""}</td>
+        <td>${escapar(bairrosDe(c).join(" / ") || "—")}<small>${escapar([...new Set(bairrosDe(c).map(zonaDe).filter(Boolean))].join(" · "))}</small></td>
+        <td>${escapar(c.categoria)}<small>${escapar(c.operacao)}</small></td>
+        <td><small>${escapar([...(c.faixas_locacao || []), ...(c.faixas_venda || [])].join(", ") || "Não informou")}</small></td>
+        <td>${enviosDoCorretor(c.id).length}</td>
+        <td>${selo(c.status)}</td>
+      </tr>`).join("")}</tbody></table></div>`;
 }
 
-/* ----- Follow-ups ----- */
+/* ----- Envios e cobranças ----- */
+function itemEnvio(e, mostrar) {
+  const l = leadPorId(e.lead_id);
+  const c = corretorPorId(e.corretor_id);
+  if (!l || !c) return "";
+  const vencida = cobrancaVencida(e);
+  const titulo = [
+    mostrar.corretor && `<button class="crm-link-texto" data-acao="abrir-corretor" data-id="${c.id}">${escapar(c.nome)}</button>`,
+    mostrar.lead && `<button class="crm-link-texto" data-acao="abrir-lead" data-id="${l.id}">${escapar(l.nome)}</button>`,
+  ].filter(Boolean).join(" ← ");
+  return `<li class="crm-envio${vencida ? " vencida" : ""}">
+    <div class="crm-envio__topo">
+      <strong>${titulo}</strong>
+      <small>Enviado em ${dataBR(e.criado_em)}${e.cobrado_em ? " · cobrado em " + dataBR(e.cobrado_em) : ""}${vencida ? " · <b>cobrar agora</b>" : ""}</small>
+    </div>
+    <div class="crm-envio__campos">
+      <label>Status<select data-acao="envio-status" data-id="${e.id}">${htmlOpcoes(STATUS_ENVIO, e.status)}</select></label>
+      <label class="crm-envio__retorno">Retorno do corretor<input type="text" data-acao="envio-retorno" data-id="${e.id}" value="${escapar(e.retorno)}" maxlength="1000" placeholder="O que ele respondeu"></label>
+      <label>Próxima cobrança<input type="date" data-acao="envio-cobranca" data-id="${e.id}" value="${escapar(e.proxima_cobranca || "")}"></label>
+      <a class="botao botao--whats" data-acao="cobrar" data-id="${e.id}" href="${linkWhatsApp(c.telefone, textoCobranca(c, l))}" target="_blank" rel="noopener">Cobrar</a>
+      <button class="crm-x" data-acao="excluir-envio" data-id="${e.id}" aria-label="Excluir envio">×</button>
+    </div>
+  </li>`;
+}
+
 function itemTarefa(t, comLead = true) {
   const l = leadPorId(t.lead_id);
-  const c = l && corretorPorId(l.corretor_id);
   const hoje = hojeISO();
   const classe = t.concluida ? "feita" : t.vence_em < hoje ? "atrasada" : t.vence_em === hoje ? "hoje" : "";
   const rotulo = t.concluida ? "" : t.vence_em < hoje ? " · atrasado" : t.vence_em === hoje ? " · hoje" : "";
@@ -200,20 +305,24 @@ function itemTarefa(t, comLead = true) {
     <input type="checkbox" data-acao="concluir-tarefa" data-id="${t.id}"${t.concluida ? " checked" : ""} aria-label="Concluir">
     <div>
       <strong>${escapar(t.descricao)}</strong>
-      <small>${dataBR(t.vence_em)}${rotulo}${comLead && l ? ` · <button class="crm-link-texto" data-acao="abrir-lead" data-id="${l.id}">${escapar(l.nome)}</button>` : ""}${comLead && c ? ` · corretor ${escapar(c.nome)}` : ""}</small>
+      <small>${dataBR(t.vence_em)}${rotulo}${comLead && l ? ` · <button class="crm-link-texto" data-acao="abrir-lead" data-id="${l.id}">${escapar(l.nome)}</button>` : ""}</small>
     </div>
-    <button class="crm-x" data-acao="excluir-tarefa" data-id="${t.id}" aria-label="Excluir follow-up">×</button>
+    <button class="crm-x" data-acao="excluir-tarefa" data-id="${t.id}" aria-label="Excluir lembrete">×</button>
   </li>`;
 }
 
-function abaTarefas() {
-  const abertas = D.tarefas.filter((t) => !t.concluida).sort((a, b) => a.vence_em.localeCompare(b.vence_em));
-  const feitas = D.tarefas.filter((t) => t.concluida).slice(0, 10);
+function abaEnvios() {
+  const lista = D.envios.filter((e) => !filtros.statusEnvio || e.status === filtros.statusEnvio)
+    .sort((a, b) => (a.proxima_cobranca || "9999").localeCompare(b.proxima_cobranca || "9999"));
+  const tarefas = D.tarefas.filter((t) => !t.concluida).sort((a, b) => a.vence_em.localeCompare(b.vence_em));
   $("conteudo").innerHTML = `
-    <h2 class="crm-titulo">Follow-ups pendentes</h2>
-    ${abertas.length ? `<ul class="crm-tarefas">${abertas.map((t) => itemTarefa(t)).join("")}</ul>`
-      : '<p class="vazio">Nenhum follow-up pendente. Para criar um, abra um lead.</p>'}
-    ${feitas.length ? `<h2 class="crm-titulo">Concluídos recentemente</h2><ul class="crm-tarefas">${feitas.map((t) => itemTarefa(t)).join("")}</ul>` : ""}`;
+    <div class="crm-barra">
+      <h2 class="crm-titulo">Leads enviados a corretores</h2>
+      <select id="filtro-envio">${htmlOpcoes(STATUS_ENVIO, filtros.statusEnvio, "Todos os status")}</select>
+    </div>
+    ${lista.length ? `<ul class="crm-envios">${lista.map((e) => itemEnvio(e, { corretor: true, lead: true })).join("")}</ul>`
+      : `<p class="vazio">${D.envios.length ? "Nenhum envio com esse status." : "Nenhum envio ainda. Abra um lead e clique em “📲 Enviar” ao lado de um corretor."}</p>`}
+    ${tarefas.length ? `<h2 class="crm-titulo">Lembretes pendentes</h2><ul class="crm-tarefas">${tarefas.map((t) => itemTarefa(t)).join("")}</ul>` : ""}`;
 }
 
 /* ----- Relatórios ----- */
@@ -226,68 +335,53 @@ function barras(titulo, pares) {
   return `<section class="crm-cartao"><h3>${escapar(titulo)}</h3>${linhas}</section>`;
 }
 
-function contar(lista, chave) {
+function contar(valores) {
   const m = new Map();
-  lista.forEach((x) => { const k = chave(x); if (k) m.set(k, (m.get(k) || 0) + 1); });
+  valores.forEach((k) => { if (k) m.set(k, (m.get(k) || 0) + 1); });
   return [...m.entries()].sort((a, b) => b[1] - a[1]);
 }
 
 function abaRelatorios() {
-  const total = D.leads.length;
-  const fechados = D.leads.filter((l) => l.etapa === "fechado").length;
-  const perdidos = D.leads.filter((l) => l.etapa === "perdido").length;
-  const abertos = total - fechados - perdidos;
-  const semCorretor = D.leads.filter((l) => !l.corretor_id && ETAPAS_ABERTAS.includes(l.etapa)).length;
-  const atrasados = D.tarefas.filter((t) => !t.concluida && t.vence_em < hojeISO()).length;
-  const conversao = total ? Math.round((fechados / total) * 100) + "%" : "—";
+  const ativos = D.corretores.filter((c) => c.status === "Ativo");
+  const limite30 = Date.now() - 30 * 864e5;
+  const enviados = new Set(D.envios.map((e) => e.lead_id));
+  const naoEnviados = D.leads.filter((l) => !enviados.has(l.id) && !ETAPAS_FINAIS.includes(l.etapa));
   const numero = (rotulo, valor) => `<div class="crm-numero"><b>${valor}</b><span>${rotulo}</span></div>`;
+
+  const cobertura = Object.keys(NOME_ZONA).map((z) => {
+    const nLeads = D.leads.filter((l) => [l.bairro1, l.bairro2].some((b) => zonaDe(b) === z)).length;
+    const nCorr = ativos.filter((c) => bairrosDe(c).some((b) => zonaDe(b) === z)).length;
+    const situacao = nCorr === 0 ? (nLeads > 0 ? "🔴 Sem corretor" : "—") : nLeads > nCorr ? "🟡 Recrutar mais" : "🟢 OK";
+    return `<tr><td>${NOME_ZONA[z]}</td><td>${nLeads}</td><td>${nCorr}</td><td>${situacao}</td></tr>`;
+  }).join("");
 
   $("conteudo").innerHTML = `
     <div class="crm-numeros">
-      ${numero("Leads no total", total)}
-      ${numero("Em andamento", abertos)}
-      ${numero("Sem corretor", semCorretor)}
-      ${numero("Fechados", fechados)}
-      ${numero("Conversão", conversao)}
-      ${numero("Corretores ativos", D.corretores.filter((c) => c.ativo).length)}
-      ${numero("Follow-ups atrasados", atrasados)}
+      ${numero("Leads recebidos", D.leads.length)}
+      ${numero("Nos últimos 30 dias", D.leads.filter((l) => new Date(l.criado_em).getTime() >= limite30).length)}
+      ${numero("Residenciais", D.leads.filter((l) => l.categoria === "Residencial").length)}
+      ${numero("Comerciais", D.leads.filter((l) => l.categoria === "Comercial").length)}
+      ${numero("Enviados a corretores", enviados.size)}
+      ${numero("Negócios fechados", D.leads.filter((l) => l.etapa === "Fechado").length)}
+      ${numero("Corretores ativos", ativos.length)}
+      ${numero("Cobranças vencidas", D.envios.filter(cobrancaVencida).length)}
     </div>
     <div class="crm-grade-cartoes">
-      ${barras("Leads por etapa", ETAPAS.map(([id, nome]) => [nome, D.leads.filter((l) => l.etapa === id).length]))}
-      ${barras("Leads por origem", contar(D.leads, (l) => l.origem))}
-      ${barras("Leads por região", contar(D.leads, (l) => l.regiao || "Não informada"))}
-      ${barras("Leads por corretor", contar(D.leads.filter((l) => l.corretor_id), (l) => corretorPorId(l.corretor_id)?.nome))}
-      ${barras("Negócios fechados por corretor", contar(D.leads.filter((l) => l.corretor_id && l.etapa === "fechado"), (l) => corretorPorId(l.corretor_id)?.nome))}
+      <section class="crm-cartao"><h3>Cobertura por zona</h3>
+        <table class="crm-mini"><thead><tr><th>Zona</th><th>Leads</th><th>Corretores</th><th>Situação</th></tr></thead><tbody>${cobertura}</tbody></table>
+      </section>
+      <section class="crm-cartao"><h3>Leads ainda não enviados (${naoEnviados.length})</h3>
+        ${naoEnviados.length ? `<ul class="crm-lista-simples">${naoEnviados.slice(0, 12).map((l) =>
+          `<li><button class="crm-link-texto" data-acao="abrir-lead" data-id="${l.id}">${escapar(l.nome)}</button> <small>${escapar(l.bairro1 || "")}</small></li>`).join("")}</ul>`
+          : '<p class="crm-sem-dados">Todos enviados ✅</p>'}
+      </section>
+      ${barras("Leads por etapa", ETAPAS.map((e) => [e, D.leads.filter((l) => l.etapa === e).length]))}
+      ${barras("Bairros mais pedidos", contar(D.leads.flatMap((l) => [l.bairro1, l.bairro2])).slice(0, 10))}
+      ${barras("Bairros com corretores ativos", contar(ativos.flatMap(bairrosDe)).slice(0, 10))}
+      ${barras("Leads por origem", contar(D.leads.map((l) => l.origem)))}
+      ${barras("Envios por status", STATUS_ENVIO.map((s) => [s, D.envios.filter((e) => e.status === s).length]))}
+      ${barras("Corretores que mais receberam leads", contar(D.envios.map((e) => corretorPorId(e.corretor_id)?.nome)).slice(0, 10))}
     </div>`;
-}
-
-/* ---------- Conexão lead x corretor ---------- */
-function sugerirCorretores(lead) {
-  const negocio = lead.interesse === "compra" ? "venda" : "aluguel";
-  return D.corretores.filter((c) => c.ativo).map((c) => {
-    let pontos = 0;
-    const motivos = [];
-    if (lead.regiao && (c.regioes || []).includes(lead.regiao)) { pontos += 3; motivos.push("atua em " + lead.regiao); }
-    if (lead.tipo && (c.tipos || []).includes(lead.tipo)) { pontos += 2; motivos.push("atende " + lead.tipo.toLowerCase()); }
-    if ((c.negocios || []).includes(negocio)) { pontos += 1; motivos.push("trabalha com " + negocio); }
-    const carga = leadsDoCorretor(c.id).filter((l) => ETAPAS_ABERTAS.includes(l.etapa)).length;
-    return { c, pontos, motivos, carga };
-  }).sort((a, b) => b.pontos - a.pontos || a.carga - b.carga);
-}
-
-function mensagemParaCorretor(lead, corretor, comContato) {
-  const linhas = [
-    `Olá, ${primeiroNome(corretor.nome)}! Aqui é da ${CRM_CONFIG.EMPRESA}.`,
-    "Tenho um cliente que combina com o seu perfil:",
-    "",
-    `• Procura: ${lead.interesse === "compra" ? "comprar" : "alugar"}${lead.tipo ? " " + lead.tipo.toLowerCase() : " imóvel"}`,
-  ];
-  if (lead.regiao || lead.bairros) linhas.push(`• Região: ${[lead.regiao, lead.bairros].filter(Boolean).join(" – ")}`);
-  if (lead.valor_max) linhas.push(`• Valor até: ${reais(lead.valor_max)}`);
-  if (lead.observacoes) linhas.push(`• Observações: ${lead.observacoes}`);
-  if (comContato) linhas.push(`• Cliente: ${lead.nome} – ${formatarTelefone(lead.telefone)}`);
-  linhas.push("", "Consegue atender? Me avise por aqui.");
-  return linhas.join("\n");
 }
 
 /* ---------- Janela (detalhes e formulários) ---------- */
@@ -303,65 +397,74 @@ function reabrirJanela() {
   if (aberto.tipo === "lead") janelaLead(aberto.id); else janelaCorretor(aberto.id);
   $("janela").scrollTop = topo;
 }
+const info = (rotulo, valor) => (valor ? `<div><dt>${rotulo}</dt><dd>${valor}</dd></div>` : "");
 
 function janelaLead(id) {
   const l = leadPorId(id);
   if (!l) { fecharJanela(); return; }
+  if (!aberto || aberto.id !== id) { verMais = false; msgEditada = null; }
   aberto = { tipo: "lead", id };
-  const atual = corretorPorId(l.corretor_id);
-  const sugestoes = sugerirCorretores(l).filter((s) => s.c.id !== l.corretor_id);
+  const corpo = msgEditada?.leadId === id ? msgEditada.texto : mensagemLead(l);
+  const ranking = rankear(l);
+  const visiveis = verMais ? ranking : ranking.slice(0, TOP);
+  const envios = enviosDoLead(id);
+  const jaEnviado = (cid) => envios.find((e) => e.corretor_id === cid);
   const tarefas = D.tarefas.filter((t) => t.lead_id === id).sort((a, b) => a.concluida - b.concluida || a.vence_em.localeCompare(b.vence_em));
   const historico = D.interacoes.filter((i) => i.lead_id === id);
-  const etapas = ETAPAS.map(([e, nome]) => `<option value="${e}"${l.etapa === e ? " selected" : ""}>${nome}</option>`).join("");
-  const info = (rotulo, valor) => (valor ? `<div><dt>${rotulo}</dt><dd>${valor}</dd></div>` : "");
+  const zonas = [...new Set([l.bairro1, l.bairro2].map(zonaDe).filter(Boolean))].map((z) => NOME_ZONA[z]).join(" / ");
 
-  const cartaoCorretor = (s, atribuido) => `<li class="crm-sugestao${atribuido ? " crm-sugestao--atual" : ""}">
+  const linhaRanking = (r, i) => {
+    const env = jaEnviado(r.c.id);
+    return `<li class="crm-sugestao${env ? " crm-sugestao--atual" : ""}">
+      <span class="crm-rank">${i + 1}</span>
       <div>
-        <strong>${escapar(s.c.nome)}</strong>
-        <small>${escapar([s.c.imobiliaria, formatarTelefone(s.c.telefone)].filter(Boolean).join(" · "))}</small>
-        <small>${s.motivos.length ? "✓ " + escapar(s.motivos.join(" · ")) : "Sem pontos em comum com o pedido"} · ${s.carga} lead(s) em aberto</small>
+        <strong>${escapar(r.c.nome)}</strong> <span class="crm-score">${r.score} pts</span>
+        <small>${escapar(bairrosDe(r.c).join(" / "))}${r.c.imobiliaria ? " · " + escapar(r.c.imobiliaria) : ""}</small>
+        <small><b class="crm-nivel crm-nivel--${slug(r.nivel)}">${escapar(r.compat)}</b> · já recebeu ${r.recebidos} lead(s)${env ? ` · <b>enviado em ${dataBR(env.criado_em)}</b>` : ""}</small>
       </div>
       <div class="crm-sugestao__acoes">
-        <button class="botao botao--whats" data-acao="msg" data-corretor="${s.c.id}">WhatsApp</button>
-        ${atribuido ? `<button class="botao botao--detalhes" data-acao="desatribuir">Remover</button>`
-          : `<button class="botao botao--detalhes" data-acao="atribuir" data-corretor="${s.c.id}">Atribuir</button>`}
+        <a class="botao botao--whats" data-acao="enviar" data-corretor="${r.c.id}" href="${linkWhatsApp(r.c.telefone, textoEnvio(r.c, corpo))}" target="_blank" rel="noopener">📲 ${env ? "Reenviar" : "Enviar"}</a>
       </div></li>`;
-
-  const atualHtml = atual
-    ? `<ul class="crm-sugestoes">${cartaoCorretor(sugerirCorretores(l).find((s) => s.c.id === atual.id)
-        || { c: atual, motivos: [], carga: leadsDoCorretor(atual.id).filter((x) => ETAPAS_ABERTAS.includes(x.etapa)).length }, true)}</ul>`
-    : '<p class="crm-sem-dados">Nenhum corretor atribuído ainda.</p>';
+  };
 
   abrirJanela(`<div class="crm-janela__corpo">
     <header class="crm-janela__topo">
       <div><h2>${escapar(l.nome)}</h2><p>${escapar(resumoLead(l))} · entrou em ${dataBR(l.criado_em)}</p></div>
-      <label class="crm-campo crm-campo--etapa">Etapa<select data-acao="mudar-etapa">${etapas}</select></label>
+      <label class="crm-campo crm-campo--etapa">Etapa<select data-acao="mudar-etapa">${htmlOpcoes(ETAPAS, l.etapa)}</select></label>
     </header>
 
     <dl class="crm-info">
       ${info("WhatsApp", `<a href="${linkWhatsApp(l.telefone)}" target="_blank" rel="noopener">${escapar(formatarTelefone(l.telefone))}</a>`)}
-      ${info("E-mail", escapar(l.email))}
-      ${info("Região", escapar([l.regiao, l.bairros].filter(Boolean).join(" – ")))}
-      ${info("Valor máximo", l.valor_max ? reais(l.valor_max) : "")}
+      ${info("Bairros", escapar([l.bairro1, l.bairro2].filter(Boolean).join(" / ")))}
+      ${info("Zonas", escapar(zonas))}
+      ${info("Orçamento", escapar(valorLead(l)))}
+      ${info("Categoria", escapar(l.categoria))}
       ${info("Origem", escapar(l.origem))}
-      ${info("Observações", escapar(l.observacoes))}
+      ${info("Observação interna", escapar(l.observacao_interna))}
     </dl>
     <div class="crm-acoes">
       <button class="botao botao--detalhes" data-acao="editar-lead">Editar dados</button>
       <button class="botao crm-perigo" data-acao="excluir-lead">Excluir lead</button>
     </div>
 
-    <h3>Corretor responsável</h3>
-    ${atualHtml}
+    <h3>Mensagem pronta para encaminhar</h3>
+    <textarea id="msg-texto" rows="9" aria-label="Mensagem para os corretores">${escapar(corpo)}</textarea>
+    <p class="crm-aviso-legal">Pode ajustar o texto antes de enviar. O contato do cliente não vai na mensagem. A saudação (“Oi, Fulano, ${saudacao()}…”) é colocada sozinha.
+      <button class="crm-link-texto" data-acao="copiar-msg">Copiar texto</button></p>
 
-    <h3>${atual ? "Outros corretores possíveis" : "Corretores sugeridos"}</h3>
-    ${sugestoes.length ? `<ul class="crm-sugestoes">${sugestoes.map((s) => cartaoCorretor(s, false)).join("")}</ul>`
-      : '<p class="crm-sem-dados">Nenhum outro corretor ativo cadastrado.</p>'}
+    <h3>Top ${TOP} corretores para este lead</h3>
+    ${visiveis.length ? `<ol class="crm-sugestoes">${visiveis.map(linhaRanking).join("")}</ol>`
+      : '<p class="crm-sem-dados">Nenhum corretor ativo atende esses bairros, categoria e operação. Cadastre um corretor ou revise os bairros do lead.</p>'}
+    ${ranking.length > TOP ? `<button class="crm-link-texto" data-acao="ver-mais">${verMais ? "Mostrar só os 5 melhores" : `Ver os outros ${ranking.length - TOP} corretores compatíveis`}</button>` : ""}
 
-    <h3>Follow-ups</h3>
+    <h3>Envios deste lead (${envios.length})</h3>
+    ${envios.length ? `<ul class="crm-envios">${envios.map((e) => itemEnvio(e, { corretor: true })).join("")}</ul>`
+      : '<p class="crm-sem-dados">Ainda não foi enviado a nenhum corretor.</p>'}
+
+    <h3>Lembretes</h3>
     ${tarefas.length ? `<ul class="crm-tarefas">${tarefas.map((t) => itemTarefa(t, false)).join("")}</ul>` : ""}
     <form class="crm-linha-form" data-form="tarefa">
-      <input type="text" name="descricao" placeholder="Ex.: ligar para confirmar visita" maxlength="500" required>
+      <input type="text" name="descricao" placeholder="Ex.: ligar para o cliente" maxlength="500" required>
       <input type="date" name="vence_em" value="${hojeISO()}" required>
       <button class="botao botao--zap">Adicionar</button>
     </form>
@@ -381,40 +484,39 @@ function janelaCorretor(id) {
   const c = corretorPorId(id);
   if (!c) { fecharJanela(); return; }
   aberto = { tipo: "corretor", id };
-  const meus = leadsDoCorretor(id);
-  const info = (rotulo, valor) => (valor ? `<div><dt>${rotulo}</dt><dd>${valor}</dd></div>` : "");
+  const envios = enviosDoCorretor(id);
+  const zonas = [...new Set(bairrosDe(c).map(zonaDe).filter(Boolean))].map((z) => NOME_ZONA[z]).join(" / ");
   abrirJanela(`<div class="crm-janela__corpo">
     <header class="crm-janela__topo">
-      <div><h2>${escapar(c.nome)}</h2><p>${c.ativo ? "Corretor ativo" : "Corretor inativo"} · cadastrado em ${dataBR(c.criado_em)}</p></div>
+      <div><h2>${escapar(c.nome)}</h2><p>${selo(c.status)} · cadastrado em ${dataBR(c.criado_em)} · ${escapar(c.origem || "")}</p></div>
     </header>
     <dl class="crm-info">
       ${info("WhatsApp", `<a href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noopener">${escapar(formatarTelefone(c.telefone))}</a>`)}
       ${info("E-mail", escapar(c.email))}
       ${info("CRECI", escapar(c.creci))}
       ${info("Imobiliária", escapar(c.imobiliaria))}
-      ${info("Regiões", escapar((c.regioes || []).join(", ")))}
-      ${info("Tipos de imóvel", escapar((c.tipos || []).join(", ")))}
-      ${info("Trabalha com", escapar((c.negocios || []).map((n) => (n === "venda" ? "Venda" : "Aluguel")).join(", ")))}
+      ${info("Site / perfil", escapar(c.site))}
+      ${info("Atende", escapar(`${c.categoria} · ${c.operacao}`))}
+      ${info("Bairros", escapar(bairrosDe(c).join(" / ")))}
+      ${info("Zonas", escapar(zonas))}
+      ${info("Faixas de locação", escapar((c.faixas_locacao || []).join(", ")))}
+      ${info("Faixas de venda", escapar((c.faixas_venda || []).join(", ")))}
       ${info("Observações", escapar(c.observacoes))}
     </dl>
     <div class="crm-acoes">
       <button class="botao botao--detalhes" data-acao="editar-corretor">Editar dados</button>
       <button class="botao crm-perigo" data-acao="excluir-corretor">Excluir corretor</button>
     </div>
-    <h3>Leads deste corretor (${meus.length})</h3>
-    ${meus.length ? `<ul class="crm-sugestoes">${meus.map((l) => `<li class="crm-sugestao">
-        <div><strong>${escapar(l.nome)}</strong><small>${escapar(resumoLead(l))}${l.regiao ? " · " + escapar(l.regiao) : ""}</small></div>
-        <div class="crm-sugestao__acoes">${seloEtapa(l.etapa)}<button class="botao botao--detalhes" data-acao="abrir-lead" data-id="${l.id}">Abrir</button></div>
-      </li>`).join("")}</ul>` : '<p class="crm-sem-dados">Nenhum lead atribuído ainda.</p>'}
+    <h3>Leads enviados a este corretor (${envios.length})</h3>
+    ${envios.length ? `<ul class="crm-envios">${envios.map((e) => itemEnvio(e, { lead: true })).join("")}</ul>`
+      : '<p class="crm-sem-dados">Nenhum lead enviado ainda.</p>'}
   </div>`);
 }
 
 function janelaForm(tipo, registro) {
   const ehLead = tipo === "lead";
   const campos = ehLead ? CAMPOS_LEAD_PAINEL : CAMPOS_CORRETOR_PAINEL;
-  const valores = registro
-    ? (ehLead ? registro : { ...registro, ativo: registro.ativo ? "sim" : "nao" })
-    : (ehLead ? { origem: "Cadastro manual", etapa: "novo" } : { ativo: "sim" });
+  const valores = registro || (ehLead ? { origem: "Cadastro manual", etapa: "Novo" } : { status: "Ativo" });
   abrirJanela(`<div class="crm-janela__corpo">
     <h2>${registro ? "Editar" : "Novo"} ${ehLead ? "lead" : "corretor"}</h2>
     <form class="crm-form" data-form="${tipo}" data-id="${registro ? registro.id : ""}" novalidate>
@@ -425,38 +527,10 @@ function janelaForm(tipo, registro) {
         <button type="button" class="botao botao--detalhes" data-acao="cancelar-form">Cancelar</button>
       </div>
     </form></div>`);
-}
-
-function janelaMensagem(leadId, corretorId) {
-  const l = leadPorId(leadId);
-  const c = corretorPorId(corretorId);
-  if (!l || !c) return;
-  abrirJanela(`<div class="crm-janela__corpo">
-    <button type="button" class="crm-voltar" data-acao="voltar-lead">← Voltar para o lead</button>
-    <h2>Mensagem para ${escapar(c.nome)}</h2>
-    <p class="crm-sub">Revise o texto. Ao clicar, o WhatsApp abre com a mensagem pronta para ${escapar(formatarTelefone(c.telefone))}; é só enviar.</p>
-    <label class="crm-check"><input type="checkbox" id="msg-contato" checked> Incluir nome e telefone do cliente</label>
-    <textarea id="msg-texto" rows="11" data-lead="${l.id}" data-corretor="${c.id}">${escapar(mensagemParaCorretor(l, c, true))}</textarea>
-    <div class="crm-acoes">
-      <a class="botao botao--whats" id="msg-enviar" href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noopener" data-acao="enviar-msg">Abrir WhatsApp e enviar</a>
-      <button type="button" class="botao botao--detalhes" data-acao="copiar-msg">Copiar texto</button>
-    </div>
-    <p class="crm-aviso-legal">Ao abrir o WhatsApp, o lead é atribuído a este corretor e o envio fica registrado no histórico.</p>
-  </div>`);
+  ativarForm($("janela-conteudo").querySelector("form"), campos);
 }
 
 /* ---------- Ações ---------- */
-async function atribuir(leadId, corretorId, nota) {
-  const l = leadPorId(leadId);
-  const c = corretorPorId(corretorId);
-  if (!l || !c) return;
-  const mudanca = { corretor_id: corretorId };
-  if (l.etapa === "novo") mudanca.etapa = "em_atendimento";
-  if (!(await gravar(sb.from("leads").update(mudanca).eq("id", leadId)))) return;
-  await gravar(sb.from("interacoes").insert({ lead_id: leadId, texto: nota || `Lead atribuído a ${c.nome}.`, autor: usuario?.email }));
-  await carregar();
-}
-
 const ACOES = {
   "sair": async () => { await sb.auth.signOut(); usuario = null; fecharJanela(); mostrarTela("v-login"); },
   "copiar-link": async () => {
@@ -472,35 +546,45 @@ const ACOES = {
   "editar-lead": () => janelaForm("lead", leadPorId(aberto.id)),
   "editar-corretor": () => janelaForm("corretor", corretorPorId(aberto.id)),
   "cancelar-form": () => { if (aberto) reabrirJanela(); else fecharJanela(); },
-  "voltar-lead": () => reabrirJanela(),
+  "ver-mais": () => { verMais = !verMais; reabrirJanela(); },
   "excluir-lead": async () => {
     const l = leadPorId(aberto.id);
-    if (!confirm(`Excluir o lead "${l.nome}"? O histórico e os follow-ups dele também serão apagados.`)) return;
+    if (!confirm(`Excluir o lead "${l.nome}"? Os envios, o histórico e os lembretes dele também serão apagados.`)) return;
     if (await gravar(sb.from("leads").delete().eq("id", l.id))) { fecharJanela(); aviso("Lead excluído."); await carregar(); }
   },
   "excluir-corretor": async () => {
     const c = corretorPorId(aberto.id);
-    if (!confirm(`Excluir o corretor "${c.nome}"? Os leads dele ficarão sem corretor.`)) return;
+    if (!confirm(`Excluir o corretor "${c.nome}"? Os envios feitos a ele também serão apagados. Para só parar de enviar leads, mude a situação para Pausado.`)) return;
     if (await gravar(sb.from("corretores").delete().eq("id", c.id))) { fecharJanela(); aviso("Corretor excluído."); await carregar(); }
   },
-  "atribuir": async (b) => { await atribuir(aberto.id, b.dataset.corretor); aviso("Corretor atribuído."); },
-  "desatribuir": async () => {
-    if (await gravar(sb.from("leads").update({ corretor_id: null }).eq("id", aberto.id))) {
-      await gravar(sb.from("interacoes").insert({ lead_id: aberto.id, texto: "Corretor removido do lead.", autor: usuario?.email }));
-      await carregar();
-    }
-  },
-  "msg": (b) => janelaMensagem(aberto.id, b.dataset.corretor),
   "copiar-msg": async () => {
     try { await navigator.clipboard.writeText($("msg-texto").value); aviso("Texto copiado."); }
     catch { $("msg-texto").select(); aviso("Selecione e copie o texto manualmente.", true); }
   },
-  "enviar-msg": async (link) => {
-    // Sem preventDefault: o navegador abre o WhatsApp com o texto atual da caixa.
-    const caixa = $("msg-texto");
-    const c = corretorPorId(caixa.dataset.corretor);
-    link.href = linkWhatsApp(c.telefone, caixa.value);
-    await atribuir(caixa.dataset.lead, c.id, `Lead encaminhado para ${c.nome} pelo WhatsApp.`);
+  // Sem preventDefault: o navegador abre o WhatsApp; aqui só registramos o envio.
+  "enviar": async (link) => {
+    const l = leadPorId(aberto.id);
+    const c = corretorPorId(link.dataset.corretor);
+    link.href = linkWhatsApp(c.telefone, textoEnvio(c, $("msg-texto").value));
+    const existente = enviosDoLead(l.id).find((e) => e.corretor_id === c.id);
+    const ok = existente
+      ? await gravar(sb.from("envios").update({ status: "Aguardando", proxima_cobranca: daquiADias(DIAS_COBRANCA) }).eq("id", existente.id))
+      : await gravar(sb.from("envios").insert({ lead_id: l.id, corretor_id: c.id, proxima_cobranca: daquiADias(DIAS_COBRANCA) }));
+    if (!ok) return;
+    if (["Novo", "Qualificado"].includes(l.etapa)) await gravar(sb.from("leads").update({ etapa: "Buscando imóveis" }).eq("id", l.id));
+    await anotar(l.id, `${existente ? "Reenviado" : "Enviado"} para ${c.nome} pelo WhatsApp.`);
+    await carregar();
+  },
+  "cobrar": async (link) => {
+    const e = envioPorId(link.dataset.id);
+    const c = corretorPorId(e.corretor_id);
+    if (!(await gravar(sb.from("envios").update({ cobrado_em: hojeISO(), proxima_cobranca: daquiADias(DIAS_COBRANCA) }).eq("id", e.id)))) return;
+    await anotar(e.lead_id, `Cobrança enviada a ${c.nome} pelo WhatsApp.`);
+    await carregar();
+  },
+  "excluir-envio": async (b) => {
+    if (!confirm("Excluir este registro de envio?")) return;
+    if (await gravar(sb.from("envios").delete().eq("id", b.dataset.id))) await carregar();
   },
   "excluir-tarefa": async (b) => {
     if (await gravar(sb.from("tarefas").delete().eq("id", b.dataset.id))) await carregar();
@@ -520,24 +604,44 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("change", async (e) => {
   const t = e.target;
-  if (t.dataset.acao === "mudar-etapa") {
+  const acao = t.dataset.acao;
+  if (acao === "mudar-etapa") {
     if (await gravar(sb.from("leads").update({ etapa: t.value }).eq("id", aberto.id))) {
-      await gravar(sb.from("interacoes").insert({ lead_id: aberto.id, texto: `Etapa alterada para "${NOME_ETAPA[t.value]}".`, autor: usuario?.email }));
+      await anotar(aberto.id, `Etapa alterada para "${t.value}".`);
       await carregar();
     }
-  } else if (t.dataset.acao === "concluir-tarefa") {
+  } else if (acao === "envio-status") {
+    const env = envioPorId(t.dataset.id);
+    if (await gravar(sb.from("envios").update({ status: t.value }).eq("id", env.id))) {
+      await anotar(env.lead_id, `${corretorPorId(env.corretor_id)?.nome}: status do envio alterado para "${t.value}".`);
+      await carregar();
+    }
+  } else if (acao === "envio-retorno") {
+    // Não redesenha a tela, para não atrapalhar quem está digitando em vários campos.
+    const env = envioPorId(t.dataset.id);
+    const retorno = t.value.trim() || null;
+    if (await gravar(sb.from("envios").update({ retorno }).eq("id", env.id))) { env.retorno = retorno; aviso("Retorno salvo."); }
+  } else if (acao === "envio-cobranca") {
+    if (await gravar(sb.from("envios").update({ proxima_cobranca: t.value || null }).eq("id", t.dataset.id))) await carregar();
+  } else if (acao === "concluir-tarefa") {
     if (await gravar(sb.from("tarefas").update({ concluida: t.checked }).eq("id", t.dataset.id))) await carregar();
   } else if (t.id === "filtro-etapa") {
     filtros.etapa = t.value; listaLeads();
-  } else if (t.id === "msg-contato") {
-    const caixa = $("msg-texto");
-    caixa.value = mensagemParaCorretor(leadPorId(caixa.dataset.lead), corretorPorId(caixa.dataset.corretor), t.checked);
+  } else if (t.id === "filtro-envio") {
+    filtros.statusEnvio = t.value; abaEnvios();
   }
 });
 
 document.addEventListener("input", (e) => {
   if (e.target.id === "busca-lead") { filtros.buscaLead = e.target.value; listaLeads(); }
   if (e.target.id === "busca-corretor") { filtros.buscaCorretor = e.target.value; listaCorretores(); }
+  if (e.target.id === "msg-texto" && aberto?.tipo === "lead") {
+    // Guarda o texto ajustado e atualiza os links de envio com ele.
+    msgEditada = { leadId: aberto.id, texto: e.target.value };
+    document.querySelectorAll('#janela [data-acao="enviar"]').forEach((a) => {
+      a.href = linkWhatsApp(corretorPorId(a.dataset.corretor).telefone, textoEnvio(corretorPorId(a.dataset.corretor), e.target.value));
+    });
+  }
 });
 
 document.addEventListener("submit", async (e) => {
@@ -553,7 +657,7 @@ document.addEventListener("submit", async (e) => {
   }
   if (tipo === "nota") {
     const texto = f.elements.texto.value.trim();
-    if (texto && await gravar(sb.from("interacoes").insert({ lead_id: aberto.id, texto, autor: usuario?.email }))) await carregar();
+    if (texto && await anotar(aberto.id, texto)) await carregar();
     return;
   }
 
@@ -564,14 +668,14 @@ document.addEventListener("submit", async (e) => {
   if (!f.checkValidity()) { f.reportValidity(); return; }
   const { dados, erro } = lerCampos(f, campos);
   if (erro) { caixaErro.textContent = erro; caixaErro.classList.remove("oculto"); return; }
-  if (tipo === "corretor") dados.ativo = dados.ativo !== "nao";
-  if (tipo === "lead" && !dados.origem) dados.origem = "Cadastro manual";
+  const id = f.dataset.id;
+  if (!dados.origem) { if (tipo === "lead" || !id) dados.origem = "Cadastro manual"; else delete dados.origem; }
 
   const tabela = tipo === "lead" ? "leads" : "corretores";
-  const id = f.dataset.id;
   const ok = await gravar(id ? sb.from(tabela).update(dados).eq("id", id) : sb.from(tabela).insert(dados));
   if (!ok) return;
   aviso("Salvo.");
+  if (id && tipo === "lead") msgEditada = null; // a mensagem pronta volta a refletir os dados novos
   if (!id) fecharJanela();
   await carregar();
   if (id) reabrirJanela();

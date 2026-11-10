@@ -58,47 +58,52 @@ O número fica no início do arquivo `script.js` (`WHATSAPP = "5511911297820"`).
 
 # CRM (corretores parceiros + leads)
 
-Duas páginas novas, que não mudam o site de imóveis:
+Duas páginas, que não mudam o site de imóveis. Seguem os mesmos formulários e as mesmas regras da planilha "Sistema de Match Lead-Corretor".
 
 | Página | Quem usa | O que faz |
 |---|---|---|
 | `cadastro.html` | Qualquer pessoa com o link | Escolhe **"Quero encontrar um imóvel"** ou **"Sou corretor"** e preenche o cadastro. |
-| `painel.html` | Só os 2 usuários autorizados (login) | Leads, corretores, sugestão de corretor para cada lead, mensagem pronta de WhatsApp, follow-ups e relatórios. |
+| `painel.html` | Só os usuários autorizados (login) | Leads, corretores, top 5 corretores de cada lead, envio pelo WhatsApp, cobranças e relatórios. |
 
 Links úteis para divulgar:
 - `cadastro.html?perfil=corretor` abre direto o cadastro de corretor.
 - `cadastro.html?perfil=cliente` abre direto o cadastro de cliente.
 - `cadastro.html?origem=Instagram` marca de onde o lead veio (aparece nos relatórios).
 
-## Como ligar o CRM (uma vez só)
+## Como funciona no dia a dia
+1. O lead ou o corretor se cadastra pelo link (ou você cadastra em **+ Novo lead** / **+ Novo corretor**).
+2. No painel, abra o lead. Aparecem a **mensagem pronta** e o **top 5 corretores**.
+3. Clique em **📲 Enviar** ao lado de cada corretor. O WhatsApp abre com a mensagem escrita; é só enviar.
+   O contato do cliente não vai na mensagem.
+4. O envio fica registrado, com cobrança marcada para 2 dias depois. Na aba **Envios** você anota o retorno
+   do corretor, muda o status e clica em **Cobrar** quando vencer.
 
+## Como o match pontua (igual à planilha)
+- Bairro principal do lead: 50 pontos se for o 1º bairro do corretor, 40 se for o 2º, 30 se for o 3º; 5 se só a zona bater.
+- 2ª opção de bairro do lead: 25, 20 ou 15 pontos; 3 se só a zona bater.
+- Faixa de valor: +15 se o orçamento cabe numa faixa do corretor, -15 se não cabe, 0 se ele não informou.
+- Só entram corretores **ativos**, da mesma **categoria** (residencial/comercial) e **operação** (locação/venda) do lead.
+- 50 pontos ou mais de região = Excelente; 30 ou mais = Boa; abaixo disso = Possível.
+
+Para mudar bairros e zonas, faixas de valor ou etapas, edite o início de `crm/comum.js`
+(etapas e status também ficam em `supabase/schema.sql`). A quantidade de corretores sugeridos e o prazo
+de cobrança ficam no início de `crm/painel.js` (`TOP` e `DIAS_COBRANCA`).
+
+## Como ligar o CRM (uma vez só)
 1. Crie uma conta gratuita em **supabase.com** e um projeto novo (região: São Paulo).
-2. No projeto, abra **SQL Editor > New query**, cole todo o conteúdo de `supabase/schema.sql` e clique em **Run**.
-3. Em **Authentication > Sign In / Providers**, desligue **"Allow new users to sign up"** (assim ninguém cria conta sozinho).
-4. Em **Authentication > Users > Add user**, crie os 2 usuários (e-mail e senha), marcando **Auto Confirm User**.
-5. Volte ao **SQL Editor** e rode, trocando pelos dois e-mails:
-   ```sql
-   insert into public.crm_admins (user_id)
-   select id from auth.users
-   where email in ('voce@exemplo.com', 'socio@exemplo.com')
-   on conflict do nothing;
-   ```
-6. Em **Project Settings > API**, copie a **Project URL** e a chave **anon public** e cole em `crm/config.js`.
-   Nunca use a chave `service_role` no site.
+2. No projeto, abra **SQL Editor**, cole todo o conteúdo de `supabase/schema.sql` e clique em **Run**.
+3. Em **Authentication > Sign In / Providers**, desligue **"Allow new users to sign up"**.
+4. Em **Authentication > Users > Add user**, crie os usuários do painel (e-mail e senha).
+5. No **SQL Editor**, autorize cada um (o comando está no fim do `schema.sql`).
+6. Em **Settings > API Keys**, copie a chave **Publishable** (ou **anon public**) e cole em `crm/config.js`,
+   junto com o endereço do projeto. Nunca use a chave `secret` / `service_role` no site.
 7. Publique o site como já faz hoje. O CRM funciona em qualquer hospedagem de site estático.
 
 ## Segurança
 - O visitante do link público só consegue **enviar** um cadastro. Ele não lê, não altera e não apaga nada.
 - Só quem está na tabela `crm_admins` vê os dados no painel. Outra conta, mesmo logada, é barrada.
-- A chave `anon public` pode ficar no código: quem protege os dados são as regras do `schema.sql`.
+- A chave pública pode ficar no código: quem protege os dados são as regras do `schema.sql`.
 
 ## WhatsApp
-No painel, abra um lead e clique em **WhatsApp** ao lado do corretor sugerido. O texto vem pronto e pode ser editado;
-ao confirmar, o WhatsApp (ou WhatsApp Business) do aparelho abre com a mensagem para o corretor, o lead é atribuído
-a ele e o envio fica no histórico. Não usa a API paga da Meta.
-
-## Como o CRM sugere corretores
-Para cada lead, os corretores ativos são ordenados por: atua na **região** pedida (3 pontos), atende o **tipo de imóvel**
-(2 pontos), trabalha com **venda/aluguel** conforme o interesse (1 ponto). No empate, vem primeiro quem tem menos leads em aberto.
-
-Para mudar regiões, tipos de imóvel ou etapas do funil, edite o início de `crm/comum.js` (as etapas também ficam em `supabase/schema.sql`).
+Os botões **📲 Enviar** e **Cobrar** abrem o WhatsApp (ou WhatsApp Business) do aparelho com a mensagem pronta,
+igual ao link "Enviar" da planilha. Não usa a API paga da Meta, então o envio não é automático: você confirma no WhatsApp.

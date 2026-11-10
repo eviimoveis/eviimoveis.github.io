@@ -5,15 +5,15 @@ const PERFIS = {
     tabela: "leads",
     campos: CAMPOS_LEAD,
     titulo: "Quero encontrar um imóvel",
-    sub: "Preencha os dados abaixo. Leva menos de um minuto.",
-    ok: "Recebemos seu pedido. Um corretor que atua na região que você procura vai entrar em contato pelo WhatsApp.",
+    sub: "Quanto mais detalhes, mais rápido seu imóvel aparece. Leva menos de 3 minutos.",
+    ok: "Recebemos seu pedido. Seu perfil vai para corretores parceiros que atuam nos bairros que você escolheu, e entraremos em contato pelo WhatsApp.",
   },
   corretor: {
     tabela: "corretores",
     campos: CAMPOS_CORRETOR,
     titulo: "Cadastro de corretor parceiro",
-    sub: "Informe onde você atua para receber os clientes certos.",
-    ok: "Recebemos seu cadastro. Quando surgir um cliente na sua região de atuação, entraremos em contato pelo WhatsApp.",
+    sub: "Quando surgir um cliente com o perfil da sua região, enviamos para você e trabalhamos em parceria. Leva menos de 3 minutos.",
+    ok: "Recebemos seu cadastro. Quando surgir um cliente nos bairros em que você atua, entraremos em contato pelo WhatsApp.",
   },
 };
 
@@ -32,6 +32,7 @@ function abrirForm(perfil) {
   el("form-titulo").textContent = p.titulo;
   el("form-sub").textContent = p.sub;
   el("campos").innerHTML = montarCampos(p.campos);
+  ativarForm(el("form"), p.campos);
   el("erro").classList.add("oculto");
   mostrarPasso("passo-form");
 }

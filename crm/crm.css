@@ -29,6 +29,7 @@
 .crm-grade-campos { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .crm-campo { display: flex; flex-direction: column; gap: 5px; font-size: .82rem; font-weight: 600; color: var(--cinza); min-width: 0; }
 .crm-campo--largo { grid-column: 1 / -1; }
+.crm-campo[hidden] { display: none; }
 fieldset.crm-campo { border: none; }
 fieldset.crm-campo legend { margin-bottom: 6px; }
 .crm-campo input, .crm-campo select, .crm-campo textarea,
@@ -95,14 +96,16 @@ code { background: #e6ecf3; padding: 1px 6px; border-radius: 5px; font-size: .9e
 
 .crm-selo { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .76rem; font-weight: 700; white-space: nowrap; }
 .crm-selo--novo { background: #fff1d6; color: #8a5a00; }
-.crm-selo--em_atendimento { background: #dcebfb; color: #14508f; }
+.crm-selo--qualificado { background: #dcebfb; color: #14508f; }
+.crm-selo--buscando-imoveis { background: #e0e7ff; color: #2f3d9c; }
 .crm-selo--visita { background: #e8ddf8; color: #5b2aa3; }
 .crm-selo--proposta { background: #d9f1f4; color: #0b6470; }
-.crm-selo--fechado { background: #d8f3e6; color: #0a6b48; }
-.crm-selo--perdido { background: #eceff3; color: #56616e; }
+.crm-selo--fechado, .crm-selo--ativo { background: #d8f3e6; color: #0a6b48; }
+.crm-selo--pausado { background: #fff1d6; color: #8a5a00; }
+.crm-selo--perdido, .crm-selo--inativo { background: #eceff3; color: #56616e; }
 
-/* Follow-ups */
-.crm-tarefas, .crm-sugestoes, .crm-historico { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+/* Lembretes */
+.crm-tarefas, .crm-sugestoes, .crm-historico, .crm-envios { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 .crm-tarefa {
   display: flex; align-items: flex-start; gap: 12px; background: var(--branco); border: 1px solid var(--borda);
   border-left: 4px solid var(--borda); border-radius: 10px; padding: 12px 14px;
@@ -162,7 +165,7 @@ code { background: #e6ecf3; padding: 1px 6px; border-radius: 5px; font-size: .9e
   border: 1px solid var(--borda); border-radius: 10px; padding: 12px 14px; background: #fff;
 }
 .crm-sugestao--atual { border-color: var(--aluguel); background: #f1fbf6; }
-.crm-sugestao > div:first-child { flex: 1 1 220px; min-width: 0; }
+.crm-sugestao > div:not(.crm-sugestao__acoes) { flex: 1 1 200px; min-width: 0; }
 .crm-sugestao small { display: block; color: var(--cinza); font-size: .82rem; }
 .crm-sugestao__acoes { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .crm-linha-form { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -181,6 +184,42 @@ code { background: #e6ecf3; padding: 1px 6px; border-radius: 5px; font-size: .9e
 }
 .crm-toast.visivel { opacity: 1; transform: translate(-50%, 0); }
 .crm-toast--erro { background: #a12a1e; }
+
+/* Ranking de corretores */
+.crm-sugestoes { padding: 0; }
+.crm-rank {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--azul); color: #fff;
+  font-weight: 700; font-size: .9rem; display: grid; place-items: center;
+}
+.crm-score { font-size: .78rem; font-weight: 700; color: var(--azul-claro); background: #e6ecf3; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.crm-nivel--excelente { color: #0a6b48; }
+.crm-nivel--boa { color: #14508f; }
+.crm-nivel--possivel { color: #8a5a00; }
+
+/* Envios */
+.crm-envio {
+  background: var(--branco); border: 1px solid var(--borda); border-left: 4px solid var(--borda);
+  border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.crm-envio.vencida { border-left-color: #d64545; }
+.crm-envio.vencida small b { color: #a12a1e; }
+.crm-envio__topo { display: flex; gap: 6px 12px; flex-wrap: wrap; justify-content: space-between; align-items: baseline; }
+.crm-envio__topo strong { overflow-wrap: anywhere; }
+.crm-envio__topo small { color: var(--cinza); font-size: .82rem; }
+.crm-envio__campos { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.crm-envio__campos label { display: flex; flex-direction: column; gap: 3px; font-size: .74rem; font-weight: 600; color: var(--cinza); flex: 0 1 150px; min-width: 0; }
+.crm-envio__campos .crm-envio__retorno { flex: 1 1 220px; }
+.crm-envio__campos select, .crm-envio__campos input {
+  font: inherit; font-size: .92rem; font-weight: 400; color: var(--texto); padding: 8px 10px;
+  border: 1px solid var(--borda); border-radius: 8px; background: #fff; width: 100%;
+}
+.crm-envio__campos .botao { padding: 9px 16px; font-size: .9rem; }
+.crm-barra .crm-titulo { flex: 1 1 220px; margin: 0; align-self: center; }
+.crm-mini { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.crm-mini th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: var(--cinza); padding: 0 8px 8px 0; }
+.crm-mini td { padding: 6px 8px 6px 0; border-top: 1px solid var(--borda); }
+.crm-lista-simples { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: .92rem; }
+.crm-lista-simples small { color: var(--cinza); }
 
 @media (max-width: 560px) {
   .crm-link { margin-left: 12px; font-size: .88rem; }
