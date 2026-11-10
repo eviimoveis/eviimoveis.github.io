@@ -1,0 +1,66 @@
+/* ===== Tema verde e dourado (inspirado no cartão de visita) — só na página de cadastro ===== */
+body.tema-evi {
+  --azul: #375543;          /* verde escuro do cartão (Pantone 7736C) */
+  --azul-claro: #2c4637;
+  --dourado: #c9a24d;
+  --fundo: #f6f1e7;         /* creme, igual ao fundo do formulário */
+  --borda: #e6dcc6;
+  --cinza: #5f6b64;
+  --texto: #1d2420;
+  --preto: #1a1d1b;         /* faixa preta do cartão (Black 3C) */
+  --ouro: linear-gradient(90deg, #a8772a 0%, #d9ac52 22%, #f6e7b8 48%, #d4a24c 72%, #a8772a 100%);
+  background: var(--fundo);
+}
+.tema-evi .titulo-evi, .tema-evi .logo, .tema-evi .crm-escolha strong, .tema-evi .crm-publico h1 {
+  font-family: "Montserrat", "Inter", system-ui, sans-serif;
+}
+
+/* Topo verde com fio dourado */
+.tema-evi .topo { background: var(--azul); }
+.tema-evi .topo::after { content: ""; display: block; height: 2px; background: var(--ouro); }
+.tema-evi .logo { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 8px; font-size: 1.25rem; font-weight: 700; letter-spacing: 1px; }
+.tema-evi .logo { color: var(--preto); }
+.tema-evi .logo span { color: #e3bd62; }
+.tema-evi .logo__sub { font-size: .66rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #e9e1cf; }
+.tema-evi .logo__sub::before { content: "– "; }
+.tema-evi .menu a:hover { color: #e3bd62; }
+
+/* Faixa de destaque, como a frente do cartão */
+.evi-hero {
+  background: var(--azul); color: #fff; text-align: center; border-radius: 14px; overflow: hidden;
+  padding: 26px 0 0; margin-bottom: 26px; box-shadow: 0 14px 34px rgba(26, 29, 27, .18);
+}
+.evi-hero__marca { display: flex; align-items: flex-end; }
+.evi-hero__linha { flex: 1; height: 2px; background: var(--ouro); }
+.evi-hero__marca svg { width: 74px; height: 46px; display: block; margin-bottom: -1px; }
+.evi-hero__kicker { margin-top: 16px; font-size: .74rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
+.tema-evi .evi-hero h1 {
+  margin: 8px 20px 26px; font-weight: 700; font-size: clamp(1.55rem, 4.6vw, 2.35rem); line-height: 1.2;
+  color: #e3bd62;
+}
+.evi-hero__faixa { height: 26px; background: var(--preto); border-top: 2px solid transparent; border-image: var(--ouro) 1; }
+
+/* Opções */
+.tema-evi .crm-escolha { position: relative; overflow: hidden; border: 1px solid var(--borda); box-shadow: 0 4px 14px rgba(26, 29, 27, .06); padding-top: 32px; }
+.tema-evi .crm-escolha::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--ouro); }
+.tema-evi .crm-escolha:hover, .tema-evi .crm-escolha:focus-visible { border-color: var(--dourado); box-shadow: 0 12px 28px rgba(55, 85, 67, .18); }
+.tema-evi .crm-escolha strong { color: var(--azul); font-weight: 700; }
+
+/* Formulário */
+.tema-evi #passo-form h1 { color: var(--azul); }
+.tema-evi .crm-form { border-top: 5px solid var(--dourado); }
+.tema-evi .botao--zap { background: var(--azul); color: #fff; box-shadow: inset 0 -3px 0 var(--dourado); }
+.tema-evi .crm-voltar { color: var(--azul); }
+.tema-evi .crm-ok__icone { background: var(--azul); }
+
+/* Celular */
+@media (max-width: 640px) {
+  .tema-evi .topo__conteudo { height: auto; min-height: 60px; padding-top: 8px; padding-bottom: 8px; }
+  .tema-evi .logo { display: block; font-size: 1.1rem; }
+  .tema-evi .logo__sub { display: block; margin-top: 1px; font-size: .56rem; letter-spacing: 1.6px; }
+  .tema-evi .logo__sub::before { content: ""; }
+  .tema-evi .menu a { margin-left: 12px; font-size: .9rem; }
+  .tema-evi .crm-publico { padding-top: 22px; }
+  .evi-hero { padding-top: 22px; }
+  .evi-hero__kicker { font-size: .66rem; letter-spacing: 3px; }
+}
