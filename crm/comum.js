@@ -135,7 +135,7 @@ function formatarTelefone(t) {
   return t || "";
 }
 const linkWhatsApp = (telefone, texto) =>
-  `https://wa.me/${telefoneWhats(telefone)}` + (texto ? `?text=${encodeURIComponent(texto)}` : "");
+  `https://web.whatsapp.com/send?phone=${telefoneWhats(telefone)}` + (texto ? `&text=${encodeURIComponent(texto)}` : "");
 
 /* ---------- Conexão com o banco ---------- */
 function criarCliente() {
