@@ -6,7 +6,7 @@
   NUNCA cole aqui a chave "service_role".
 */
 const CRM_CONFIG = {
-  SUPABASE_URL: "",       // ex.: "https://abcdefgh.supabase.co"
-  SUPABASE_ANON_KEY: "",  // chave "anon public"
+  SUPABASE_URL: "https://rbrmuenwxwqkeofnsoam.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_QosyeQjys_6Bv08sbHo-5w_F41bDrn5",
   EMPRESA: "EVI Imóveis",
 };
