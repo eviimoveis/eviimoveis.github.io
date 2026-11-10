@@ -11,8 +11,8 @@ const PERFIS = {
   corretor: {
     tabela: "corretores",
     campos: CAMPOS_CORRETOR,
-    titulo: "Cadastro de corretor parceiro",
-    sub: "Quando surgir um cliente com o perfil da sua região, enviamos para você e trabalhamos em parceria. Leva menos de 3 minutos.",
+    titulo: "Cadastro de Corretor Parceiro",
+    sub: "Indicação de clientes + link de imóveis disponíveis — Parceria 50%.",
     ok: "Recebemos seu cadastro. Quando surgir um cliente nos bairros em que você atua, entraremos em contato pelo WhatsApp.",
   },
 };
