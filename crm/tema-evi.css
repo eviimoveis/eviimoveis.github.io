@@ -1,66 +1,64 @@
-/* ===== Tema verde e dourado (inspirado no cartão de visita) — só na página de cadastro ===== */
+/* ===== Tema verde e dourado, estilo sofisticado — só na página de cadastro ===== */
 body.tema-evi {
-  --azul: #375543;          /* verde escuro do cartão (Pantone 7736C) */
-  --azul-claro: #2c4637;
+  --azul: #1f4a37;          /* verde principal */
+  --azul-claro: #2c5a45;
   --dourado: #c9a24d;
-  --fundo: #f6f1e7;         /* creme, igual ao fundo do formulário */
+  --ouro-claro: #e3bd62;
+  --creme: #efe6d2;
   --borda: #e6dcc6;
   --cinza: #5f6b64;
   --texto: #1d2420;
-  --preto: #1a1d1b;         /* faixa preta do cartão (Black 3C) */
-  --ouro: linear-gradient(90deg, #a8772a 0%, #d9ac52 22%, #f6e7b8 48%, #d4a24c 72%, #a8772a 100%);
-  background: var(--fundo);
+  --ouro: linear-gradient(90deg, rgba(201,162,77,0) 0%, #b8862f 15%, #f1dc9f 50%, #b8862f 85%, rgba(201,162,77,0) 100%);
+  min-height: 100vh;
+  background: #0b261c radial-gradient(ellipse 120% 70% at 75% 0%, #1f4c39 0%, #143a2c 45%, #0b261c 100%) no-repeat;
+  color: var(--creme);
 }
-.tema-evi .titulo-evi, .tema-evi .logo, .tema-evi .crm-escolha strong, .tema-evi .crm-publico h1 {
-  font-family: "Montserrat", "Inter", system-ui, sans-serif;
-}
+.tema-evi .logo, .tema-evi .crm-escolha strong, .tema-evi .evi-hero__kicker, .tema-evi .botao { font-family: "Inter", system-ui, sans-serif; }
+.tema-evi .crm-publico h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; }
 
-/* Topo verde com fio dourado */
-.tema-evi .topo { background: var(--azul); }
-.tema-evi .topo::after { content: ""; display: block; height: 2px; background: var(--ouro); }
-.tema-evi .logo { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 8px; font-size: 1.25rem; font-weight: 700; letter-spacing: 1px; }
-.tema-evi .logo { color: var(--preto); }
-.tema-evi .logo span { color: #e3bd62; }
-.tema-evi .logo__sub { font-size: .66rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #e9e1cf; }
-.tema-evi .logo__sub::before { content: "– "; }
-.tema-evi .menu a:hover { color: #e3bd62; }
+/* Topo */
+.tema-evi .topo { background: rgba(11, 38, 28, .85); backdrop-filter: blur(6px); }
+.tema-evi .topo::after { content: ""; display: block; height: 1px; background: var(--ouro); }
+.tema-evi .logo { color: #fff; font-weight: 700; letter-spacing: 1.5px; }
+.tema-evi .logo span { color: var(--ouro-claro); font-weight: 600; }
+.tema-evi .menu a { color: var(--creme); }
+.tema-evi .menu a:hover { color: var(--ouro-claro); }
 
-/* Faixa de destaque, como a frente do cartão */
-.evi-hero {
-  background: var(--azul); color: #fff; text-align: center; border-radius: 14px; overflow: hidden;
-  padding: 26px 0 0; margin-bottom: 26px; box-shadow: 0 14px 34px rgba(26, 29, 27, .18);
-}
-.evi-hero__marca { display: flex; align-items: flex-end; }
-.evi-hero__linha { flex: 1; height: 2px; background: var(--ouro); }
-.evi-hero__marca svg { width: 74px; height: 46px; display: block; margin-bottom: -1px; }
-.evi-hero__kicker { margin-top: 16px; font-size: .74rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
-.tema-evi .evi-hero h1 {
-  margin: 8px 20px 26px; font-weight: 700; font-size: clamp(1.55rem, 4.6vw, 2.35rem); line-height: 1.2;
-  color: #e3bd62;
-}
-.evi-hero__faixa { height: 26px; background: var(--preto); border-top: 2px solid transparent; border-image: var(--ouro) 1; }
+/* Destaque com a casinha e o fio dourado */
+.evi-hero { text-align: center; margin: 6px 0 34px; }
+.evi-hero__marca { display: flex; align-items: flex-end; max-width: 560px; margin: 0 auto; }
+.evi-hero__linha { flex: 1; height: 1px; background: var(--ouro); }
+.evi-hero__marca svg { width: 64px; height: 40px; display: block; margin-bottom: -1px; }
+.evi-hero__kicker { margin-top: 18px; font-size: .78rem; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: #fff; }
+.tema-evi .evi-hero h1 { margin: 14px 0 0; font-size: clamp(1.1rem, 5.6vw, 2.8rem); line-height: 1.15; white-space: nowrap; color: var(--ouro-claro); }
+.evi-hero__faixa { display: none; }
 
 /* Opções */
-.tema-evi .crm-escolha { position: relative; overflow: hidden; border: 1px solid var(--borda); box-shadow: 0 4px 14px rgba(26, 29, 27, .06); padding-top: 32px; }
-.tema-evi .crm-escolha::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--ouro); }
-.tema-evi .crm-escolha:hover, .tema-evi .crm-escolha:focus-visible { border-color: var(--dourado); box-shadow: 0 12px 28px rgba(55, 85, 67, .18); }
-.tema-evi .crm-escolha strong { color: var(--azul); font-weight: 700; }
+.tema-evi .crm-escolha {
+  background: rgba(255, 255, 255, .05); border: 1px solid rgba(227, 189, 98, .45); color: var(--creme);
+  border-radius: 14px; padding: 26px 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+}
+.tema-evi .crm-escolha:hover, .tema-evi .crm-escolha:focus-visible {
+  background: rgba(255, 255, 255, .09); border-color: var(--ouro-claro); box-shadow: 0 16px 36px rgba(0, 0, 0, .28);
+}
+.tema-evi .crm-escolha > span:first-child {
+  width: 60px; height: 60px; border-radius: 50%; display: flex !important; align-items: center; justify-content: center;
+  font-size: 30px !important; background: rgba(227, 189, 98, .14); border: 1px solid rgba(227, 189, 98, .5);
+}
+.tema-evi .crm-escolha strong { color: #fff; font-size: 1.12rem; }
+.tema-evi .crm-escolha span { color: #cfd8d2; }
 
-/* Formulário */
-.tema-evi #passo-form h1 { color: var(--azul); }
-.tema-evi .crm-form { border-top: 5px solid var(--dourado); }
-.tema-evi .botao--zap { background: var(--azul); color: #fff; box-shadow: inset 0 -3px 0 var(--dourado); }
-.tema-evi .crm-voltar { color: var(--azul); }
-.tema-evi .crm-ok__icone { background: var(--azul); }
+/* Formulário (caixa clara para facilitar o preenchimento) */
+.tema-evi #passo-form > h1, .tema-evi .crm-ok h1 { color: #fff; }
+.tema-evi .crm-sub { color: #cfd8d2; }
+.tema-evi .crm-voltar { color: var(--ouro-claro); }
+.tema-evi .crm-form { background: #fbf8f1; border: 1px solid rgba(227, 189, 98, .6); border-top: 4px solid var(--dourado); border-radius: 14px; color: var(--texto); }
+.tema-evi .botao--zap { background: linear-gradient(135deg, #c9a24d, #e3bd62); color: #10291f; font-weight: 700; }
+.tema-evi .crm-ok__icone { background: linear-gradient(135deg, #c9a24d, #e3bd62); color: #10291f; }
 
 /* Celular */
 @media (max-width: 640px) {
-  .tema-evi .topo__conteudo { height: auto; min-height: 60px; padding-top: 8px; padding-bottom: 8px; }
-  .tema-evi .logo { display: block; font-size: 1.1rem; }
-  .tema-evi .logo__sub { display: block; margin-top: 1px; font-size: .56rem; letter-spacing: 1.6px; }
-  .tema-evi .logo__sub::before { content: ""; }
-  .tema-evi .menu a { margin-left: 12px; font-size: .9rem; }
-  .tema-evi .crm-publico { padding-top: 22px; }
-  .evi-hero { padding-top: 22px; }
+  .tema-evi .crm-publico { padding-top: 26px; }
   .evi-hero__kicker { font-size: .66rem; letter-spacing: 3px; }
+  .evi-hero__marca svg { width: 54px; height: 34px; }
 }
