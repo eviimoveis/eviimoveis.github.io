@@ -4,8 +4,8 @@ const PERFIS = {
   lead: {
     tabela: "leads",
     campos: CAMPOS_LEAD,
-    titulo: "Quero encontrar um imóvel",
-    sub: "Quanto mais detalhes, mais rápido seu imóvel aparece. Leva menos de 3 minutos.",
+    titulo: "Conte o que procura e encontre seu imóvel mais rápido",
+    sub: "Leva menos de 3 minutos. Quanto mais detalhes, mais rápido seu imóvel aparece. Seu perfil vai direto para corretores parceiros que atuam nos bairros que você escolher.",
     ok: "Recebemos seu pedido. Seu perfil vai para corretores parceiros que atuam nos bairros que você escolheu, e entraremos em contato pelo WhatsApp.",
   },
   corretor: {
