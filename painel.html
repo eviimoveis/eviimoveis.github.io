@@ -19,8 +19,8 @@
   <header class="topo">
     <div class="container topo__conteudo">
       <span class="logo">EVI <span>CRM</span></span>
-      <nav class="menu oculto" id="menu-app">
-        <button type="button" class="crm-link" data-acao="copiar-link">Copiar link de cadastro</button>
+      <nav class="menu crm-menu-topo oculto" id="menu-app">
+        <button type="button" class="crm-link" data-acao="copiar-link">Copiar link</button>
         <button type="button" class="crm-link" data-acao="sair">Sair</button>
       </nav>
     </div>
@@ -49,15 +49,26 @@
   </main>
 
   <!-- PAINEL -->
-  <main id="v-app" class="container crm-app oculto">
-    <div class="crm-abas" role="tablist">
-      <button class="crm-aba ativa" data-aba="leads">Leads <span id="n-leads"></span></button>
-      <button class="crm-aba" data-aba="corretores">Corretores <span id="n-corretores"></span></button>
-      <button class="crm-aba" data-aba="envios">Envios <span id="n-envios"></span></button>
-      <button class="crm-aba" data-aba="relatorios">Relatórios</button>
-    </div>
-    <div id="conteudo"></div>
-  </main>
+  <div id="v-app" class="crm-layout oculto">
+    <aside class="crm-lateral" id="lateral">
+      <nav class="crm-abas" aria-label="Seções do painel">
+        <button class="crm-aba" data-aba="leads" title="Leads"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg><span class="crm-aba__nome">Leads</span><span class="crm-aba__n" id="n-leads"></span></button>
+        <button class="crm-aba" data-aba="corretores" title="Corretores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm7.5 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM9 13c-3.3 0-7 1.6-7 4.5V20h14v-2.5c0-2.9-3.7-4.5-7-4.5zm7.5 0c-.5 0-1 0-1.5.1 1.5 1 2.5 2.5 2.5 4.4V20H22v-2.5c0-2.7-3-4.5-5.5-4.5z"/></svg><span class="crm-aba__nome">Corretores</span><span class="crm-aba__n" id="n-corretores"></span></button>
+        <button class="crm-aba" data-aba="envios" title="Envios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg><span class="crm-aba__nome">Envios</span><span class="crm-aba__n" id="n-envios"></span></button>
+        <button class="crm-aba" data-aba="relatorios" title="Relatórios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16v2H4zM5 11h3v7H5zm5.5-7h3v14h-3zM16 8h3v10h-3z"/></svg><span class="crm-aba__nome">Relatórios</span></button>
+      </nav>
+      <div class="crm-lateral__rodape">
+        <button type="button" class="crm-aba crm-aba--acao" data-acao="copiar-link" title="Copiar link de cadastro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3.5-3.5a4 4 0 0 0-5.7-5.7l-1.2 1.2 1.4 1.4 1.2-1.2a2 2 0 0 1 2.9 2.9L14.3 12.6a2 2 0 0 1-2.9 0zM14 10a4 4 0 0 0-5.7 0l-3.5 3.5a4 4 0 0 0 5.7 5.7l1.2-1.2-1.4-1.4-1.2 1.2a2 2 0 0 1-2.9-2.9l3.5-3.5a2 2 0 0 1 2.9 0z"/></svg><span class="crm-aba__nome">Copiar link de cadastro</span></button>
+        <button type="button" class="crm-aba crm-aba--acao" data-acao="sair" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5v-2H6V6h4zm5.6 3.6-1.4 1.4 2 2H9v2h7.2l-2 2 1.4 1.4L20 12z"/></svg><span class="crm-aba__nome">Sair</span></button>
+        <button type="button" class="crm-aba crm-aba--acao crm-recolher" data-acao="recolher" title="Recolher ou abrir o menu" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3 13.3 4.9 6.2 12l7.1 7.1 1.4-1.4L9 12z"/></svg><span class="crm-aba__nome">Recolher menu</span></button>
+      </div>
+    </aside>
+    <main class="crm-app">
+      <div id="conteudo"></div>
+    </main>
+  </div>
+
+  <div id="menu-linha" class="crm-menu-linha" role="menu" hidden></div>
 
   <dialog id="janela" class="crm-janela">
     <button class="crm-janela__fechar" aria-label="Fechar" data-acao="fechar">×</button>

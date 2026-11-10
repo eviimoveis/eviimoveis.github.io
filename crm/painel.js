@@ -191,11 +191,13 @@ async function carregar() {
 /* ---------- Abas ---------- */
 function desenhar() {
   const hoje = hojeISO();
-  $("n-leads").textContent = `(${D.leads.filter((l) => l.etapa === "Novo").length} novos)`;
-  $("n-corretores").textContent = `(${D.corretores.filter((c) => c.status === "Ativo").length})`;
+  const novos = D.leads.filter((l) => l.etapa === "Novo").length;
+  $("n-leads").textContent = novos ? `${novos} novo${novos > 1 ? "s" : ""}` : "";
+  $("n-corretores").textContent = D.corretores.filter((c) => c.status === "Ativo").length;
   const pend = D.envios.filter(cobrancaVencida).length + D.tarefas.filter((t) => !t.concluida && t.vence_em <= hoje).length;
-  $("n-envios").textContent = pend ? `(${pend} a cobrar)` : "";
-  document.querySelectorAll(".crm-aba").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
+  $("n-envios").textContent = pend ? `${pend} a cobrar` : "";
+  $("n-envios").classList.toggle("crm-aba__n--alerta", pend > 0);
+  document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
   ({ leads: abaLeads, corretores: abaCorretores, envios: abaEnvios, relatorios: abaRelatorios })[aba]();
 }
 
@@ -221,7 +223,7 @@ function listaLeads() {
     return;
   }
   $("lista").innerHTML = `<div class="crm-tabela-wrap"><table class="crm-tabela">
-    <thead><tr><th>Cliente</th><th>Procura</th><th>Bairros</th><th>Valor máx.</th><th>Etapa</th><th>Enviado para</th><th>Entrada</th></tr></thead>
+    <thead><tr><th>Cliente</th><th>Procura</th><th>Bairros</th><th>Valor máx.</th><th>Etapa</th><th>Enviado para</th><th>Entrada</th><th class="crm-col-mais"><span class="crm-so-leitor">Ações</span></th></tr></thead>
     <tbody>${itens.map((l) => {
       const env = enviosDoLead(l.id);
       const nomes = env.map((e) => primeiroNome(corretorPorId(e.corretor_id)?.nome)).filter(Boolean);
@@ -233,6 +235,7 @@ function listaLeads() {
         <td>${selo(l.etapa)}</td>
         <td>${env.length ? `${env.length} corretor(es)<small>${escapar(nomes.join(", "))}</small>` : '<span class="crm-pendente">Não enviado</span>'}</td>
         <td>${dataBR(l.criado_em)}<small>${escapar(l.origem || "")}</small></td>
+        <td class="crm-col-mais">${botaoMais("lead", l.id, l.nome)}</td>
       </tr>`;
     }).join("")}</tbody></table></div>`;
 }
@@ -259,7 +262,7 @@ function listaCorretores() {
   const vezes = {};
   D.corretores.forEach((c) => { const k = soDigitos(c.telefone).slice(-8); vezes[k] = (vezes[k] || 0) + 1; });
   $("lista").innerHTML = `<div class="crm-tabela-wrap"><table class="crm-tabela">
-    <thead><tr><th>Corretor</th><th>Bairros</th><th>Atende</th><th>Faixas</th><th>Leads recebidos</th><th>Situação</th></tr></thead>
+    <thead><tr><th>Corretor</th><th>Bairros</th><th>Atende</th><th>Faixas</th><th>Leads recebidos</th><th>Situação</th><th class="crm-col-mais"><span class="crm-so-leitor">Ações</span></th></tr></thead>
     <tbody>${itens.map((c) => `<tr data-acao="abrir-corretor" data-id="${c.id}" tabindex="0">
         <td><strong>${escapar(c.nome)}</strong><small>${escapar([formatarTelefone(c.telefone), c.imobiliaria].filter(Boolean).join(" · "))}</small>
           ${vezes[soDigitos(c.telefone).slice(-8)] > 1 ? '<small class="crm-pendente">⚠ telefone repetido em outro cadastro</small>' : ""}</td>
@@ -268,6 +271,7 @@ function listaCorretores() {
         <td><small>${escapar([...(c.faixas_locacao || []), ...(c.faixas_venda || [])].join(", ") || "Não informou")}</small></td>
         <td>${enviosDoCorretor(c.id).length}</td>
         <td>${selo(c.status)}</td>
+        <td class="crm-col-mais">${botaoMais("corretor", c.id, c.nome)}</td>
       </tr>`).join("")}</tbody></table></div>`;
 }
 
@@ -530,6 +534,59 @@ function janelaForm(tipo, registro) {
   ativarForm($("janela-conteudo").querySelector("form"), campos);
 }
 
+/* ---------- Excluir ---------- */
+async function excluirLead(id) {
+  const l = leadPorId(id);
+  if (!l) return;
+  const n = enviosDoLead(id).length;
+  if (!confirm(`Excluir o lead "${l.nome}"?\n\nIsso apaga também ${n} envio(s), o histórico e os lembretes dele. Não dá para desfazer.`)) return;
+  if (await gravar(sb.from("leads").delete().eq("id", id))) { fecharJanela(); aviso("Lead excluído."); await carregar(); }
+}
+async function excluirCorretor(id) {
+  const c = corretorPorId(id);
+  if (!c) return;
+  const n = enviosDoCorretor(id).length;
+  if (!confirm(`Excluir o corretor "${c.nome}"?\n\nIsso apaga também ${n} envio(s) feito(s) a ele. Não dá para desfazer.\nPara só parar de enviar leads, use "Pausar".`)) return;
+  if (await gravar(sb.from("corretores").delete().eq("id", id))) { fecharJanela(); aviso("Corretor excluído."); await carregar(); }
+}
+
+/* ---------- Menu ⋮ de cada linha ---------- */
+const botaoMais = (tipo, id, nome) =>
+  `<button type="button" class="crm-mais" data-acao="menu-linha" data-tipo="${tipo}" data-id="${id}" aria-haspopup="menu" aria-label="Mais opções para ${escapar(nome)}">⋮</button>`;
+
+function fecharMenuLinha() { $("menu-linha").hidden = true; }
+function abrirMenuLinha(botao) {
+  const m = $("menu-linha");
+  const { tipo, id } = botao.dataset;
+  if (!m.hidden && m.dataset.id === id) { fecharMenuLinha(); return; }
+  const dados = `data-tipo="${tipo}" data-id="${id}" role="menuitem"`;
+  const c = tipo === "corretor" ? corretorPorId(id) : null;
+  m.dataset.id = id;
+  m.innerHTML = `
+    <button ${dados} data-acao="menu-abrir">Abrir</button>
+    <button ${dados} data-acao="menu-editar">Editar</button>
+    ${c ? `<button ${dados} data-acao="menu-status">${c.status === "Ativo" ? "Pausar (não recebe leads)" : "Reativar"}</button>` : ""}
+    <button ${dados} data-acao="menu-excluir" class="crm-menu-linha__perigo">Excluir ${tipo === "lead" ? "lead" : "corretor"}</button>`;
+  m.hidden = false;
+  // Posiciona junto ao botão, sem sair da tela.
+  const r = botao.getBoundingClientRect();
+  const esquerda = Math.max(8, Math.min(r.right - m.offsetWidth, innerWidth - m.offsetWidth - 8));
+  const cabeEmbaixo = r.bottom + m.offsetHeight + 8 < innerHeight;
+  m.style.left = esquerda + "px";
+  m.style.top = (cabeEmbaixo ? r.bottom + 4 : Math.max(8, r.top - m.offsetHeight - 4)) + "px";
+  m.querySelector("button").focus();
+}
+
+/* ---------- Menu lateral: recolher / abrir ---------- */
+function recolherMenu(recolhido) {
+  $("v-app").classList.toggle("recolhido", recolhido);
+  const b = document.querySelector(".crm-recolher");
+  b.setAttribute("aria-expanded", String(!recolhido));
+  b.querySelector(".crm-aba__nome").textContent = recolhido ? "Abrir menu" : "Recolher menu";
+  try { localStorage.setItem("crm-menu-recolhido", recolhido ? "1" : ""); } catch { /* sem armazenamento: só não lembra */ }
+}
+try { if (localStorage.getItem("crm-menu-recolhido")) recolherMenu(true); } catch { /* ignora */ }
+
 /* ---------- Ações ---------- */
 const ACOES = {
   "sair": async () => { await sb.auth.signOut(); usuario = null; fecharJanela(); mostrarTela("v-login"); },
@@ -547,16 +604,25 @@ const ACOES = {
   "editar-corretor": () => janelaForm("corretor", corretorPorId(aberto.id)),
   "cancelar-form": () => { if (aberto) reabrirJanela(); else fecharJanela(); },
   "ver-mais": () => { verMais = !verMais; reabrirJanela(); },
-  "excluir-lead": async () => {
-    const l = leadPorId(aberto.id);
-    if (!confirm(`Excluir o lead "${l.nome}"? Os envios, o histórico e os lembretes dele também serão apagados.`)) return;
-    if (await gravar(sb.from("leads").delete().eq("id", l.id))) { fecharJanela(); aviso("Lead excluído."); await carregar(); }
+  "excluir-lead": () => excluirLead(aberto.id),
+  "excluir-corretor": () => excluirCorretor(aberto.id),
+  // Menu ⋮ das listas
+  "menu-linha": (b) => abrirMenuLinha(b),
+  "menu-abrir": (b) => (b.dataset.tipo === "lead" ? janelaLead(b.dataset.id) : janelaCorretor(b.dataset.id)),
+  "menu-editar": (b) => {
+    aberto = { tipo: b.dataset.tipo, id: b.dataset.id };
+    janelaForm(b.dataset.tipo, b.dataset.tipo === "lead" ? leadPorId(b.dataset.id) : corretorPorId(b.dataset.id));
   },
-  "excluir-corretor": async () => {
-    const c = corretorPorId(aberto.id);
-    if (!confirm(`Excluir o corretor "${c.nome}"? Os envios feitos a ele também serão apagados. Para só parar de enviar leads, mude a situação para Pausado.`)) return;
-    if (await gravar(sb.from("corretores").delete().eq("id", c.id))) { fecharJanela(); aviso("Corretor excluído."); await carregar(); }
+  "menu-excluir": (b) => (b.dataset.tipo === "lead" ? excluirLead(b.dataset.id) : excluirCorretor(b.dataset.id)),
+  "menu-status": async (b) => {
+    const c = corretorPorId(b.dataset.id);
+    const novo = c.status === "Ativo" ? "Pausado" : "Ativo";
+    if (await gravar(sb.from("corretores").update({ status: novo }).eq("id", c.id))) {
+      aviso(novo === "Ativo" ? `${c.nome} voltou a receber leads.` : `${c.nome} pausado: não aparece mais nas sugestões.`);
+      await carregar();
+    }
   },
+  "recolher": () => recolherMenu(!$("v-app").classList.contains("recolhido")),
   "copiar-msg": async () => {
     try { await navigator.clipboard.writeText($("msg-texto").value); aviso("Texto copiado."); }
     catch { $("msg-texto").select(); aviso("Selecione e copie o texto manualmente.", true); }
@@ -593,6 +659,7 @@ const ACOES = {
 
 document.addEventListener("click", (e) => {
   const alvo = e.target.closest("[data-acao]");
+  if (!alvo || alvo.dataset.acao !== "menu-linha") fecharMenuLinha();
   if (!alvo || alvo.matches("select, input")) return;
   const acao = ACOES[alvo.dataset.acao];
   if (acao) acao(alvo, e);
@@ -600,7 +667,10 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && e.target.matches("tr[data-acao]")) e.target.click();
+  if (e.key === "Escape") fecharMenuLinha();
 });
+addEventListener("scroll", fecharMenuLinha, true);
+addEventListener("resize", fecharMenuLinha);
 
 document.addEventListener("change", async (e) => {
   const t = e.target;
@@ -681,7 +751,7 @@ document.addEventListener("submit", async (e) => {
   if (id) reabrirJanela();
 });
 
-document.querySelectorAll(".crm-aba").forEach((b) => b.addEventListener("click", () => { aba = b.dataset.aba; desenhar(); }));
+document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.addEventListener("click", () => { aba = b.dataset.aba; desenhar(); window.scrollTo({ top: 0 }); }));
 $("janela").addEventListener("close", () => { aberto = null; });
 $("janela").addEventListener("click", (e) => { if (e.target === $("janela")) fecharJanela(); });
 
