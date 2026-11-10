@@ -1,0 +1,228 @@
+/* ===== CRM EVI Imóveis - estilos do cadastro público e do painel ===== */
+/* Usa as cores e os botões do style.css do site. */
+
+.crm-publico { max-width: 760px; padding-top: 40px; padding-bottom: 64px; }
+.crm-publico h1 { color: var(--azul); font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.2; }
+.crm-sub { color: var(--cinza); margin: 6px 0 22px; }
+.crm-obrig { color: #c0392b; }
+
+/* Escolha: corretor ou cliente */
+.crm-escolhas { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.crm-escolha {
+  background: var(--branco); border: 2px solid var(--borda); border-radius: var(--raio);
+  padding: 28px 22px; text-align: left; cursor: pointer; font: inherit; color: var(--texto);
+  display: flex; flex-direction: column; gap: 8px; transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.crm-escolha:hover, .crm-escolha:focus-visible {
+  border-color: var(--dourado); box-shadow: 0 10px 28px rgba(15,42,68,.12); transform: translateY(-2px); outline: none;
+}
+.crm-escolha svg { width: 44px; height: 44px; fill: var(--dourado); }
+.crm-escolha strong { font-size: 1.15rem; color: var(--azul); }
+.crm-escolha span { color: var(--cinza); font-size: .92rem; }
+
+/* Formulários */
+.crm-form {
+  background: var(--branco); border: 1px solid var(--borda); border-radius: var(--raio);
+  padding: 22px; display: flex; flex-direction: column; gap: 16px;
+}
+.crm-janela .crm-form { border: none; padding: 0; }
+.crm-grade-campos { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.crm-campo { display: flex; flex-direction: column; gap: 5px; font-size: .82rem; font-weight: 600; color: var(--cinza); min-width: 0; }
+.crm-campo--largo { grid-column: 1 / -1; }
+.crm-campo[hidden] { display: none; }
+fieldset.crm-campo { border: none; }
+fieldset.crm-campo legend { margin-bottom: 6px; }
+.crm-campo input, .crm-campo select, .crm-campo textarea,
+.crm-barra input, .crm-barra select, .crm-linha-form input, #msg-texto {
+  font: inherit; font-size: 1rem; font-weight: 400; color: var(--texto); padding: 10px 12px;
+  border: 1px solid var(--borda); border-radius: 8px; background: #fff; width: 100%;
+}
+.crm-campo textarea, #msg-texto { resize: vertical; line-height: 1.45; }
+.crm-campo input:focus, .crm-campo select:focus, .crm-campo textarea:focus,
+.crm-barra input:focus, .crm-linha-form input:focus, #msg-texto:focus { outline: 2px solid var(--azul-claro); outline-offset: 1px; }
+.crm-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.crm-chip { cursor: pointer; }
+.crm-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.crm-chip span {
+  display: inline-block; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--borda);
+  background: #fff; color: var(--texto); font-size: .9rem; font-weight: 500;
+}
+.crm-chip input:checked + span { background: var(--azul); border-color: var(--azul); color: #fff; }
+.crm-chip input:focus-visible + span { outline: 2px solid var(--dourado); outline-offset: 2px; }
+.crm-mel { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.crm-erro { background: #fdecea; color: #a12a1e; border-radius: 8px; padding: 10px 12px; font-size: .9rem; font-weight: 500; }
+.crm-aviso-legal { font-size: .78rem; color: var(--cinza); }
+.crm-form > .botao { align-self: flex-start; }
+.crm-voltar { background: none; border: none; color: var(--azul-claro); font: inherit; font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 14px; }
+
+.crm-ok { text-align: center; padding-top: 30px; }
+.crm-ok__icone {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--aluguel); color: #fff;
+  font-size: 2rem; line-height: 64px; margin: 0 auto 16px;
+}
+.crm-login { max-width: 420px; margin: 20px auto 0; }
+code { background: #e6ecf3; padding: 1px 6px; border-radius: 5px; font-size: .9em; }
+
+/* ----- Painel ----- */
+.crm-app { padding-top: 20px; padding-bottom: 64px; }
+.crm-link { background: none; border: none; color: #fff; font: inherit; font-weight: 500; cursor: pointer; margin-left: 18px; opacity: .9; }
+.crm-link:hover { color: var(--dourado); opacity: 1; }
+.crm-abas { display: flex; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--borda); margin-bottom: 18px; scrollbar-width: none; }
+.crm-aba {
+  background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 14px; font: inherit;
+  font-weight: 600; color: var(--cinza); cursor: pointer; white-space: nowrap;
+}
+.crm-aba span { font-weight: 500; font-size: .82em; }
+.crm-aba.ativa { color: var(--azul); border-bottom-color: var(--dourado); }
+.crm-barra { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.crm-barra input { flex: 1 1 220px; }
+.crm-barra select { flex: 0 1 200px; }
+.crm-barra .botao { white-space: nowrap; }
+.crm-titulo { color: var(--azul); font-size: 1.1rem; margin: 22px 0 10px; }
+.crm-titulo:first-child { margin-top: 0; }
+
+.crm-tabela-wrap { background: var(--branco); border: 1px solid var(--borda); border-radius: var(--raio); overflow-x: auto; }
+.crm-tabela { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 760px; }
+.crm-tabela th {
+  text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: var(--cinza);
+  padding: 12px 14px; border-bottom: 1px solid var(--borda); white-space: nowrap;
+}
+.crm-tabela td { padding: 12px 14px; border-bottom: 1px solid var(--borda); vertical-align: top; }
+.crm-tabela tr:last-child td { border-bottom: none; }
+.crm-tabela tbody tr { cursor: pointer; }
+.crm-tabela tbody tr:hover, .crm-tabela tbody tr:focus-visible { background: #f4f7fb; outline: none; }
+.crm-tabela small { display: block; color: var(--cinza); font-size: .8rem; }
+.crm-pendente { color: #b26a00; font-weight: 600; }
+
+.crm-selo { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .76rem; font-weight: 700; white-space: nowrap; }
+.crm-selo--novo { background: #fff1d6; color: #8a5a00; }
+.crm-selo--qualificado { background: #dcebfb; color: #14508f; }
+.crm-selo--buscando-imoveis { background: #e0e7ff; color: #2f3d9c; }
+.crm-selo--visita { background: #e8ddf8; color: #5b2aa3; }
+.crm-selo--proposta { background: #d9f1f4; color: #0b6470; }
+.crm-selo--fechado, .crm-selo--ativo { background: #d8f3e6; color: #0a6b48; }
+.crm-selo--pausado { background: #fff1d6; color: #8a5a00; }
+.crm-selo--perdido, .crm-selo--inativo { background: #eceff3; color: #56616e; }
+
+/* Lembretes */
+.crm-tarefas, .crm-sugestoes, .crm-historico, .crm-envios { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.crm-tarefa {
+  display: flex; align-items: flex-start; gap: 12px; background: var(--branco); border: 1px solid var(--borda);
+  border-left: 4px solid var(--borda); border-radius: 10px; padding: 12px 14px;
+}
+.crm-tarefa > div { flex: 1; min-width: 0; }
+.crm-tarefa strong { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.crm-tarefa small { color: var(--cinza); font-size: .82rem; }
+.crm-tarefa input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--aluguel); flex: none; }
+.crm-tarefa.atrasada { border-left-color: #d64545; }
+.crm-tarefa.atrasada small { color: #a12a1e; font-weight: 600; }
+.crm-tarefa.hoje { border-left-color: var(--dourado); }
+.crm-tarefa.feita strong { text-decoration: line-through; color: var(--cinza); }
+.crm-x { background: none; border: none; font-size: 1.3rem; line-height: 1; color: var(--cinza); cursor: pointer; padding: 0 4px; }
+.crm-x:hover { color: #a12a1e; }
+.crm-link-texto { background: none; border: none; font: inherit; color: var(--azul-claro); font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+
+/* Relatórios */
+.crm-numeros { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-bottom: 18px; }
+.crm-numero { background: var(--branco); border: 1px solid var(--borda); border-radius: var(--raio); padding: 16px; }
+.crm-numero b { display: block; font-size: 1.7rem; color: var(--azul); line-height: 1.1; }
+.crm-numero span { font-size: .82rem; color: var(--cinza); font-weight: 600; }
+.crm-grade-cartoes { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.crm-cartao { background: var(--branco); border: 1px solid var(--borda); border-radius: var(--raio); padding: 18px; }
+.crm-cartao h3 { color: var(--azul); font-size: 1rem; margin-bottom: 12px; }
+.crm-barra-linha { display: grid; grid-template-columns: minmax(90px, 34%) 1fr 32px; gap: 10px; align-items: center; font-size: .88rem; margin-bottom: 8px; }
+.crm-barra-linha span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crm-barra-linha b { text-align: right; }
+.crm-barra-trilho { background: #eef2f7; border-radius: 999px; height: 10px; overflow: hidden; }
+.crm-barra-trilho div { background: var(--azul-claro); height: 100%; border-radius: 999px; min-width: 2px; }
+.crm-sem-dados { color: var(--cinza); font-size: .9rem; }
+
+/* Janela */
+.crm-janela {
+  border: none; border-radius: 14px; padding: 0; width: min(760px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px); margin: auto; overflow-y: auto; color: var(--texto);
+}
+.crm-janela::backdrop { background: rgba(10,20,35,.6); }
+.crm-janela__fechar {
+  position: sticky; top: 10px; display: block; margin: 10px 10px -46px auto; width: 36px; height: 36px; border-radius: 50%;
+  border: none; background: #e6ecf3; color: var(--azul); font-size: 1.4rem; line-height: 1; cursor: pointer; z-index: 2;
+}
+.crm-janela__corpo { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.crm-janela__corpo h2 { color: var(--azul); font-size: 1.35rem; line-height: 1.25; overflow-wrap: anywhere; }
+.crm-janela__corpo h3 { color: var(--azul); font-size: 1rem; margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--borda); }
+.crm-janela__topo { display: flex; gap: 14px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; padding-right: 44px; }
+.crm-janela__topo p { color: var(--cinza); font-size: .9rem; }
+.crm-campo--etapa { min-width: 170px; }
+.crm-info { display: grid; gap: 12px 18px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.crm-info dt { font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: var(--cinza); font-weight: 700; }
+.crm-info dd { overflow-wrap: anywhere; white-space: pre-line; }
+.crm-info a { color: var(--azul-claro); font-weight: 600; text-decoration: underline; }
+.crm-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.crm-acoes .botao, .crm-sugestao__acoes .botao, .crm-linha-form .botao { padding: 9px 16px; font-size: .9rem; }
+.crm-perigo { background: #fdecea; color: #a12a1e; }
+.crm-sugestao {
+  display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  border: 1px solid var(--borda); border-radius: 10px; padding: 12px 14px; background: #fff;
+}
+.crm-sugestao--atual { border-color: var(--aluguel); background: #f1fbf6; }
+.crm-sugestao > div:not(.crm-sugestao__acoes) { flex: 1 1 200px; min-width: 0; }
+.crm-sugestao small { display: block; color: var(--cinza); font-size: .82rem; }
+.crm-sugestao__acoes { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.crm-linha-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.crm-linha-form input[type="text"] { flex: 1 1 220px; }
+.crm-linha-form input[type="date"] { flex: 0 1 170px; }
+.crm-historico li { border-left: 3px solid var(--borda); padding: 2px 0 2px 12px; font-size: .92rem; overflow-wrap: anywhere; }
+.crm-historico small { display: block; color: var(--cinza); font-size: .78rem; }
+.crm-check { display: flex; gap: 8px; align-items: center; font-size: .92rem; cursor: pointer; }
+.crm-check input { width: 18px; height: 18px; }
+
+/* Aviso rápido */
+.crm-toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: var(--azul); color: #fff;
+  padding: 12px 18px; border-radius: 10px; font-size: .92rem; font-weight: 500; opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 100; max-width: calc(100vw - 32px); overflow-wrap: anywhere;
+}
+.crm-toast.visivel { opacity: 1; transform: translate(-50%, 0); }
+.crm-toast--erro { background: #a12a1e; }
+
+/* Ranking de corretores */
+.crm-sugestoes { padding: 0; }
+.crm-rank {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--azul); color: #fff;
+  font-weight: 700; font-size: .9rem; display: grid; place-items: center;
+}
+.crm-score { font-size: .78rem; font-weight: 700; color: var(--azul-claro); background: #e6ecf3; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.crm-nivel--excelente { color: #0a6b48; }
+.crm-nivel--boa { color: #14508f; }
+.crm-nivel--possivel { color: #8a5a00; }
+
+/* Envios */
+.crm-envio {
+  background: var(--branco); border: 1px solid var(--borda); border-left: 4px solid var(--borda);
+  border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.crm-envio.vencida { border-left-color: #d64545; }
+.crm-envio.vencida small b { color: #a12a1e; }
+.crm-envio__topo { display: flex; gap: 6px 12px; flex-wrap: wrap; justify-content: space-between; align-items: baseline; }
+.crm-envio__topo strong { overflow-wrap: anywhere; }
+.crm-envio__topo small { color: var(--cinza); font-size: .82rem; }
+.crm-envio__campos { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.crm-envio__campos label { display: flex; flex-direction: column; gap: 3px; font-size: .74rem; font-weight: 600; color: var(--cinza); flex: 0 1 150px; min-width: 0; }
+.crm-envio__campos .crm-envio__retorno { flex: 1 1 220px; }
+.crm-envio__campos select, .crm-envio__campos input {
+  font: inherit; font-size: .92rem; font-weight: 400; color: var(--texto); padding: 8px 10px;
+  border: 1px solid var(--borda); border-radius: 8px; background: #fff; width: 100%;
+}
+.crm-envio__campos .botao { padding: 9px 16px; font-size: .9rem; }
+.crm-barra .crm-titulo { flex: 1 1 220px; margin: 0; align-self: center; }
+.crm-mini { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.crm-mini th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: var(--cinza); padding: 0 8px 8px 0; }
+.crm-mini td { padding: 6px 8px 6px 0; border-top: 1px solid var(--borda); }
+.crm-lista-simples { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: .92rem; }
+.crm-lista-simples small { color: var(--cinza); }
+
+@media (max-width: 560px) {
+  .crm-link { margin-left: 12px; font-size: .88rem; }
+  .crm-janela__corpo { padding: 18px 16px; }
+  .crm-form { padding: 16px; }
+}

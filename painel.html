@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel CRM | EVI Imóveis</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#0f2a44">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="crm/crm.css">
+</head>
+<body>
+
+  <header class="topo">
+    <div class="container topo__conteudo">
+      <span class="logo">EVI <span>CRM</span></span>
+      <nav class="menu oculto" id="menu-app">
+        <button type="button" class="crm-link" data-acao="copiar-link">Copiar link de cadastro</button>
+        <button type="button" class="crm-link" data-acao="sair">Sair</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CRM não configurado -->
+  <main id="v-config" class="container crm-publico oculto">
+    <section class="crm-ok">
+      <h1>CRM ainda não configurado</h1>
+      <p class="crm-sub">Preencha <code>crm/config.js</code> com os dados do Supabase. O passo a passo está no arquivo <code>README.md</code>.</p>
+    </section>
+  </main>
+
+  <!-- LOGIN -->
+  <main id="v-login" class="container crm-publico oculto">
+    <section class="crm-login">
+      <h1>Entrar no painel</h1>
+      <p class="crm-sub">Acesso restrito à equipe.</p>
+      <form id="form-login" class="crm-form">
+        <label class="crm-campo">E-mail<input type="email" name="email" autocomplete="username" required></label>
+        <label class="crm-campo">Senha<input type="password" name="senha" autocomplete="current-password" required></label>
+        <p class="crm-erro oculto" id="erro-login" role="alert"></p>
+        <button type="submit" class="botao botao--zap">Entrar</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- PAINEL -->
+  <main id="v-app" class="container crm-app oculto">
+    <div class="crm-abas" role="tablist">
+      <button class="crm-aba ativa" data-aba="leads">Leads <span id="n-leads"></span></button>
+      <button class="crm-aba" data-aba="corretores">Corretores <span id="n-corretores"></span></button>
+      <button class="crm-aba" data-aba="envios">Envios <span id="n-envios"></span></button>
+      <button class="crm-aba" data-aba="relatorios">Relatórios</button>
+    </div>
+    <div id="conteudo"></div>
+  </main>
+
+  <dialog id="janela" class="crm-janela">
+    <button class="crm-janela__fechar" aria-label="Fechar" data-acao="fechar">×</button>
+    <div id="janela-conteudo"></div>
+  </dialog>
+
+  <div id="aviso" class="crm-toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="crm/config.js"></script>
+  <script src="crm/comum.js"></script>
+  <script src="crm/painel.js"></script>
+</body>
+</html>
