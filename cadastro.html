@@ -15,18 +15,20 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <meta name="theme-color" content="#0f2a44">
+  <meta name="theme-color" content="#375543">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="crm/crm.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="crm/tema-evi.css">
 </head>
-<body>
+<body class="tema-evi">
 
   <header class="topo">
     <div class="container topo__conteudo">
-      <a href="index.html" class="logo">EVI <span>Imóveis</span> – Assessoria Imobiliária Completa</a>
+      <a href="index.html" class="logo">EVI <span>Imóveis</span></a>
       <nav class="menu"><a href="index.html">Ver imóveis</a></nav>
     </div>
   </header>
@@ -35,8 +37,16 @@
 
     <!-- PASSO 1: escolha -->
     <section id="passo-escolha">
-<h1>Conectando você ao imóvel certo</h1>
-      <p class="crm-sub">Escolha a sua opção:</p>
+<div class="evi-hero">
+        <div class="evi-hero__marca" aria-hidden="true">
+          <span class="evi-hero__linha"></span>
+          <svg viewBox="0 0 74 46" fill="none"><defs><linearGradient id="ouro" x1="0" x2="1"><stop offset="0" stop-color="#b8862f"/><stop offset=".5" stop-color="#f6e7b8"/><stop offset="1" stop-color="#c9973f"/></linearGradient></defs><path d="M2 45V21L37 3l35 18v24M28 45V33h18v12" stroke="url(#ouro)" stroke-width="3" stroke-linejoin="round"/></svg>
+          <span class="evi-hero__linha"></span>
+        </div>
+        <p class="evi-hero__kicker">Assessoria Imobiliária Completa</p>
+        <h1>Conectando você ao imóvel certo</h1>
+        <div class="evi-hero__faixa"></div>
+      </div>
       <div class="crm-escolhas">
         <button class="crm-escolha" data-perfil="lead">
 <span aria-hidden="true" style="font-size:44px;line-height:1;display:block;margin-bottom:12px">🏡</span>
