@@ -24,6 +24,8 @@ let perfilAtual = null;
 function mostrarPasso(id) {
   ["passo-escolha", "passo-form", "passo-ok", "passo-config"].forEach((p) => el(p).classList.toggle("oculto", p !== id));
   window.scrollTo({ top: 0 });
+  const seta = el("ok-seta");
+  if (seta) seta.classList.toggle("oculto", !(id === "passo-ok" && perfilAtual === "corretor"));
 }
 
 function abrirForm(perfil) {
