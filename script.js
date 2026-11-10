@@ -1,6 +1,7 @@
 /* ===== EVI Imóveis - funcionamento do site ===== */
 
 const WHATSAPP = "5511911297820"; // (11) 91129-7820
+const URL_SITE = "https://eviimoveis.github.io/";
 const PASTA_FOTOS = "fotos/";
 const EXTENSOES = ["webp", "jpg", "jpeg", "png"]; // .webp primeiro: é o formato das fotos do ZAP
 const MAX_FOTOS = 40; // até CODIGO, CODIGO-2 ... CODIGO-40
@@ -19,7 +20,7 @@ const idAncora = (prefixo, r) => prefixo + "-" + r.normalize("NFD").replace(/[\u
 
 function linkWhats(imovel) {
   let msg = "Olá! Vim pelo site da EVI Imóveis e gostaria de mais informações";
-  if (imovel) msg += ` sobre o imóvel ${imovel.codigo} (${imovel.tipo} em ${imovel.bairro}).`;
+  if (imovel) msg += ` sobre este imóvel: ${imovel.tipo} em ${imovel.bairro}\n${URL_SITE}#imovel-${encodeURIComponent(imovel.codigo)}`;
   else msg += ".";
   return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 }
@@ -326,3 +327,14 @@ $("ano").textContent = new Date().getFullYear();
 montarFiltros();
 $("campo-valor-de").classList.remove("oculto");
 renderizar();
+
+/* ---------- Link direto para um imóvel (#imovel-CODIGO) ---------- */
+function abrirPeloLink() {
+  const m = location.hash.match(/^#imovel-(.+)$/);
+  if (!m) return;
+  const cod = decodeURIComponent(m[1]).toUpperCase();
+  const i = IMOVEIS.find((x) => String(x.codigo).toUpperCase() === cod);
+  if (i) abrirDetalhe(i);
+}
+abrirPeloLink();
+window.addEventListener("hashchange", abrirPeloLink);
