@@ -12,7 +12,7 @@ const PERFIS = {
     tabela: "corretores",
     campos: CAMPOS_CORRETOR,
     titulo: "Cadastro de Corretor Parceiro",
-    sub: "Indicação de clientes + link de imóveis disponíveis — Parceria 50%.",
+    sub: "Nossos imóveis disponíveis + Indicação de clientes (parceria 50%)",
     ok: "Recebemos seu cadastro. Quando surgir um cliente nos bairros em que você atua, entraremos em contato pelo WhatsApp.",
   },
 };
