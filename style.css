@@ -29,7 +29,7 @@ a { color: inherit; text-decoration: none; }
 .oculto { display: none !important; }
 
 /* Topo */
-.topo { background: var(--azul); color: #fff; position: sticky; top: 0; z-index: 20; }
+.topo { background: #0b3b2c; border-bottom: 1px solid rgba(201,161,74,.45); color: #fff; position: sticky; top: 0; z-index: 20; }
 .topo__conteudo { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: .5px; }
 .logo span { color: var(--dourado); font-weight: 600; }
@@ -38,7 +38,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Banner */
 .banner {
-  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-claro) 100%);
+  background: linear-gradient(135deg, #0b3b2c 0%, #14694d 100%);
   color: #fff; padding: 56px 0 72px; text-align: center;
 }
 .banner h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); margin-bottom: 10px; }
@@ -208,10 +208,10 @@ a { color: inherit; text-decoration: none; }
 .detalhe__secao { border-top: 1px solid var(--borda); padding-top: 14px; }
 
 /* Contato e rodapé */
-.contato { background: var(--azul); color: #fff; text-align: center; padding: 56px 0; margin-top: 56px; }
+.contato { background: linear-gradient(135deg, #0b3b2c 0%, #14694d 100%); color: #fff; text-align: center; padding: 56px 0; margin-top: 56px; }
 .contato h2 { margin-bottom: 8px; }
 .contato p { opacity: .9; margin-bottom: 22px; }
-.rodape { background: #0a1d30; color: #9fb0c3; font-size: .85rem; text-align: center; padding: 18px 0; }
+.rodape { background: #07281e; color: #a8c4b6; font-size: .85rem; text-align: center; padding: 18px 0; }
 
 /* WhatsApp fixo */
 .whats-fixo {
