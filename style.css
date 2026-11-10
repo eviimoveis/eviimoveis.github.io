@@ -108,15 +108,17 @@ a { color: inherit; text-decoration: none; }
 .bairro { margin-bottom: 64px; scroll-margin-top: calc(64px + var(--h-atalhos) + 12px); }
 .bairro__titulo {
   display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
-  background: var(--azul); color: #fff; border-radius: var(--raio);
-  border-left: 8px solid var(--dourado);
+  background: linear-gradient(135deg, #0b3b2c 0%, #14694d 100%); color: #fff; border-radius: var(--raio);
+  border-left: 6px solid var(--dourado);
+  border-bottom: 1px solid rgba(201,161,74,.45);
   padding: 16px 22px; margin-bottom: 18px;
-  box-shadow: 0 6px 18px rgba(15,42,68,.15);
+  box-shadow: 0 8px 22px rgba(11,59,44,.22);
 }
-.bairro__nome { font-size: clamp(1.3rem, 3.2vw, 1.9rem); font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.bairro__nome { font-size: clamp(1.3rem, 3.2vw, 1.9rem); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
 .bairro__info {
-  font-size: .85rem; font-weight: 600; color: var(--azul);
-  background: var(--dourado); color: #fff; padding: 4px 12px; border-radius: 999px;
+  font-size: .85rem; font-weight: 700; letter-spacing: .3px;
+  background: var(--dourado); color: #0b3b2c; padding: 5px 14px; border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.18);
 }
 
 /* Bairro: 2 imóveis por linha */
