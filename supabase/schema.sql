@@ -165,3 +165,71 @@ create policy "admin interacoes" on public.interacoes
 --   select id from auth.users where email = 'pessoa@exemplo.com'
 --   on conflict do nothing;
 -- =====================================================================
+
+-- =====================================================================
+-- Pagamentos Digo  ·  versão 3  (pode rodar mais de uma vez)
+-- =====================================================================
+alter table public.leads add column if not exists captado_digo boolean not null default false;
+alter table public.leads add column if not exists captado_digo_em timestamptz;
+
+-- Marco da contagem automática: só corretores cadastrados DEPOIS disto contam.
+create table if not exists public.digo_config (
+  id int primary key default 1 check (id = 1),
+  criado_em timestamptz not null default now()
+);
+
+create table if not exists public.digo_lancamentos (
+  id uuid primary key default gen_random_uuid(),
+  criado_em timestamptz not null default now(),
+  data date not null default current_date,
+  tipo text not null check (tipo in ('Corretor', 'Anúncio', 'Cliente', 'Visita', 'Comissão', 'Ajuste')),
+  descricao text check (char_length(descricao) <= 300),
+  qtd int not null default 1,
+  valor numeric not null,
+  autor text check (char_length(autor) <= 160)
+);
+
+create table if not exists public.digo_pagamentos (
+  id uuid primary key default gen_random_uuid(),
+  criado_em timestamptz not null default now(),
+  data date not null default current_date,
+  valor numeric not null check (valor > 0),
+  observacao text check (char_length(observacao) <= 300),
+  autor text check (char_length(autor) <= 160)
+);
+
+alter table public.digo_config enable row level security;
+alter table public.digo_lancamentos enable row level security;
+alter table public.digo_pagamentos enable row level security;
+grant select, insert, update, delete on public.digo_config, public.digo_lancamentos, public.digo_pagamentos to authenticated;
+
+drop policy if exists "admin digo_config" on public.digo_config;
+create policy "admin digo_config" on public.digo_config
+  for all to authenticated using (public.is_crm_admin()) with check (public.is_crm_admin());
+drop policy if exists "admin digo_lancamentos" on public.digo_lancamentos;
+create policy "admin digo_lancamentos" on public.digo_lancamentos
+  for all to authenticated using (public.is_crm_admin()) with check (public.is_crm_admin());
+drop policy if exists "admin digo_pagamentos" on public.digo_pagamentos;
+create policy "admin digo_pagamentos" on public.digo_pagamentos
+  for all to authenticated using (public.is_crm_admin()) with check (public.is_crm_admin());
+
+-- O cadastro público não pode marcar "Captado pelo Digo".
+drop policy if exists "publico cadastra lead" on public.leads;
+create policy "publico cadastra lead" on public.leads
+  for insert to anon, authenticated
+  with check (etapa = 'Novo' and observacao_interna is null and captado_digo = false);
+
+-- Histórico da planilha (entra uma vez só, junto com o marco da contagem)
+do $$
+begin
+  if not exists (select 1 from public.digo_config) then
+    insert into public.digo_config (id) values (1);
+    insert into public.digo_lancamentos (criado_em, data, tipo, descricao, qtd, valor, autor) values
+      ('2026-11-02 12:00-03', '2026-11-02', 'Corretor', 'Corretores captados antes de 03/11 (planilha)', 15, 75, 'importado'),
+      (now(), '2026-11-11', 'Corretor', 'Corretores novos de 03/11 a 11/11 (planilha)', 21, 105, 'importado'),
+      (now(), '2026-11-11', 'Corretor', 'Corretores cadastrados direto pelo site (planilha)', 6, 30, 'importado'),
+      (now(), '2026-11-11', 'Anúncio', 'Anúncios publicados (planilha)', 7, 140, 'importado');
+    insert into public.digo_pagamentos (criado_em, data, valor, observacao, autor) values
+      ('2026-11-03 18:00-03', '2026-11-03', 75, '15 corretores antes de 03/11 (planilha)', 'importado');
+  end if;
+end $$;
