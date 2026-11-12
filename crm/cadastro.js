@@ -65,7 +65,13 @@ async function enviar(evento) {
   const botao = el("enviar");
   botao.disabled = true;
   botao.textContent = "Enviando...";
-  const { error } = await sb.from(p.tabela).insert(dados);
+  let { error } = await sb.from(p.tabela).insert(dados);
+  // Banco ainda sem a coluna de bairros extras: guarda a lista nas observações para o cadastro não se perder.
+  if (error && /outros_bairros/.test(error.message || "") && dados.outros_bairros) {
+    const { outros_bairros: extras, ...resto } = dados;
+    if (extras.length) resto.observacoes = [resto.observacoes, "Atua também em: " + extras.join(", ")].filter(Boolean).join(" | ");
+    ({ error } = await sb.from(p.tabela).insert(resto));
+  }
   botao.disabled = false;
   botao.textContent = "Enviar cadastro";
 

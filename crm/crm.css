@@ -30,6 +30,12 @@
 .crm-campo { display: flex; flex-direction: column; gap: 5px; font-size: .82rem; font-weight: 600; color: var(--cinza); min-width: 0; }
 .crm-campo--largo { grid-column: 1 / -1; }
 .crm-campo[hidden] { display: none; }
+.crm-ajuda { font-weight: 400; font-size: .85rem; margin-bottom: 8px; }
+.crm-grupos > summary { cursor: pointer; font-weight: 600; color: var(--azul-claro); padding: 8px 0; }
+.crm-grupo { margin: 10px 0 14px; }
+.crm-grupo > strong { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+.crm-mais-bairros { font-size: .74rem; font-weight: 700; background: #e6ecf3; color: var(--azul); padding: 1px 7px; border-radius: 999px; cursor: help; }
+.crm-nota-extra { color: var(--azul-claro) !important; font-weight: 600; }
 fieldset.crm-campo { border: none; }
 fieldset.crm-campo legend { margin-bottom: 6px; }
 .crm-campo input, .crm-campo select, .crm-campo textarea,
@@ -41,8 +47,8 @@ fieldset.crm-campo legend { margin-bottom: 6px; }
 .crm-campo input:focus, .crm-campo select:focus, .crm-campo textarea:focus,
 .crm-barra input:focus, .crm-linha-form input:focus, #msg-texto:focus { outline: 2px solid var(--azul-claro); outline-offset: 1px; }
 .crm-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.crm-chip { cursor: pointer; }
-.crm-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.crm-chip { cursor: pointer; position: relative; }
+.crm-chip input { position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .crm-chip span {
   display: inline-block; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--borda);
   background: #fff; color: var(--texto); font-size: .9rem; font-weight: 500;

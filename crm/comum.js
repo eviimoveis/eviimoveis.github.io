@@ -15,9 +15,21 @@ const BAIRROS = {
   "Tatuapé": "ZL", "Tremembé": "ZN", "Tucuruvi": "ZN", "Vila Formosa": "ZL", "Vila Guilherme": "ZN",
   "Vila Leopoldina": "ZO", "Vila Madalena": "ZO", "Vila Maria": "ZN", "Vila Mariana": "ZS",
   "Vila Nova Conceição": "ZS", "Vila Olímpia": "ZS", "Vila Prudente": "ZL",
+  // incluídos depois, a partir do que os corretores citam
+  "Campo Limpo": "ZS", "Vila Andrade": "ZS", "Jardim Marajoara": "ZS", "Jabaquara": "ZS", "Vila Clementino": "ZS",
+  "Chácara Santo Antônio": "ZS", "Vila Sônia": "ZO", "Vila Romana": "ZO",
 };
 const LISTA_BAIRROS = Object.keys(BAIRROS).sort((a, b) => a.localeCompare(b, "pt-BR"));
 const NOME_ZONA = { ZO: "Zona Oeste", ZS: "Zona Sul", ZC: "Centro", ZN: "Zona Norte", ZL: "Zona Leste" };
+const BAIRROS_POR_ZONA = Object.keys(NOME_ZONA).map((z) => [NOME_ZONA[z], LISTA_BAIRROS.filter((b) => BAIRROS[b] === z)]);
+/* Jeitos comuns de escrever um bairro nas observações -> nome oficial */
+const APELIDOS_BAIRRO = {
+  "itaim": "Itaim Bibi", "vnc": "Vila Nova Conceição", "vila nova": "Vila Nova Conceição", "madalena": "Vila Madalena",
+  "jardim america": "Jardins", "jardim europa": "Jardins", "jardim paulista": "Jardins", "alto pinheiros": "Alto de Pinheiros",
+  "klabin": "Chácara Klabin", "leopoldina": "Vila Leopoldina", "olimpia": "Vila Olímpia", "sta cecilia": "Santa Cecília",
+  "sta. cecilia": "Santa Cecília", "pompeia": "Pompeia", "vila pompeia": "Pompeia", "vila sonia": "Vila Sônia",
+  "sto amaro": "Santo Amaro", "sto. amaro": "Santo Amaro", "marajoara": "Jardim Marajoara",
+};
 
 /* Faixas de valor em que o corretor trabalha: texto -> [mínimo, máximo] */
 const FAIXAS_LOCACAO = ["R$ 2 a 5 mil", "R$ 5 a 10 mil", "R$ 10 a 20 mil", "R$ 20 a 50 mil", "Mais de R$ 50 mil"];
@@ -62,6 +74,8 @@ const CAMPOS_CORRETOR = [
   { id: "bairro1", rotulo: "1º bairro em que mais atua", tipo: "select", opcoes: [...LISTA_BAIRROS, OUTRO_BAIRRO], obrig: true, vazio: "Selecione" },
   { id: "bairro1_outro", rotulo: "Qual bairro?", tipo: "text", obrig: true, max: 80, se: { campo: "bairro1", valores: [OUTRO_BAIRRO] } },
   { id: "bairro2", rotulo: "2º bairro em que mais atua", tipo: "select", opcoes: LISTA_BAIRROS, vazio: "Atuo somente em 1 bairro" },
+  { id: "outros_bairros", rotulo: "Atua em outros bairros? Marque todos", tipo: "multi", grupos: BAIRROS_POR_ZONA,
+    ajuda: "Opcional. Quanto mais completo, mais clientes certos chegam até você." },
   { id: "observacoes", rotulo: "Observações / especialidades / outras regiões", tipo: "textarea", max: 2000 },
 ];
 
@@ -108,6 +122,39 @@ const daquiADias = (n) => { const d = new Date(); d.setDate(d.getDate() + n); re
 
 const _zonas = Object.fromEntries(Object.entries(BAIRROS).map(([b, z]) => [semAcento(b), z]));
 const zonaDe = (bairro) => _zonas[semAcento(bairro)] || "";
+
+/*
+  Lê um texto livre (as observações do corretor) e devolve os bairros da lista citados nele.
+  Procura primeiro os nomes mais compridos, para "Alto de Pinheiros" não contar também como "Pinheiros".
+  "Sé" fica de fora: confunde com a palavra "se".
+*/
+const _termosBairro = [
+  ...LISTA_BAIRROS.filter((b) => b !== "Sé").map((b) => [semAcento(b), b]),
+  ...Object.entries(APELIDOS_BAIRRO),
+].sort((a, b) => b[0].length - a[0].length);
+const _escaparRegex = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function bairrosCitados(texto) {
+  let t = " " + semAcento(texto) + " ";
+  const achados = [];
+  for (const [termo, oficial] of _termosBairro) {
+    const re = new RegExp("(^|[^a-z0-9])" + _escaparRegex(termo) + "(?=[^a-z0-9]|$)", "g");
+    if (re.test(t)) { if (!achados.includes(oficial)) achados.push(oficial); t = t.replace(re, "$1" + " ".repeat(termo.length)); }
+  }
+  return achados;
+}
+/* Zonas citadas por extenso ou pela sigla: "toda a Zona Oeste", "Zonas Oeste e Norte", "ZS". */
+function zonasCitadas(texto) {
+  const t = " " + semAcento(texto) + " ";
+  const tem = (re) => re.test(t);
+  const falaDeZona = tem(/[^a-z]zonas?[^a-z]/);
+  const z = [];
+  if (tem(/[^a-z]zo[^a-z]/) || (falaDeZona && tem(/[^a-z]oeste[^a-z]/))) z.push("ZO");
+  if (tem(/[^a-z]zs[^a-z]/) || (falaDeZona && tem(/[^a-z]sul[^a-z]/))) z.push("ZS");
+  if (tem(/[^a-z]zn[^a-z]/) || (falaDeZona && tem(/[^a-z]norte[^a-z]/))) z.push("ZN");
+  if (tem(/[^a-z]zl[^a-z]/) || (falaDeZona && tem(/[^a-z]leste[^a-z]/))) z.push("ZL");
+  if (tem(/[^a-z]zc[^a-z]/) || tem(/regiao central|zona central/)) z.push("ZC");
+  return z;
+}
 
 /* "15.500", "15500", "5 mil", "30k a 50k", "1,2 milhão" -> número (0 se não entender) */
 function lerDinheiro(texto) {
@@ -158,10 +205,15 @@ function montarCampos(campos, valores = {}) {
     const estrela = c.obrig ? ' <span class="crm-obrig">*</span>' : "";
     if (c.tipo === "multi") {
       const marcados = v || [];
-      const ops = c.opcoes.map((o) =>
+      const chips = (lista) => lista.map((o) =>
         `<label class="crm-chip"><input type="checkbox" name="${c.id}" value="${escapar(o)}"${marcados.includes(o) ? " checked" : ""}><span>${escapar(o)}</span></label>`).join("");
+      // Com "grupos", as opções vêm separadas por título (ex.: bairros por zona) e começam recolhidas.
+      const corpo = c.grupos
+        ? `<details class="crm-grupos"${marcados.length ? " open" : ""}><summary>Mostrar a lista de bairros</summary>${c.grupos.map(([titulo, lista]) =>
+            `<div class="crm-grupo"><strong>${escapar(titulo)}</strong><div class="crm-chips">${chips(lista)}</div></div>`).join("")}</details>`
+        : `<div class="crm-chips">${chips(c.opcoes)}</div>`;
       return `<fieldset class="crm-campo crm-campo--largo" data-campo="${c.id}">
-        <legend>${escapar(c.rotulo)}${estrela}</legend><div class="crm-chips">${ops}</div></fieldset>`;
+        <legend>${escapar(c.rotulo)}${estrela}</legend>${c.ajuda ? `<p class="crm-ajuda">${escapar(c.ajuda)}</p>` : ""}${corpo}</fieldset>`;
     }
     let entrada;
     if (c.tipo === "select") {
@@ -240,6 +292,10 @@ function lerCampos(form, campos) {
   if ("bairro1_outro" in dados) {
     if (dados.bairro1 === OUTRO_BAIRRO) dados.bairro1 = dados.bairro1_outro;
     delete dados.bairro1_outro;
+  }
+  // Bairros extras: não repete os dois principais
+  if (Array.isArray(dados.outros_bairros)) {
+    dados.outros_bairros = dados.outros_bairros.filter((b) => b !== dados.bairro1 && b !== dados.bairro2);
   }
   return { dados };
 }
