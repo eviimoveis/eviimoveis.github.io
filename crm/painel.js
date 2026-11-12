@@ -2,11 +2,12 @@
 
 const $ = (id) => document.getElementById(id);
 const sb = criarCliente();
-const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [] };
+const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], digo_lancamentos: [], digo_pagamentos: [], digo_config: [] };
 const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando" };
 const TOP = 5;            // quantos corretores sugerir
 const DIAS_COBRANCA = 2;  // cobrar o corretor depois de quantos dias
 let aba = "leads";
+let digoAtivo = false;   // false enquanto o banco não tiver as tabelas do Pagamentos Digo
 let usuario = null;
 let aberto = null;        // { tipo: "lead" | "corretor", id }
 let verMais = false;      // mostrar além do top 5
@@ -17,6 +18,7 @@ const paraPainel = (campos) => campos.map((c) => (c.soPublico ? { ...c, obrig: f
 const CAMPOS_LEAD_PAINEL = [
   ...paraPainel(CAMPOS_LEAD),
   { id: "origem", rotulo: "Origem", tipo: "text", max: 60, dica: "Ex.: Instagram, indicação, placa" },
+  { id: "captado_digo", rotulo: "Captado pelo Digo", tipo: "select", opcoes: ["Não", "Sim"] },
   { id: "etapa", rotulo: "Etapa", tipo: "select", opcoes: ETAPAS },
   { id: "observacao_interna", rotulo: "Observação interna (não vai na mensagem)", tipo: "textarea", max: 2000 },
 ];
@@ -181,6 +183,9 @@ $("form-login").addEventListener("submit", async (e) => {
 async function carregar() {
   const tabelas = Object.keys(D);
   const respostas = await Promise.all(tabelas.map((t) => sb.from(t).select("*").order("criado_em", { ascending: false })));
+  // Tabelas do Pagamentos Digo são opcionais: se ainda não existirem no banco, o resto do painel segue normal.
+  digoAtivo = !tabelas.some((t, i) => t.startsWith("digo_") && respostas[i].error);
+  tabelas.forEach((t, i) => { if (t.startsWith("digo_") && respostas[i].error) respostas[i] = { data: [] }; });
   const falha = respostas.find((r) => r.error);
   if (falha) { console.error(falha.error); aviso("Erro ao carregar dados: " + falha.error.message, true); return; }
   tabelas.forEach((t, i) => { D[t] = respostas[i].data || []; });
@@ -197,8 +202,10 @@ function desenhar() {
   const pend = D.envios.filter(cobrancaVencida).length + D.tarefas.filter((t) => !t.concluida && t.vence_em <= hoje).length;
   $("n-envios").textContent = pend ? `${pend} a cobrar` : "";
   $("n-envios").classList.toggle("crm-aba__n--alerta", pend > 0);
+  const saldoDigo = resumoDigo().saldo;
+  $("n-digo").textContent = saldoDigo > 0 ? brl(saldoDigo).replace(",00", "") : "";
   document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
-  ({ leads: abaLeads, corretores: abaCorretores, envios: abaEnvios, relatorios: abaRelatorios })[aba]();
+  ({ leads: abaLeads, corretores: abaCorretores, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
 }
 
 /* ----- Leads ----- */
@@ -520,7 +527,8 @@ function janelaCorretor(id) {
 function janelaForm(tipo, registro) {
   const ehLead = tipo === "lead";
   const campos = ehLead ? CAMPOS_LEAD_PAINEL : CAMPOS_CORRETOR_PAINEL;
-  const valores = registro || (ehLead ? { origem: "Cadastro manual", etapa: "Novo" } : { status: "Ativo" });
+  const base = registro || (ehLead ? { origem: "Cadastro manual", etapa: "Novo" } : { status: "Ativo" });
+  const valores = ehLead ? { ...base, captado_digo: base.captado_digo ? "Sim" : "Não" } : base;
   abrirJanela(`<div class="crm-janela__corpo">
     <h2>${registro ? "Editar" : "Novo"} ${ehLead ? "lead" : "corretor"}</h2>
     <form class="crm-form" data-form="${tipo}" data-id="${registro ? registro.id : ""}" novalidate>
@@ -589,6 +597,7 @@ try { if (localStorage.getItem("crm-menu-recolhido")) recolherMenu(true); } catc
 
 /* ---------- Ações ---------- */
 const ACOES = {
+  ...ACOES_DIGO,
   "sair": async () => { await sb.auth.signOut(); usuario = null; fecharJanela(); mostrarTela("v-login"); },
   "copiar-link": async () => {
     const link = new URL("cadastro.html", location.href).href;
@@ -720,6 +729,7 @@ document.addEventListener("submit", async (e) => {
   if (!tipo) return;
   e.preventDefault();
 
+  if (tipo.startsWith("digo-")) return enviarDigo(f, tipo);
   if (tipo === "tarefa") {
     const dados = { lead_id: aberto.id, descricao: f.elements.descricao.value.trim(), vence_em: f.elements.vence_em.value };
     if (dados.descricao && dados.vence_em && await gravar(sb.from("tarefas").insert(dados))) await carregar();
@@ -741,6 +751,14 @@ document.addEventListener("submit", async (e) => {
   const id = f.dataset.id;
   if (!dados.origem) { if (tipo === "lead" || !id) dados.origem = "Cadastro manual"; else delete dados.origem; }
 
+  if (tipo === "lead" && !digoAtivo) { delete dados.captado_digo; }
+  else if (tipo === "lead") {
+    // "Captado pelo Digo": grava sim/não e a data em que foi marcado (conta no Pagamentos Digo)
+    const antes = id ? leadPorId(id)?.captado_digo : false;
+    dados.captado_digo = dados.captado_digo === "Sim";
+    if (dados.captado_digo && !antes) dados.captado_digo_em = new Date().toISOString();
+    if (!dados.captado_digo) dados.captado_digo_em = null;
+  }
   const tabela = tipo === "lead" ? "leads" : "corretores";
   const ok = await gravar(id ? sb.from(tabela).update(dados).eq("id", id) : sb.from(tabela).insert(dados));
   if (!ok) return;
