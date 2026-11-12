@@ -263,6 +263,13 @@ code { background: #e6ecf3; padding: 1px 6px; border-radius: 5px; font-size: .9e
 }
 .crm-envio__campos .botao { padding: 9px 16px; font-size: .9rem; }
 .crm-barra .crm-titulo { flex: 1 1 220px; margin: 0; align-self: center; }
+/* Pesquisa grande, com lupa (aba Envios) */
+.crm-barra--busca { max-width: 860px; margin: 0 auto 16px; align-items: stretch; }
+.crm-busca { position: relative; flex: 1 1 320px; display: block; }
+.crm-busca svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; fill: var(--cinza); pointer-events: none; }
+.crm-barra .crm-busca input { width: 100%; font-size: 1.05rem; padding: 14px 16px 14px 48px; border-radius: 999px; box-shadow: 0 4px 14px rgba(15,42,68,.06); }
+.crm-barra--busca select { border-radius: 999px; padding-left: 16px; }
+#lista-envios .resultado { max-width: 860px; margin: 0 auto 10px; }
 .crm-mini { width: 100%; border-collapse: collapse; font-size: .9rem; }
 .crm-mini th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: var(--cinza); padding: 0 8px 8px 0; }
 .crm-mini td { padding: 6px 8px 6px 0; border-top: 1px solid var(--borda); }

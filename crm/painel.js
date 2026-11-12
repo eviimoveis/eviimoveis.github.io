@@ -3,7 +3,7 @@
 const $ = (id) => document.getElementById(id);
 const sb = criarCliente();
 const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], digo_lancamentos: [], digo_pagamentos: [], digo_config: [] };
-const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando" };
+const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando", buscaEnvio: "" };
 const TOP = 5;            // quantos corretores sugerir
 const DIAS_COBRANCA = 2;  // cobrar o corretor depois de quantos dias
 let aba = "leads";
@@ -323,17 +323,44 @@ function itemTarefa(t, comLead = true) {
 }
 
 function abaEnvios() {
-  const lista = D.envios.filter((e) => !filtros.statusEnvio || e.status === filtros.statusEnvio)
-    .sort((a, b) => (a.proxima_cobranca || "9999").localeCompare(b.proxima_cobranca || "9999"));
   const tarefas = D.tarefas.filter((t) => !t.concluida).sort((a, b) => a.vence_em.localeCompare(b.vence_em));
   $("conteudo").innerHTML = `
-    <div class="crm-barra">
-      <h2 class="crm-titulo">Leads enviados a corretores</h2>
-      <select id="filtro-envio">${htmlOpcoes(STATUS_ENVIO, filtros.statusEnvio, "Todos os status")}</select>
+    <h2 class="crm-titulo">Leads enviados a corretores</h2>
+    <div class="crm-barra crm-barra--busca">
+      <label class="crm-busca">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4a6 6 0 1 0 3.7 10.7l4.3 4.3 1.4-1.4-4.3-4.3A6 6 0 0 0 10 4zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></svg>
+        <span class="crm-so-leitor">Pesquisar envios</span>
+        <input type="search" id="busca-envio" placeholder="Pesquisar pelo nome do corretor, telefone ou cliente..." value="${escapar(filtros.buscaEnvio)}" autocomplete="off">
+      </label>
+      <select id="filtro-envio" aria-label="Filtrar por status">${htmlOpcoes(STATUS_ENVIO, filtros.statusEnvio, "Todos os status")}</select>
     </div>
-    ${lista.length ? `<ul class="crm-envios">${lista.map((e) => itemEnvio(e, { corretor: true, lead: true })).join("")}</ul>`
-      : `<p class="vazio">${D.envios.length ? "Nenhum envio com esse status." : "Nenhum envio ainda. Abra um lead e clique em “📲 Enviar” ao lado de um corretor."}</p>`}
+    <div id="lista-envios"></div>
     ${tarefas.length ? `<h2 class="crm-titulo">Lembretes pendentes</h2><ul class="crm-tarefas">${tarefas.map((t) => itemTarefa(t)).join("")}</ul>` : ""}`;
+  listaEnvios();
+}
+
+/* Lista de envios, filtrada pelo status e pela pesquisa (corretor, telefone ou cliente). */
+function listaEnvios() {
+  const termo = semAcento(filtros.buscaEnvio);
+  const digitos = soDigitos(filtros.buscaEnvio);
+  const bate = (e) => {
+    if (!termo) return true;
+    const c = corretorPorId(e.corretor_id);
+    const l = leadPorId(e.lead_id);
+    if (semAcento([c?.nome, c?.imobiliaria, l?.nome].join(" ")).includes(termo)) return true;
+    // Telefone: compara só os números, para achar com ou sem parênteses e traço.
+    return digitos.length >= 3 && soDigitos(c?.telefone).includes(digitos);
+  };
+  const lista = D.envios.filter((e) => (!filtros.statusEnvio || e.status === filtros.statusEnvio) && bate(e))
+    .sort((a, b) => (a.proxima_cobranca || "9999").localeCompare(b.proxima_cobranca || "9999"));
+  const emOutros = termo && filtros.statusEnvio ? D.envios.filter((e) => e.status !== filtros.statusEnvio && bate(e)).length : 0;
+  const dica = emOutros ? ` <button class="crm-link-texto" data-acao="envios-todos-status">Ver também ${emOutros} em outros status</button>` : "";
+  let vazio = "Nenhum envio ainda. Abra um lead e clique em “📲 Enviar” ao lado de um corretor.";
+  if (D.envios.length) vazio = termo ? `Nenhum envio encontrado para “${escapar(filtros.buscaEnvio)}”${filtros.statusEnvio ? " com esse status" : ""}.` : "Nenhum envio com esse status.";
+  $("lista-envios").innerHTML =
+    (termo ? `<p class="resultado">${lista.length} envio(s) encontrado(s).${dica}</p>` : "") +
+    (lista.length ? `<ul class="crm-envios">${lista.map((e) => itemEnvio(e, { corretor: true, lead: true })).join("")}</ul>`
+      : `<p class="vazio">${vazio}${termo ? dica : ""}</p>`);
 }
 
 /* ----- Relatórios ----- */
@@ -631,6 +658,7 @@ const ACOES = {
       await carregar();
     }
   },
+  "envios-todos-status": () => { filtros.statusEnvio = ""; $("filtro-envio").value = ""; listaEnvios(); },
   "recolher": () => recolherMenu(!$("v-app").classList.contains("recolhido")),
   "copiar-msg": async () => {
     try { await navigator.clipboard.writeText($("msg-texto").value); aviso("Texto copiado."); }
@@ -707,13 +735,14 @@ document.addEventListener("change", async (e) => {
   } else if (t.id === "filtro-etapa") {
     filtros.etapa = t.value; listaLeads();
   } else if (t.id === "filtro-envio") {
-    filtros.statusEnvio = t.value; abaEnvios();
+    filtros.statusEnvio = t.value; listaEnvios();
   }
 });
 
 document.addEventListener("input", (e) => {
   if (e.target.id === "busca-lead") { filtros.buscaLead = e.target.value; listaLeads(); }
   if (e.target.id === "busca-corretor") { filtros.buscaCorretor = e.target.value; listaCorretores(); }
+  if (e.target.id === "busca-envio") { filtros.buscaEnvio = e.target.value; listaEnvios(); }
   if (e.target.id === "msg-texto" && aberto?.tipo === "lead") {
     // Guarda o texto ajustado e atualiza os links de envio com ele.
     msgEditada = { leadId: aberto.id, texto: e.target.value };
