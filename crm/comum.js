@@ -15,9 +15,6 @@ const BAIRROS = {
   "Tatuapé": "ZL", "Tremembé": "ZN", "Tucuruvi": "ZN", "Vila Formosa": "ZL", "Vila Guilherme": "ZN",
   "Vila Leopoldina": "ZO", "Vila Madalena": "ZO", "Vila Maria": "ZN", "Vila Mariana": "ZS",
   "Vila Nova Conceição": "ZS", "Vila Olímpia": "ZS", "Vila Prudente": "ZL",
-  // incluídos depois, a partir do que os corretores citam
-  "Campo Limpo": "ZS", "Vila Andrade": "ZS", "Jardim Marajoara": "ZS", "Jabaquara": "ZS", "Vila Clementino": "ZS",
-  "Chácara Santo Antônio": "ZS", "Vila Sônia": "ZO", "Vila Romana": "ZO",
 };
 const LISTA_BAIRROS = Object.keys(BAIRROS).sort((a, b) => a.localeCompare(b, "pt-BR"));
 const NOME_ZONA = { ZO: "Zona Oeste", ZS: "Zona Sul", ZC: "Centro", ZN: "Zona Norte", ZL: "Zona Leste" };
@@ -27,8 +24,8 @@ const APELIDOS_BAIRRO = {
   "itaim": "Itaim Bibi", "vnc": "Vila Nova Conceição", "vila nova": "Vila Nova Conceição", "madalena": "Vila Madalena",
   "jardim america": "Jardins", "jardim europa": "Jardins", "jardim paulista": "Jardins", "alto pinheiros": "Alto de Pinheiros",
   "klabin": "Chácara Klabin", "leopoldina": "Vila Leopoldina", "olimpia": "Vila Olímpia", "sta cecilia": "Santa Cecília",
-  "sta. cecilia": "Santa Cecília", "pompeia": "Pompeia", "vila pompeia": "Pompeia", "vila sonia": "Vila Sônia",
-  "sto amaro": "Santo Amaro", "sto. amaro": "Santo Amaro", "marajoara": "Jardim Marajoara",
+  "sta. cecilia": "Santa Cecília", "vila pompeia": "Pompeia",
+  "sto amaro": "Santo Amaro", "sto. amaro": "Santo Amaro",
 };
 
 /* Faixas de valor em que o corretor trabalha: texto -> [mínimo, máximo] */
