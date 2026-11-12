@@ -228,7 +228,8 @@ begin
       ('2026-11-02 12:00-03', '2026-11-02', 'Corretor', 'Corretores captados antes de 03/11 (planilha)', 15, 75, 'importado'),
       (now(), '2026-11-11', 'Corretor', 'Corretores novos de 03/11 a 11/11 (planilha)', 21, 105, 'importado'),
       (now(), '2026-11-11', 'Corretor', 'Corretores cadastrados direto pelo site (planilha)', 6, 30, 'importado'),
-      (now(), '2026-11-11', 'Anúncio', 'Anúncios publicados (planilha)', 7, 140, 'importado');
+      (now(), '2026-11-11', 'Anúncio', 'Anúncios publicados (planilha)', 7, 140, 'importado'),
+      (now(), '2026-11-12', 'Corretor', 'Corretores no painel além da planilha (46 - 42)', 4, 20, 'importado');
     insert into public.digo_pagamentos (criado_em, data, valor, observacao, autor) values
       ('2026-11-03 18:00-03', '2026-11-03', 75, '15 corretores antes de 03/11 (planilha)', 'importado');
   end if;
