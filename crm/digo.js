@@ -3,10 +3,10 @@
 
 const VALOR_DIGO = { Corretor: 5, "Anúncio": 20, Cliente: 30, Visita: 30 };
 const REGRAS_COMISSAO = [
-  { id: "captou", rotulo: "Imóvel que ele captou e anunciou", pct: 15 },
+  { id: "captou", rotulo: "Imóvel que ele captou", pct: 10 },
   { id: "corretor", rotulo: "Locação com corretor que ele trouxe", pct: 10 },
-  { id: "cliente", rotulo: "Cliente que ele trouxe", pct: 20 },
-  { id: "achou", rotulo: "Ele achou o imóvel para o cliente", pct: 15 },
+  { id: "cliente", rotulo: "Cliente que ele trouxe", pct: 10 },
+  { id: "achou", rotulo: "Ele achou o imóvel para o cliente", pct: 10 },
 ];
 const brl = (v) => "R$ " + Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
