@@ -50,6 +50,22 @@ create table if not exists public.corretores (
   origem text not null default 'Formulário' check (char_length(origem) <= 60)
 );
 
+-- Bairros extras em que o corretor atua, além do 1º e do 2º (adicionado depois).
+alter table public.corretores add column if not exists outros_bairros text[] not null default '{}';
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'corretores_outros_bairros_limite') then
+    alter table public.corretores add constraint corretores_outros_bairros_limite check (cardinality(outros_bairros) <= 100);
+  end if;
+end $$;
+
+-- Especialidades do corretor (adicionado depois).
+alter table public.corretores add column if not exists especialidades text[] not null default '{}';
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'corretores_especialidades_limite') then
+    alter table public.corretores add constraint corretores_especialidades_limite check (cardinality(especialidades) <= 20);
+  end if;
+end $$;
+
 -- ---------- Leads (clientes) ----------
 create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),

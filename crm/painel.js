@@ -25,7 +25,7 @@ const CAMPOS_LEAD_PAINEL = [
 const CAMPOS_CORRETOR_PAINEL = (() => {
   const base = paraPainel(CAMPOS_CORRETOR);
   const i = base.findIndex((c) => c.id === "bairro2");
-  base.splice(i + 1, 0, { id: "bairro3", rotulo: "3º bairro (só pelo painel)", tipo: "select", opcoes: LISTA_BAIRROS, vazio: "Nenhum" });
+  base.splice(i + 1, 0, { id: "bairro3", rotulo: "3º bairro (antigo)", tipo: "bairro", livre: true, dica: "Prefira “outros bairros”, abaixo" });
   return [...base, { id: "status", rotulo: "Situação", tipo: "select", opcoes: STATUS_CORRETOR }];
 })();
 
@@ -105,13 +105,29 @@ const textoCobranca = (corretor, lead) =>
   mensagemLead(lead).split("\n").slice(0, 3).join("\n");
 
 /* ---------- Match lead x corretor (mesmas regras da planilha) ---------- */
+/* Bairros extras do corretor: os que ele marcou (ou o 3º bairro) e os que citou nas observações. */
+function extrasDe(c) {
+  const principais = [c.bairro1, c.bairro2].map(semAcento);
+  const novo = (lista, ja = []) => [...new Set(lista.filter(Boolean))].filter((b) => !principais.includes(semAcento(b)) && !ja.map(semAcento).includes(semAcento(b)));
+  const marcados = novo([c.bairro3, ...(c.outros_bairros || [])]);
+  const citados = novo(bairrosCitados(c.observacoes), marcados);
+  return { marcados, citados, zonas: zonasCitadas(c.observacoes) };
+}
+const todosBairros = (c) => { const x = extrasDe(c); return [...new Set([c.bairro1, c.bairro2, ...x.marcados, ...x.citados].filter(Boolean))]; };
+
 function pontuar(lead, c) {
-  const meus = [c.bairro1, c.bairro2, c.bairro3].map(semAcento);
-  const minhasZonas = [c.bairro1, c.bairro2, c.bairro3].map(zonaDe).filter(Boolean);
+  const principais = [c.bairro1, c.bairro2].map(semAcento);
+  const extras = extrasDe(c);
+  const minhasZonas = [...todosBairros(c).map(zonaDe), ...extras.zonas].filter(Boolean);
+  const notas = []; // explica quando o corretor entrou por um bairro extra
+  // pontos: [1º bairro do corretor, 2º bairro, bairro extra], depois só a zona
   const parte = (bairro, pontos, pontosZona) => {
     if (!bairro) return 0;
-    const i = meus.indexOf(semAcento(bairro));
+    const alvo = semAcento(bairro);
+    const i = principais.indexOf(alvo);
     if (i >= 0) return pontos[i];
+    if (extras.marcados.some((b) => semAcento(b) === alvo)) { notas.push(`também atua em ${bairro}`); return pontos[2]; }
+    if (extras.citados.some((b) => semAcento(b) === alvo)) { notas.push(`${bairro} citado nas observações`); return pontos[2]; }
     const z = zonaDe(bairro);
     return z && minhasZonas.includes(z) ? pontosZona : 0;
   };
@@ -129,9 +145,23 @@ function pontuar(lead, c) {
   if (valor && limites.length) faixa = limites.some(([min, max]) => valor >= min && valor <= max) ? "Dentro" : "Fora";
   const bonus = faixa === "Dentro" ? 15 : faixa === "Fora" ? -15 : 0;
 
+  // Especialidades: somam pontos quando combinam com o pedido do cliente.
+  const esp = c.especialidades || [];
+  const tem = (e) => esp.includes(e);
+  const vl = lead.valor_locacao || 0, vc = lead.valor_compra || 0;
+  const combinam = [];
+  if (tem("Alto padrão") && (vl >= ALTO_PADRAO.locacao || vc >= ALTO_PADRAO.compra)) combinam.push("alto padrão");
+  if (tem("Econômico / MCMV") && ((vl && vl <= ECONOMICO.locacao) || (vc && vc <= ECONOMICO.compra))) combinam.push("econômico");
+  if (tem("Terrenos") && lead.tipo === "Terreno") combinam.push("terrenos");
+  if (tem("Galpões") && lead.tipo === "Galpão") combinam.push("galpões");
+  if (tem("Lojas e salas") && ["Loja", "Sala/Conjunto Comercial"].includes(lead.tipo)) combinam.push("lojas e salas");
+  if (tem("Studios") && lead.tipo === "Studio") combinam.push("studios");
+  if (combinam.length) notas.push("especialista em " + combinam.join(" e "));
+  const bonusEsp = combinam.length * PONTOS_ESPECIALIDADE;
+
   const nivel = regiao >= 50 ? "Excelente" : regiao >= 30 ? "Boa" : "Possível";
   const compat = nivel + (faixa === "Dentro" ? " · na faixa ✓" : faixa === "Fora" ? " · fora da faixa" : "");
-  return { c, score: regiao + bonus, nivel, compat };
+  return { c, score: regiao + bonus + bonusEsp, nivel, compat, notas: [...new Set(notas)] };
 }
 
 function rankear(lead) {
@@ -261,7 +291,7 @@ function abaCorretores() {
 function listaCorretores() {
   const termo = semAcento(filtros.buscaCorretor);
   const itens = D.corretores.filter((c) =>
-    !termo || semAcento([c.nome, c.telefone, c.imobiliaria, c.creci, ...bairrosDe(c)].join(" ")).includes(termo));
+    !termo || semAcento([c.nome, c.telefone, c.imobiliaria, c.creci, ...todosBairros(c), ...(c.especialidades || [])].join(" ")).includes(termo));
   if (!itens.length) {
     $("lista").innerHTML = `<p class="vazio">${D.corretores.length ? "Nenhum corretor encontrado." : "Nenhum corretor ainda. Envie o link de cadastro ou clique em “+ Novo corretor”."}</p>`;
     return;
@@ -273,7 +303,7 @@ function listaCorretores() {
     <tbody>${itens.map((c) => `<tr data-acao="abrir-corretor" data-id="${c.id}" tabindex="0">
         <td><strong>${escapar(c.nome)}</strong><small>${escapar([formatarTelefone(c.telefone), c.imobiliaria].filter(Boolean).join(" · "))}</small>
           ${vezes[soDigitos(c.telefone).slice(-8)] > 1 ? '<small class="crm-pendente">⚠ telefone repetido em outro cadastro</small>' : ""}</td>
-        <td>${escapar(bairrosDe(c).join(" / ") || "—")}<small>${escapar([...new Set(bairrosDe(c).map(zonaDe).filter(Boolean))].join(" · "))}</small></td>
+        <td>${escapar([c.bairro1, c.bairro2].filter(Boolean).join(" / ") || "—")}${todosBairros(c).length > 2 ? ` <span class="crm-mais-bairros" title="${escapar(todosBairros(c).slice(2).join(", "))}">+${todosBairros(c).length - 2}</span>` : ""}<small>${escapar([...new Set(todosBairros(c).map(zonaDe).filter(Boolean))].join(" · "))}</small></td>
         <td>${escapar(c.categoria)}<small>${escapar(c.operacao)}</small></td>
         <td><small>${escapar([...(c.faixas_locacao || []), ...(c.faixas_venda || [])].join(", ") || "Não informou")}</small></td>
         <td>${enviosDoCorretor(c.id).length}</td>
@@ -388,7 +418,7 @@ function abaRelatorios() {
 
   const cobertura = Object.keys(NOME_ZONA).map((z) => {
     const nLeads = D.leads.filter((l) => [l.bairro1, l.bairro2].some((b) => zonaDe(b) === z)).length;
-    const nCorr = ativos.filter((c) => bairrosDe(c).some((b) => zonaDe(b) === z)).length;
+    const nCorr = ativos.filter((c) => todosBairros(c).some((b) => zonaDe(b) === z) || extrasDe(c).zonas.includes(z)).length;
     const situacao = nCorr === 0 ? (nLeads > 0 ? "🔴 Sem corretor" : "—") : nLeads > nCorr ? "🟡 Recrutar mais" : "🟢 OK";
     return `<tr><td>${NOME_ZONA[z]}</td><td>${nLeads}</td><td>${nCorr}</td><td>${situacao}</td></tr>`;
   }).join("");
@@ -415,7 +445,7 @@ function abaRelatorios() {
       </section>
       ${barras("Leads por etapa", ETAPAS.map((e) => [e, D.leads.filter((l) => l.etapa === e).length]))}
       ${barras("Bairros mais pedidos", contar(D.leads.flatMap((l) => [l.bairro1, l.bairro2])).slice(0, 10))}
-      ${barras("Bairros com corretores ativos", contar(ativos.flatMap(bairrosDe)).slice(0, 10))}
+      ${barras("Bairros com corretores ativos", contar(ativos.flatMap(todosBairros)).slice(0, 10))}
       ${barras("Leads por origem", contar(D.leads.map((l) => l.origem)))}
       ${barras("Envios por status", STATUS_ENVIO.map((s) => [s, D.envios.filter((e) => e.status === s).length]))}
       ${barras("Corretores que mais receberam leads", contar(D.envios.map((e) => corretorPorId(e.corretor_id)?.nome)).slice(0, 10))}
@@ -457,7 +487,8 @@ function janelaLead(id) {
       <span class="crm-rank">${i + 1}</span>
       <div>
         <strong>${escapar(r.c.nome)}</strong> <span class="crm-score">${r.score} pts</span>
-        <small>${escapar(bairrosDe(r.c).join(" / "))}${r.c.imobiliaria ? " · " + escapar(r.c.imobiliaria) : ""}</small>
+        <small>${escapar([r.c.bairro1, r.c.bairro2].filter(Boolean).join(" / "))}${r.c.imobiliaria ? " · " + escapar(r.c.imobiliaria) : ""}</small>
+        ${r.notas.length ? `<small class="crm-nota-extra">↳ ${escapar(r.notas.join(" · "))}</small>` : ""}
         <small><b class="crm-nivel crm-nivel--${slug(r.nivel)}">${escapar(r.compat)}</b> · já recebeu ${r.recebidos} lead(s)${env ? ` · <b>enviado em ${dataBR(env.criado_em)}</b>` : ""}</small>
       </div>
       <div class="crm-sugestao__acoes">
@@ -523,7 +554,8 @@ function janelaCorretor(id) {
   if (!c) { fecharJanela(); return; }
   aberto = { tipo: "corretor", id };
   const envios = enviosDoCorretor(id);
-  const zonas = [...new Set(bairrosDe(c).map(zonaDe).filter(Boolean))].map((z) => NOME_ZONA[z]).join(" / ");
+  const extras = extrasDe(c);
+  const zonas = [...new Set([...todosBairros(c).map(zonaDe), ...extras.zonas].filter(Boolean))].map((z) => NOME_ZONA[z]).join(" / ");
   abrirJanela(`<div class="crm-janela__corpo">
     <header class="crm-janela__topo">
       <div><h2>${escapar(c.nome)}</h2><p>${selo(c.status)} · cadastrado em ${dataBR(c.criado_em)} · ${escapar(c.origem || "")}</p></div>
@@ -535,7 +567,10 @@ function janelaCorretor(id) {
       ${info("Imobiliária", escapar(c.imobiliaria))}
       ${info("Site / perfil", escapar(c.site))}
       ${info("Atende", escapar(`${c.categoria} · ${c.operacao}`))}
-      ${info("Bairros", escapar(bairrosDe(c).join(" / ")))}
+      ${info("Bairros principais", escapar([c.bairro1, c.bairro2].filter(Boolean).join(" / ")))}
+      ${info("Outros bairros", escapar(extras.marcados.join(", ")))}
+      ${info("Citados nas observações", escapar(extras.citados.join(", ")))}
+      ${info("Especialidades", escapar((c.especialidades || []).join(", ")))}
       ${info("Zonas", escapar(zonas))}
       ${info("Faixas de locação", escapar((c.faixas_locacao || []).join(", ")))}
       ${info("Faixas de venda", escapar((c.faixas_venda || []).join(", ")))}
