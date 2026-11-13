@@ -1344,7 +1344,7 @@ const APELIDOS_FOTOS = {
   "8N0383-3": "8N0383-10.webp",
   "8N0383-4": "file_00000000c728820e9bfe3b0f1f842d2b.png",
   "8N0383-5": "file_0000000058cc820e9e7e2d9d63756ccb.png",
-  "8N0383-6": "Banheiro Minimalista com Armários Ripados (1).png",
+  "8N0383-6": "Banheiro Minimalista com Arma\u0301rios Ripados (1).png",
   "8N0383-7": "file_0000000078e4820e93d0b358564ad958.png",
   "8N0383-8": "file_000000009c84820eaf13fac165181e2b.png",
   "8N0383-9": "file_00000000a7a4820e8f16b32d5d0f9230.png",
