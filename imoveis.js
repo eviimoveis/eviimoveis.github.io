@@ -993,7 +993,7 @@ const IMOVEIS = [
   // ===== 8N0383 - Apartamento - Jardim Paulista =====
   {
     "codigo": "8N0383",
-    "fotos": 20,
+    "fotos": 19,
     "titulo": "Apartamento Reformado na localização mais desejada de São Paulo, Jardim Paulista, Oscar Freire",
     "negocio": "aluguel",
     "tipo": "Apartamento",
@@ -1335,3 +1335,27 @@ const IMOVEIS = [
     ]
   },
 ];
+
+
+/* Fotos com nome diferente do código (ordem igual ao anúncio do Viva Real) */
+const APELIDOS_FOTOS = {
+  "8N0383": "file_00000000cad4820e8df5f7aec86ddbf9.png",
+  "8N0383-2": "Warm Minimalist Kitchen Interior.png",
+  "8N0383-3": "8N0383-10.webp",
+  "8N0383-4": "file_00000000c728820e9bfe3b0f1f842d2b.png",
+  "8N0383-5": "file_0000000058cc820e9e7e2d9d63756ccb.png",
+  "8N0383-6": "file_0000000078e4820e93d0b358564ad958.png",
+  "8N0383-7": "file_000000009c84820eaf13fac165181e2b.png",
+  "8N0383-8": "file_00000000a7a4820e8f16b32d5d0f9230.png",
+  "8N0383-9": "IMG-20261109-WA0019.jpg",
+  "8N0383-10": "8N0383-5.webp",
+  "8N0383-11": "8N0383-6.webp",
+  "8N0383-12": "file_000000003390820ea232b74d94ca03da.png",
+  "8N0383-13": "8N0383-13.webp",
+  "8N0383-14": "8N0383-14.webp",
+  "8N0383-15": "8N0383-15.webp",
+  "8N0383-16": "8N0383-25.webp",
+  "8N0383-17": "8N0383-27.webp",
+  "8N0383-18": "8N0383-28.webp",
+  "8N0383-19": "8N0383-29.webp"
+};
