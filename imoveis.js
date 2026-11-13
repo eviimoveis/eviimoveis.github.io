@@ -993,7 +993,7 @@ const IMOVEIS = [
   // ===== 8N0383 - Apartamento - Jardim Paulista =====
   {
     "codigo": "8N0383",
-    "fotos": 29,
+    "fotos": 20,
     "titulo": "Apartamento Reformado na localização mais desejada de São Paulo, Jardim Paulista, Oscar Freire",
     "negocio": "aluguel",
     "tipo": "Apartamento",
@@ -1006,7 +1006,7 @@ const IMOVEIS = [
     "banheiros": 3,
     "vagas": 0,
     "venda": 0,
-    "aluguel": 8500.0,
+    "aluguel": 9500.0,
     "condominio": 1600.0,
     "iptu": 220.0,
     "descricao": "Opção moderna ☀️ Ambientes amplos, claros e bem iluminados🪵 Piso em madeira/laminado🛋️ Sala espaçosa e confortável🍽️ Cozinha com armários🚿 Banheiros com box de vidro👗 Armários planejados/closet🔥 Aquecedor a gásA poucos minutos da Avenida Paulista, do metrô Oscar Freire, da Rua Oscar Freire, de mercados, lojas, restaurantes e serviços. Também fica próximo ao Colégio Objetivo e em uma região extremamente valorizada, prática e elegante.✨ Um endereço excelente para quem busca conforto, localização e qualidade de vida em um dos melhores pontos de São Paulo.📍 Alameda Lorena, 1360. Apartamento amplo, claro e muito bem localizado, em um dos pontos mais desejados de São Paulo. Localização privilegiada, próxima à Rua Oscar Freire, metrô Oscar Freire, Avenida Paulista, mercados, farmácias, cafés, restaurantes, lojas e serviços de alto padrão.🍽️ Região cercada por ótimas opções gastronômicas☕ Cafés e padarias a poucos minutos🛍️ Próximo às lojas e boutiques da Oscar Freire🚇 Fácil acesso ao metrô Oscar Freire🏫 Próximo ao Colégio Objetivo🌿 No meio do Jardim Paulista",
