@@ -40,6 +40,12 @@ function fotoPadrao(tipo) {
 
 /* Tenta carregar fotos/CODIGO.jpg (ou .jpeg/.png/.webp). Se não existir, fica a imagem padrão. */
 function carregarFoto(img, nomeBase, aoFalhar) {
+  const apelido = (typeof APELIDOS_FOTOS !== "undefined") && APELIDOS_FOTOS[nomeBase];
+  if (apelido) {
+    img.onerror = () => { img.remove(); if (aoFalhar) aoFalhar(); };
+    img.src = PASTA_FOTOS + encodeURIComponent(apelido);
+    return;
+  }
   let i = 0;
   const tentar = () => {
     if (i >= EXTENSOES.length) { img.remove(); if (aoFalhar) aoFalhar(); return; }
