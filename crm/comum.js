@@ -1,22 +1,44 @@
 /* ===== CRM EVI Imóveis - partes usadas pelo cadastro público e pelo painel ===== */
 
 /* Bairro -> zona. Para adicionar um bairro, inclua uma linha aqui. */
-const BAIRROS = {
-  "Aclimação": "ZS", "Água Branca": "ZO", "Água Rasa": "ZL", "Alto de Pinheiros": "ZO", "Anália Franco": "ZL",
-  "Barra Funda": "ZO", "Bela Vista": "ZC", "Belém": "ZL", "Bom Retiro": "ZC", "Brás": "ZC", "Brasilândia": "ZN",
-  "Brooklin": "ZS", "Butantã": "ZO", "Cachoeirinha": "ZN", "Cambuci": "ZC", "Campo Belo": "ZS",
-  "Campos Elíseos": "ZC", "Carrão": "ZL", "Casa Verde": "ZN", "Centro": "ZC", "Chácara Klabin": "ZS",
-  "Consolação": "ZC", "Freguesia do Ó": "ZN", "Higienópolis": "ZC", "Indianópolis": "ZS", "Ipiranga": "ZS",
-  "Itaim Bibi": "ZS", "Itaquera": "ZL", "Jaçanã": "ZN", "Jaguaré": "ZO", "Jardim Guedala": "ZO", "Jardins": "ZC",
-  "Lapa": "ZO", "Liberdade": "ZC", "Limão": "ZN", "Mandaqui": "ZN", "Moema": "ZS", "Mooca": "ZL", "Morumbi": "ZO",
-  "Pacaembu": "ZO", "Paraíso": "ZS", "Paulista": "ZC", "Penha": "ZL", "Perdizes": "ZO", "Pinheiros": "ZO",
-  "Pompeia": "ZO", "Real Parque": "ZO", "República": "ZC", "Santa Cecília": "ZC", "Santana": "ZN",
-  "Santo Amaro": "ZS", "São Mateus": "ZL", "São Miguel Paulista": "ZL", "Saúde": "ZS", "Sé": "ZC", "Sumaré": "ZO",
-  "Tatuapé": "ZL", "Tremembé": "ZN", "Tucuruvi": "ZN", "Vila Formosa": "ZL", "Vila Guilherme": "ZN",
-  "Vila Leopoldina": "ZO", "Vila Madalena": "ZO", "Vila Maria": "ZN", "Vila Mariana": "ZS",
-  "Vila Nova Conceição": "ZS", "Vila Olímpia": "ZS", "Vila Prudente": "ZL",
+/*
+  BAIRROS_DA_LISTA: os que aparecem como sugestão nos formulários.
+  Para incluir ou tirar um bairro das sugestões, mexa só aqui.
+*/
+const BAIRROS_DA_LISTA = {
+  // Zona Oeste
+  "Água Branca": "ZO", "Alto da Lapa": "ZO", "Alto de Pinheiros": "ZO", "Barra Funda": "ZO", "Butantã": "ZO",
+  "Cidade Jardim": "ZO", "Jardim Guedala": "ZO", "Jardim Paulistano": "ZO", "Lapa": "ZO", "Morumbi": "ZO",
+  "Pacaembu": "ZO", "Perdizes": "ZO", "Pinheiros": "ZO", "Pompeia": "ZO", "Real Parque": "ZO", "Sumaré": "ZO",
+  "Sumarezinho": "ZO", "Vila Leopoldina": "ZO", "Vila Madalena": "ZO", "Vila Romana": "ZO", "Vila Sônia": "ZO",
+  // Zona Sul
+  "Aclimação": "ZS", "Alto da Boa Vista": "ZS", "Brooklin": "ZS", "Campo Belo": "ZS", "Chácara Klabin": "ZS",
+  "Chácara Santo Antônio": "ZS", "Granja Julieta": "ZS", "Indianópolis": "ZS", "Ipiranga": "ZS", "Itaim Bibi": "ZS",
+  "Jardim Marajoara": "ZS", "Moema": "ZS", "Panamby": "ZS", "Paraíso": "ZS", "Planalto Paulista": "ZS",
+  "Santo Amaro": "ZS", "Saúde": "ZS", "Vila Andrade": "ZS", "Vila Clementino": "ZS", "Vila Mariana": "ZS",
+  "Vila Nova Conceição": "ZS", "Vila Olímpia": "ZS",
+  // Centro / Jardins
+  "Bela Vista": "ZC", "Bom Retiro": "ZC", "Campos Elíseos": "ZC", "Centro": "ZC", "Cerqueira César": "ZC",
+  "Consolação": "ZC", "Higienópolis": "ZC", "Jardins": "ZC", "Liberdade": "ZC", "Paulista": "ZC",
+  "República": "ZC", "Santa Cecília": "ZC",
+  // Zona Norte
+  "Casa Verde": "ZN", "Freguesia do Ó": "ZN", "Limão": "ZN", "Santana": "ZN", "Tucuruvi": "ZN",
+  // Zona Leste
+  "Anália Franco": "ZL", "Mooca": "ZL", "Tatuapé": "ZL",
 };
-const LISTA_BAIRROS = Object.keys(BAIRROS).sort((a, b) => a.localeCompare(b, "pt-BR"));
+/*
+  Bairros que saíram das sugestões (nenhum corretor nem cliente escolheu), mas que o CRM continua
+  reconhecendo: em cadastros antigos, nas observações e para saber a zona.
+*/
+const BAIRROS_RECONHECIDOS = {
+  "Jaguaré": "ZO", "Campo Limpo": "ZS", "Jabaquara": "ZS", "Brás": "ZC", "Cambuci": "ZC", "Sé": "ZC",
+  "Brasilândia": "ZN", "Cachoeirinha": "ZN", "Jaçanã": "ZN", "Mandaqui": "ZN", "Tremembé": "ZN",
+  "Vila Guilherme": "ZN", "Vila Maria": "ZN", "Água Rasa": "ZL", "Belém": "ZL", "Carrão": "ZL", "Itaquera": "ZL",
+  "Penha": "ZL", "São Mateus": "ZL", "São Miguel Paulista": "ZL", "Vila Formosa": "ZL", "Vila Prudente": "ZL",
+};
+const BAIRROS = { ...BAIRROS_DA_LISTA, ...BAIRROS_RECONHECIDOS };
+const LISTA_BAIRROS = Object.keys(BAIRROS_DA_LISTA).sort((a, b) => a.localeCompare(b, "pt-BR"));
+const TODOS_BAIRROS = Object.keys(BAIRROS);
 const NOME_ZONA = { ZO: "Zona Oeste", ZS: "Zona Sul", ZC: "Centro", ZN: "Zona Norte", ZL: "Zona Leste" };
 const BAIRROS_POR_ZONA = Object.keys(NOME_ZONA).map((z) => [NOME_ZONA[z], LISTA_BAIRROS.filter((b) => BAIRROS[b] === z)]);
 /* Jeitos comuns de escrever um bairro nas observações -> nome oficial */
@@ -24,7 +46,7 @@ const APELIDOS_BAIRRO = {
   "itaim": "Itaim Bibi", "vnc": "Vila Nova Conceição", "vila nova": "Vila Nova Conceição", "madalena": "Vila Madalena",
   "jardim america": "Jardins", "jardim europa": "Jardins", "jardim paulista": "Jardins", "alto pinheiros": "Alto de Pinheiros",
   "klabin": "Chácara Klabin", "leopoldina": "Vila Leopoldina", "olimpia": "Vila Olímpia", "sta cecilia": "Santa Cecília",
-  "sta. cecilia": "Santa Cecília", "vila pompeia": "Pompeia",
+  "sta. cecilia": "Santa Cecília", "vila pompeia": "Pompeia", "cerqueira cesar": "Cerqueira César", "santo antonio": "Chácara Santo Antônio",
   "sto amaro": "Santo Amaro", "sto. amaro": "Santo Amaro",
 };
 
@@ -131,7 +153,7 @@ const zonaDe = (bairro) => _zonas[semAcento(bairro)] || "";
   "Sé" fica de fora: confunde com a palavra "se".
 */
 const _termosBairro = [
-  ...LISTA_BAIRROS.filter((b) => b !== "Sé").map((b) => [semAcento(b), b]),
+  ...TODOS_BAIRROS.filter((b) => b !== "Sé").map((b) => [semAcento(b), b]),
   ...Object.entries(APELIDOS_BAIRRO),
 ].sort((a, b) => b[0].length - a[0].length);
 const _escaparRegex = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -271,7 +293,7 @@ const htmlEtiqueta = (campo, bairro) =>
   `<span class="crm-etiqueta">${escapar(bairro)}<input type="hidden" name="${campo}" value="${escapar(bairro)}"><button type="button" data-remover aria-label="Remover ${escapar(bairro)}">×</button></span>`;
 
 /* Bairro oficial com esse nome (sem ligar para acento ou maiúscula), ou "". */
-const bairroOficial = (texto) => LISTA_BAIRROS.find((b) => semAcento(b) === semAcento(texto)) || "";
+const bairroOficial = (texto) => TODOS_BAIRROS.find((b) => semAcento(b) === semAcento(texto)) || "";
 
 /* Sugestões para o que foi digitado: primeiro os que começam com o texto, depois palavra que começa, depois quem contém. */
 function sugerirBairros(texto, ignorar = []) {
