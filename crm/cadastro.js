@@ -66,10 +66,10 @@ async function enviar(evento) {
   botao.disabled = true;
   botao.textContent = "Enviando...";
   let { error } = await sb.from(p.tabela).insert(dados);
-  // Banco ainda sem a coluna de bairros extras: guarda a lista nas observações para o cadastro não se perder.
-  if (error && /outros_bairros/.test(error.message || "") && dados.outros_bairros) {
-    const { outros_bairros: extras, ...resto } = dados;
-    if (extras.length) resto.observacoes = [resto.observacoes, "Atua também em: " + extras.join(", ")].filter(Boolean).join(" | ");
+  // Banco ainda sem as colunas novas: guarda as respostas nas observações para o cadastro não se perder.
+  if (error && /outros_bairros|especialidades/.test(error.message || "") && perfilAtual === "corretor") {
+    const { outros_bairros: extras = [], especialidades: esp = [], ...resto } = dados;
+    resto.observacoes = [resto.observacoes, extras.length && "Atua também em: " + extras.join(", "), esp.length && "Especialidades: " + esp.join(", ")].filter(Boolean).join(" | ") || null;
     ({ error } = await sb.from(p.tabela).insert(resto));
   }
   botao.disabled = false;

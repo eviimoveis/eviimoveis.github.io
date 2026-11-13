@@ -31,6 +31,29 @@
 .crm-campo--largo { grid-column: 1 / -1; }
 .crm-campo[hidden] { display: none; }
 .crm-ajuda { font-weight: 400; font-size: .85rem; margin-bottom: 8px; }
+/* Campo de bairro com sugestão ao digitar */
+.crm-auto { position: relative; display: block; }
+.crm-auto__lista {
+  position: absolute; z-index: 40; left: 0; right: 0; top: calc(100% + 4px); list-style: none; margin: 0; padding: 6px;
+  background: #fff; border: 1px solid var(--borda); border-radius: 10px; box-shadow: 0 12px 32px rgba(15,42,68,.18);
+  max-height: 264px; overflow-y: auto;
+}
+.crm-auto__lista[hidden] { display: none; }
+.crm-auto__lista li { padding: 11px 12px; border-radius: 7px; font-size: 1rem; font-weight: 500; color: var(--texto); cursor: pointer; }
+.crm-auto__lista li.ativo, .crm-auto__lista li[data-valor]:hover { background: #eef2f7; }
+.crm-auto__lista .crm-auto__livre { color: var(--azul-claro); border-top: 1px solid var(--borda); border-radius: 0 0 7px 7px; }
+.crm-auto__lista .crm-auto__vazio { color: var(--cinza); font-weight: 400; font-size: .9rem; cursor: default; }
+.crm-etiquetas { display: flex; flex-wrap: wrap; gap: 8px; }
+.crm-etiquetas:not(:empty) { margin-bottom: 10px; }
+.crm-etiqueta {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 8px 7px 14px; border-radius: 999px;
+  background: var(--azul); color: #fff; font-size: .9rem; font-weight: 500;
+}
+.crm-etiqueta button {
+  width: 22px; height: 22px; border: none; border-radius: 50%; background: rgba(255,255,255,.22); color: #fff;
+  font-size: 1rem; line-height: 1; cursor: pointer; padding: 0;
+}
+.crm-etiqueta button:hover, .crm-etiqueta button:focus-visible { background: rgba(255,255,255,.4); outline: none; }
 .crm-grupos > summary { cursor: pointer; font-weight: 600; color: var(--azul-claro); padding: 8px 0; }
 .crm-grupo { margin: 10px 0 14px; }
 .crm-grupo > strong { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }

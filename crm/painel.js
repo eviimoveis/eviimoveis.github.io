@@ -25,7 +25,7 @@ const CAMPOS_LEAD_PAINEL = [
 const CAMPOS_CORRETOR_PAINEL = (() => {
   const base = paraPainel(CAMPOS_CORRETOR);
   const i = base.findIndex((c) => c.id === "bairro2");
-  base.splice(i + 1, 0, { id: "bairro3", rotulo: "3º bairro (antigo; use a lista abaixo)", tipo: "select", opcoes: LISTA_BAIRROS, vazio: "Nenhum" });
+  base.splice(i + 1, 0, { id: "bairro3", rotulo: "3º bairro (antigo)", tipo: "bairro", livre: true, dica: "Prefira “outros bairros”, abaixo" });
   return [...base, { id: "status", rotulo: "Situação", tipo: "select", opcoes: STATUS_CORRETOR }];
 })();
 
@@ -145,9 +145,23 @@ function pontuar(lead, c) {
   if (valor && limites.length) faixa = limites.some(([min, max]) => valor >= min && valor <= max) ? "Dentro" : "Fora";
   const bonus = faixa === "Dentro" ? 15 : faixa === "Fora" ? -15 : 0;
 
+  // Especialidades: somam pontos quando combinam com o pedido do cliente.
+  const esp = c.especialidades || [];
+  const tem = (e) => esp.includes(e);
+  const vl = lead.valor_locacao || 0, vc = lead.valor_compra || 0;
+  const combinam = [];
+  if (tem("Alto padrão") && (vl >= ALTO_PADRAO.locacao || vc >= ALTO_PADRAO.compra)) combinam.push("alto padrão");
+  if (tem("Econômico / MCMV") && ((vl && vl <= ECONOMICO.locacao) || (vc && vc <= ECONOMICO.compra))) combinam.push("econômico");
+  if (tem("Terrenos") && lead.tipo === "Terreno") combinam.push("terrenos");
+  if (tem("Galpões") && lead.tipo === "Galpão") combinam.push("galpões");
+  if (tem("Lojas e salas") && ["Loja", "Sala/Conjunto Comercial"].includes(lead.tipo)) combinam.push("lojas e salas");
+  if (tem("Studios") && lead.tipo === "Studio") combinam.push("studios");
+  if (combinam.length) notas.push("especialista em " + combinam.join(" e "));
+  const bonusEsp = combinam.length * PONTOS_ESPECIALIDADE;
+
   const nivel = regiao >= 50 ? "Excelente" : regiao >= 30 ? "Boa" : "Possível";
   const compat = nivel + (faixa === "Dentro" ? " · na faixa ✓" : faixa === "Fora" ? " · fora da faixa" : "");
-  return { c, score: regiao + bonus, nivel, compat, notas: [...new Set(notas)] };
+  return { c, score: regiao + bonus + bonusEsp, nivel, compat, notas: [...new Set(notas)] };
 }
 
 function rankear(lead) {
@@ -277,7 +291,7 @@ function abaCorretores() {
 function listaCorretores() {
   const termo = semAcento(filtros.buscaCorretor);
   const itens = D.corretores.filter((c) =>
-    !termo || semAcento([c.nome, c.telefone, c.imobiliaria, c.creci, ...todosBairros(c)].join(" ")).includes(termo));
+    !termo || semAcento([c.nome, c.telefone, c.imobiliaria, c.creci, ...todosBairros(c), ...(c.especialidades || [])].join(" ")).includes(termo));
   if (!itens.length) {
     $("lista").innerHTML = `<p class="vazio">${D.corretores.length ? "Nenhum corretor encontrado." : "Nenhum corretor ainda. Envie o link de cadastro ou clique em “+ Novo corretor”."}</p>`;
     return;
@@ -556,6 +570,7 @@ function janelaCorretor(id) {
       ${info("Bairros principais", escapar([c.bairro1, c.bairro2].filter(Boolean).join(" / ")))}
       ${info("Outros bairros", escapar(extras.marcados.join(", ")))}
       ${info("Citados nas observações", escapar(extras.citados.join(", ")))}
+      ${info("Especialidades", escapar((c.especialidades || []).join(", ")))}
       ${info("Zonas", escapar(zonas))}
       ${info("Faixas de locação", escapar((c.faixas_locacao || []).join(", ")))}
       ${info("Faixas de venda", escapar((c.faixas_venda || []).join(", ")))}

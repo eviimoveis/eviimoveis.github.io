@@ -46,7 +46,11 @@ const STATUS_ENVIO = ["Aguardando", "Tem imóvel", "Não tem imóvel", "Sem resp
 const STATUS_CORRETOR = ["Ativo", "Pausado", "Inativo"];
 const TIPOS_RESIDENCIAL = ["Apartamento", "Casa", "Studio", "Cobertura", "Terreno", "Outro"];
 const TIPOS_COMERCIAL = ["Galpão", "Loja", "Sala/Conjunto Comercial", "Casa", "Terreno", "Prédio comercial", "Outro"];
-const OUTRO_BAIRRO = "Outro bairro";
+/* Especialidades do corretor. Cada uma soma pontos no match quando combina com o pedido do cliente. */
+const ESPECIALIDADES = ["Alto padrão", "Terrenos", "Galpões", "Lojas e salas", "Studios", "Lançamentos", "Econômico / MCMV"];
+const PONTOS_ESPECIALIDADE = 10;
+const ALTO_PADRAO = { locacao: 10000, compra: 2000000 };  // a partir destes valores conta como alto padrão
+const ECONOMICO = { locacao: 2500, compra: 400000 };      // até estes valores conta como econômico
 
 /*
   Campos dos formulários.
@@ -68,11 +72,12 @@ const CAMPOS_CORRETOR = [
     se: { campo: "operacao", valores: ["Locação", "Ambos"] } },
   { id: "faixas_venda", rotulo: "Faixas de venda em que trabalha", tipo: "multi", opcoes: FAIXAS_VENDA, obrig: true, soPublico: true,
     se: { campo: "operacao", valores: ["Venda", "Ambos"] } },
-  { id: "bairro1", rotulo: "1º bairro em que mais atua", tipo: "select", opcoes: [...LISTA_BAIRROS, OUTRO_BAIRRO], obrig: true, vazio: "Selecione" },
-  { id: "bairro1_outro", rotulo: "Qual bairro?", tipo: "text", obrig: true, max: 80, se: { campo: "bairro1", valores: [OUTRO_BAIRRO] } },
-  { id: "bairro2", rotulo: "2º bairro em que mais atua", tipo: "select", opcoes: LISTA_BAIRROS, vazio: "Atuo somente em 1 bairro" },
-  { id: "outros_bairros", rotulo: "Atua em outros bairros? Marque todos", tipo: "multi", grupos: BAIRROS_POR_ZONA,
-    ajuda: "Opcional. Quanto mais completo, mais clientes certos chegam até você." },
+  { id: "bairro1", rotulo: "1º bairro em que mais atua", tipo: "bairro", obrig: true, livre: true },
+  { id: "bairro2", rotulo: "2º bairro em que mais atua", tipo: "bairro", livre: true, dica: "Deixe em branco se atua em 1 bairro só" },
+  { id: "outros_bairros", rotulo: "Atua em outros bairros?", tipo: "bairros", livre: true,
+    ajuda: "Opcional. Digite um bairro, toque na sugestão e ele entra na lista. Repita para cada bairro." },
+  { id: "especialidades", rotulo: "Tem alguma especialidade?", tipo: "multi", opcoes: ESPECIALIDADES,
+    ajuda: "Opcional. Marque só o que for o seu forte." },
   { id: "observacoes", rotulo: "Observações / especialidades / outras regiões", tipo: "textarea", max: 2000 },
 ];
 
@@ -96,8 +101,8 @@ const CAMPOS_LEAD = [
     se: { campo: "categoria", valores: ["Residencial"] } },
   { id: "atividade", rotulo: "Atividade que pretende exercer", tipo: "text", obrig: true, max: 200,
     se: { campo: "categoria", valores: ["Comercial"] } },
-  { id: "bairro1", rotulo: "Bairro de maior preferência", tipo: "select", opcoes: LISTA_BAIRROS, obrig: true, vazio: "Selecione" },
-  { id: "bairro2", rotulo: "2ª opção de bairro", tipo: "select", opcoes: LISTA_BAIRROS, vazio: "Não tenho" },
+  { id: "bairro1", rotulo: "Bairro de maior preferência", tipo: "bairro", obrig: true },
+  { id: "bairro2", rotulo: "2ª opção de bairro", tipo: "bairro", dica: "Deixe em branco se não tiver" },
   { id: "prazo", rotulo: "Prazo para entrar no imóvel", tipo: "select", opcoes: ["Dentro de 1 mês", "Entre 1 e 2 meses", "Depois de 2 meses"], obrig: true, soPublico: true, vazio: "Selecione" },
   { id: "essencial", rotulo: "O que não pode faltar no seu imóvel?", tipo: "textarea", obrig: true, soPublico: true, max: 2000 },
   { id: "diferencial", rotulo: "O que deixaria o imóvel ainda melhor para você?", tipo: "textarea", max: 2000 },
@@ -200,6 +205,15 @@ function montarCampos(campos, valores = {}) {
     const v = valores[c.id];
     const req = c.obrig ? " required" : "";
     const estrela = c.obrig ? ' <span class="crm-obrig">*</span>' : "";
+    if (c.tipo === "bairro" || c.tipo === "bairros") {
+      const caixa = `<span class="crm-auto"><input type="text" ${c.tipo === "bairro" ? `name="${c.id}" value="${escapar(v)}"${req}` : ""} data-auto="${c.tipo}"${c.livre ? " data-livre" : ""}
+          autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="80" role="combobox" aria-autocomplete="list" aria-expanded="false"
+          placeholder="${escapar(c.dica || (c.tipo === "bairro" ? "Comece a digitar. Ex.: Pe" : "Digite um bairro para adicionar"))}"><ul class="crm-auto__lista" role="listbox" hidden></ul></span>`;
+      if (c.tipo === "bairro") return `<label class="crm-campo" data-campo="${c.id}"><span>${escapar(c.rotulo)}${estrela}</span>${caixa}</label>`;
+      return `<fieldset class="crm-campo crm-campo--largo" data-campo="${c.id}">
+        <legend>${escapar(c.rotulo)}${estrela}</legend>${c.ajuda ? `<p class="crm-ajuda">${escapar(c.ajuda)}</p>` : ""}
+        <div class="crm-etiquetas">${(v || []).map((b) => htmlEtiqueta(c.id, b)).join("")}</div>${caixa}</fieldset>`;
+    }
     if (c.tipo === "multi") {
       const marcados = v || [];
       const chips = (lista) => lista.map((o) =>
@@ -252,11 +266,93 @@ function atualizarCondicionais(form, campos) {
 }
 
 /* Liga o comportamento do formulário (condicionais e máscara de dinheiro). */
+/* ---------- Campo de bairro com sugestão ao digitar ---------- */
+const htmlEtiqueta = (campo, bairro) =>
+  `<span class="crm-etiqueta">${escapar(bairro)}<input type="hidden" name="${campo}" value="${escapar(bairro)}"><button type="button" data-remover aria-label="Remover ${escapar(bairro)}">×</button></span>`;
+
+/* Bairro oficial com esse nome (sem ligar para acento ou maiúscula), ou "". */
+const bairroOficial = (texto) => LISTA_BAIRROS.find((b) => semAcento(b) === semAcento(texto)) || "";
+
+/* Sugestões para o que foi digitado: primeiro os que começam com o texto, depois palavra que começa, depois quem contém. */
+function sugerirBairros(texto, ignorar = []) {
+  const t = semAcento(texto);
+  if (!t) return [];
+  const fora = ignorar.map(semAcento);
+  const nota = (b) => { const n = semAcento(b); return n.startsWith(t) ? 0 : n.split(/[\s-]+/).some((p) => p.startsWith(t)) ? 1 : n.includes(t) ? 2 : 9; };
+  return LISTA_BAIRROS.filter((b) => !fora.includes(semAcento(b)) && nota(b) < 9).sort((a, b) => nota(a) - nota(b) || a.localeCompare(b, "pt-BR")).slice(0, 8);
+}
+
+function fecharSugestoes(input) {
+  const ul = input.parentElement.querySelector(".crm-auto__lista");
+  ul.hidden = true; ul.innerHTML = ""; input.setAttribute("aria-expanded", "false");
+}
+function mostrarSugestoes(input) {
+  const ul = input.parentElement.querySelector(".crm-auto__lista");
+  const texto = input.value.trim();
+  const jaTem = input.dataset.auto === "bairros" ? [...input.closest("[data-campo]").querySelectorAll("input[type=hidden]")].map((i) => i.value) : [];
+  const lista = sugerirBairros(texto, jaTem);
+  const itens = lista.map((b, i) => `<li role="option" data-valor="${escapar(b)}"${i === 0 ? ' class="ativo"' : ""}>${escapar(b)}</li>`);
+  // Corretor pode informar bairro fora da lista: oferece usar o que digitou.
+  if (texto.length >= 3 && input.hasAttribute("data-livre") && !bairroOficial(texto) && !jaTem.map(semAcento).includes(semAcento(texto)))
+    itens.push(`<li role="option" data-valor="${escapar(texto)}" class="crm-auto__livre${lista.length ? "" : " ativo"}">Usar “${escapar(texto)}”</li>`);
+  if (texto && !itens.length) itens.push('<li class="crm-auto__vazio">Nenhum bairro com esse nome. Tente as primeiras letras.</li>');
+  ul.innerHTML = itens.join(""); ul.hidden = !itens.length; input.setAttribute("aria-expanded", String(!ul.hidden));
+}
+function escolherBairro(input, valor) {
+  if (input.dataset.auto === "bairros") {
+    const caixa = input.closest("[data-campo]");
+    const ja = [...caixa.querySelectorAll("input[type=hidden]")].map((i) => semAcento(i.value));
+    if (valor && !ja.includes(semAcento(valor))) caixa.querySelector(".crm-etiquetas").insertAdjacentHTML("beforeend", htmlEtiqueta(caixa.dataset.campo, valor));
+    input.value = "";
+  } else input.value = valor;
+  fecharSugestoes(input);
+}
+/*
+  Ao sair do campo: ajusta para o nome oficial; se só uma sugestão combina, usa ela.
+  Com "forcar" (ao enviar o formulário), o que ficou digitado em "outros bairros" entra como está.
+*/
+function ajustarBairro(input, forcar = false) {
+  const texto = input.value.trim();
+  if (!texto) return;
+  const exato = bairroOficial(texto);
+  const lista = exato ? [exato] : sugerirBairros(texto);
+  if (lista.length === 1) escolherBairro(input, lista[0]);
+  else if (input.dataset.auto === "bairros" && input.hasAttribute("data-livre") && texto.length >= 3 && (forcar || !lista.length)) escolherBairro(input, texto);
+}
+
 function ativarForm(form, campos) {
   form._campos = campos;
   atualizarCondicionais(form, campos);
   if (form._ativo) return; // o mesmo <form> pode ser reaproveitado com outros campos
   form._ativo = true;
+  const auto = (e) => (e.target.matches?.("[data-auto]") ? e.target : null);
+  form.addEventListener("input", (e) => { if (auto(e)) mostrarSugestoes(e.target); });
+  form.addEventListener("focusin", (e) => { if (auto(e) && e.target.value.trim()) mostrarSugestoes(e.target); });
+  form.addEventListener("focusout", (e) => { if (auto(e)) { ajustarBairro(e.target); fecharSugestoes(e.target); } });
+  // pointerdown (e não click) para escolher antes de o campo perder o foco
+  form.addEventListener("pointerdown", (e) => {
+    const li = e.target.closest?.(".crm-auto__lista li[data-valor]");
+    if (li) { e.preventDefault(); escolherBairro(li.closest(".crm-auto").querySelector("input"), li.dataset.valor); }
+  });
+  form.addEventListener("click", (e) => { if (e.target.matches?.("[data-remover]")) e.target.closest(".crm-etiqueta").remove(); });
+  form.addEventListener("keydown", (e) => {
+    const input = auto(e);
+    if (!input) return;
+    const ul = input.parentElement.querySelector(".crm-auto__lista");
+    const itens = [...ul.querySelectorAll("li[data-valor]")];
+    const atual = itens.findIndex((li) => li.classList.contains("ativo"));
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (!itens.length) return;
+      e.preventDefault();
+      const novo = (atual + (e.key === "ArrowDown" ? 1 : -1) + itens.length) % itens.length;
+      itens.forEach((li, i) => li.classList.toggle("ativo", i === novo));
+      itens[novo].scrollIntoView({ block: "nearest" });
+    } else if (e.key === "Enter") {
+      // Enter escolhe a sugestão em vez de enviar o formulário
+      if (!ul.hidden && itens.length) { e.preventDefault(); escolherBairro(input, itens[Math.max(0, atual)].dataset.valor); }
+      else if (input.dataset.auto === "bairros") { e.preventDefault(); ajustarBairro(input, true); }
+    } else if (e.key === "Escape" && !ul.hidden) { e.preventDefault(); e.stopPropagation(); fecharSugestoes(input); } // não fecha a janela do painel
+  });
   form.addEventListener("change", () => atualizarCondicionais(form, form._campos));
   form.addEventListener("focusout", (e) => {
     if (e.target.matches?.("[data-dinheiro]")) { const n = lerDinheiro(e.target.value); e.target.value = n ? reais(n) : ""; }
@@ -274,7 +370,19 @@ function lerCampos(form, campos) {
       if (!escondido && c.obrig && !dados[c.id].length) return { erro: `Marque pelo menos uma opção em "${c.rotulo}".` };
       continue;
     }
+    if (c.tipo === "bairros") {
+      const pendente = caixa?.querySelector("[data-auto]");
+      if (pendente && !escondido) ajustarBairro(pendente, true); // o que ficou digitado sem escolher
+      dados[c.id] = escondido ? [] : [...caixa.querySelectorAll("input[type=hidden]")].map((i) => i.value);
+      continue;
+    }
     const bruto = escondido ? "" : (form.elements[c.id]?.value ?? "").trim();
+    if (c.tipo === "bairro") {
+      const oficial = bairroOficial(bruto);
+      if (bruto && !oficial && !c.livre) return { erro: `Escolha um bairro da lista em "${c.rotulo}". Digite as primeiras letras e toque na sugestão.` };
+      dados[c.id] = oficial || bruto || null;
+      continue;
+    }
     if (c.tipo === "dinheiro") {
       const n = lerDinheiro(bruto);
       if (!escondido && c.obrig && !n) return { erro: `Informe um valor em "${c.rotulo}". Ex.: 5.000` };
@@ -285,14 +393,10 @@ function lerCampos(form, campos) {
       dados[c.id] = d;
     } else dados[c.id] = bruto === "" ? null : bruto;
   }
-  // "Outro bairro": grava o que a pessoa escreveu
-  if ("bairro1_outro" in dados) {
-    if (dados.bairro1 === OUTRO_BAIRRO) dados.bairro1 = dados.bairro1_outro;
-    delete dados.bairro1_outro;
-  }
   // Bairros extras: não repete os dois principais
   if (Array.isArray(dados.outros_bairros)) {
-    dados.outros_bairros = dados.outros_bairros.filter((b) => b !== dados.bairro1 && b !== dados.bairro2);
+    const principais = [dados.bairro1, dados.bairro2].map(semAcento);
+    dados.outros_bairros = dados.outros_bairros.filter((b) => !principais.includes(semAcento(b)));
   }
   return { dados };
 }
