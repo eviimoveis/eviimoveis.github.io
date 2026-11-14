@@ -97,6 +97,82 @@ insert into public.imobiliarias (id, nome, telefone, email, site, contato, opera
 insert into public.imobiliarias (id, nome, telefone, email, site, contato, operacao, bairros, observacoes) values ('e61e4fea-16b0-52e6-ac20-b3a0e9af8103', 'Adel Gestão (ADM)', '1130772277', 'gestaovendas@adel.com.br', null, null, 'Locação', '{}', 'Zona informada no cadastro antigo: ZO. Tem vários imóveis para eu somente locar.') on conflict (id) do nothing;
 insert into public.imobiliarias (id, nome, telefone, email, site, contato, operacao, bairros, observacoes) values ('90a22c33-8143-5c99-8d1c-c1b47b92a510', 'Dinâmica', '11981559070', null, 'https://www.dinamicamontepio.com.br', 'Leandro', null, array['Tucuruvi','Santana']::text[], 'Zona informada no cadastro antigo: ZL.') on conflict (id) do nothing;
 
+-- ===================== Anúncios (página pública por imóvel) =====================
+create table if not exists public.anuncios (
+  id uuid primary key default gen_random_uuid(),
+  criado_em timestamptz not null default now(),
+  atualizado_em timestamptz not null default now(),
+  status text not null default 'Ativo' check (status in ('Ativo', 'Pausado')),
+  expira_em date not null,
+  -- conteúdo público
+  titulo text not null check (char_length(titulo) between 3 and 160),
+  operacao text not null default 'Locação' check (operacao in ('Locação', 'Venda')),
+  tipo text check (char_length(tipo) <= 60),
+  bairro text check (char_length(bairro) <= 80),
+  cidade text check (char_length(cidade) <= 80),
+  localizacao text check (char_length(localizacao) <= 300),
+  valor numeric check (valor >= 0),
+  condominio numeric check (condominio >= 0),
+  iptu numeric check (iptu >= 0),
+  outros_custos numeric check (outros_custos >= 0),
+  area numeric check (area >= 0),
+  dormitorios smallint check (dormitorios between 0 and 50),
+  suites smallint check (suites between 0 and 50),
+  banheiros smallint check (banheiros between 0 and 50),
+  vagas smallint check (vagas between 0 and 50),
+  descricao text check (char_length(descricao) <= 6000),
+  destaques text[] not null default '{}' check (cardinality(destaques) <= 30),
+  fotos jsonb not null default '[]' check (jsonb_typeof(fotos) = 'array' and jsonb_array_length(fotos) <= 60),
+  whatsapp text check (char_length(whatsapp) <= 20),
+  -- só para o painel (nunca vai para a página pública)
+  link_origem text check (char_length(link_origem) <= 1000),
+  observacao_interna text check (char_length(observacao_interna) <= 2000)
+);
+alter table public.anuncios enable row level security;
+grant select, insert, update, delete on public.anuncios to authenticated;
+drop policy if exists "admin anuncios" on public.anuncios;
+create policy "admin anuncios" on public.anuncios
+  for all to authenticated using (public.is_crm_admin()) with check (public.is_crm_admin());
+
+-- Página pública: lê UM anúncio pelo id, só com os campos públicos.
+-- Vencido ou pausado devolve só {"disponivel": false}. Visitante não lista nem lê a tabela.
+create or replace function public.anuncio_publico(p_id uuid)
+returns jsonb
+language sql stable security definer set search_path = public
+as $$
+  select case
+    when a.id is null then null
+    when a.status <> 'Ativo' or a.expira_em < (now() at time zone 'America/Sao_Paulo')::date
+      then jsonb_build_object('disponivel', false)
+    else jsonb_build_object(
+      'disponivel', true, 'titulo', a.titulo, 'operacao', a.operacao, 'tipo', a.tipo,
+      'bairro', a.bairro, 'cidade', a.cidade, 'localizacao', a.localizacao,
+      'valor', a.valor, 'condominio', a.condominio, 'iptu', a.iptu, 'outros_custos', a.outros_custos,
+      'area', a.area, 'dormitorios', a.dormitorios, 'suites', a.suites, 'banheiros', a.banheiros,
+      'vagas', a.vagas, 'descricao', a.descricao, 'destaques', a.destaques, 'fotos', a.fotos,
+      'whatsapp', a.whatsapp, 'expira_em', a.expira_em)
+  end
+  from (select 1) x left join public.anuncios a on a.id = p_id
+$$;
+revoke all on function public.anuncio_publico(uuid) from public;
+grant execute on function public.anuncio_publico(uuid) to anon, authenticated;
+
+-- ---------- Fotos: bucket público para leitura, envio só pelo painel ----------
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('anuncios', 'anuncios', true, 10485760, array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do update set public = true, file_size_limit = 10485760,
+  allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp'];
+
+drop policy if exists "anuncios fotos enviar" on storage.objects;
+create policy "anuncios fotos enviar" on storage.objects
+  for insert to authenticated with check (bucket_id = 'anuncios' and public.is_crm_admin());
+drop policy if exists "anuncios fotos alterar" on storage.objects;
+create policy "anuncios fotos alterar" on storage.objects
+  for update to authenticated using (bucket_id = 'anuncios' and public.is_crm_admin());
+drop policy if exists "anuncios fotos apagar" on storage.objects;
+create policy "anuncios fotos apagar" on storage.objects
+  for delete to authenticated using (bucket_id = 'anuncios' and public.is_crm_admin());
+
 -- ---------- Leads (clientes) ----------
 create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),

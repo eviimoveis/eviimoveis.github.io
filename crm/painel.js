@@ -2,7 +2,7 @@
 
 const $ = (id) => document.getElementById(id);
 const sb = criarCliente();
-const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], digo_lancamentos: [], digo_pagamentos: [], digo_config: [], imobiliarias: [] };
+const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], digo_lancamentos: [], digo_pagamentos: [], digo_config: [], imobiliarias: [], anuncios: [] };
 const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando", buscaEnvio: "" };
 const TOP = 5;            // quantos corretores sugerir
 const DIAS_COBRANCA = 2;  // cobrar o corretor depois de quantos dias
@@ -220,6 +220,9 @@ async function carregar() {
   const iImob = tabelas.indexOf("imobiliarias");
   imobAtivo = !respostas[iImob].error;
   if (!imobAtivo) respostas[iImob] = { data: [] };
+  const iAnun = tabelas.indexOf("anuncios");
+  anunciosAtivo = !respostas[iAnun].error;
+  if (!anunciosAtivo) respostas[iAnun] = { data: [] };
   const falha = respostas.find((r) => r.error);
   if (falha) { console.error(falha.error); aviso("Erro ao carregar dados: " + falha.error.message, true); return; }
   tabelas.forEach((t, i) => { D[t] = respostas[i].data || []; });
@@ -239,8 +242,11 @@ function desenhar() {
   const saldoDigo = resumoDigo().saldo;
   $("n-digo").textContent = saldoDigo > 0 ? brl(saldoDigo).replace(",00", "") : "";
   $("n-imobiliarias").textContent = gruposImob().length || "";
+  const vencendo = (D.anuncios || []).filter((a) => a.status === "Ativo" && diasAte(a.expira_em) >= 0 && diasAte(a.expira_em) <= 3).length;
+  $("n-anuncios").textContent = vencendo ? `${vencendo} vencendo` : ((D.anuncios || []).filter((a) => a.status === "Ativo" && diasAte(a.expira_em) >= 0).length || "");
+  $("n-anuncios").classList.toggle("crm-aba__n--alerta", vencendo > 0);
   document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
-  ({ leads: abaLeads, corretores: abaCorretores, imobiliarias: abaImobiliarias, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
+  ({ leads: abaLeads, corretores: abaCorretores, imobiliarias: abaImobiliarias, anuncios: abaAnuncios, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
 }
 
 /* ----- Leads ----- */
@@ -465,7 +471,7 @@ function abrirJanela(html) {
 }
 function fecharJanela() { aberto = null; if ($("janela").open) $("janela").close(); }
 function reabrirJanela() {
-  if (!aberto || !$("janela").open) return;
+  if (!aberto || !$("janela").open || aberto.tipo === "anuncio") return;
   const topo = $("janela").scrollTop;
   if (aberto.tipo === "lead") janelaLead(aberto.id);
   else if (aberto.tipo === "imobiliaria") janelaImob(aberto.id);
@@ -735,11 +741,11 @@ const ACOES = {
     if (await gravar(sb.from("tarefas").delete().eq("id", b.dataset.id))) await carregar();
   },
 };
-Object.assign(ACOES, IMOB_ACOES);
+Object.assign(ACOES, IMOB_ACOES, ANUNCIO_ACOES);
 
 document.addEventListener("click", (e) => {
   const alvo = e.target.closest("[data-acao]");
-  if (!alvo || !["menu-linha", "im-menu"].includes(alvo.dataset.acao)) fecharMenuLinha();
+  if (!alvo || !["menu-linha", "im-menu", "an-menu"].includes(alvo.dataset.acao)) fecharMenuLinha();
   if (!alvo || alvo.matches("select, input")) return;
   const acao = ACOES[alvo.dataset.acao];
   if (acao) acao(alvo, e);

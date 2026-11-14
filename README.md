@@ -107,3 +107,20 @@ de cobrança ficam no início de `crm/painel.js` (`TOP` e `DIAS_COBRANCA`).
 ## WhatsApp
 Os botões **📲 Enviar** e **Cobrar** abrem o WhatsApp (ou WhatsApp Business) do aparelho com a mensagem pronta,
 igual ao link "Enviar" da planilha. Não usa a API paga da Meta, então o envio não é automático: você confirma no WhatsApp.
+
+# Anúncios (página pública por imóvel)
+
+Aba **Anúncios** no painel: cria uma página `anuncio.html?id=...` para cada imóvel, com o mesmo visual da `/camargo-prime/`.
+
+1. **+ Criar anúncio** → cole o link do anúncio e clique em **Extrair** (ou cole o texto do anúncio). Os dados preenchem o formulário; confira e ajuste.
+2. Envie as fotos (várias imagens ou um `.zip`). Elas são reduzidas no navegador (1600 px + miniatura de 480 px) antes de ir para o Storage. A primeira é a principal; dá para trocar, reordenar e pôr legenda.
+3. Escolha a validade (1 semana, 1 mês, 3 meses ou uma data) e clique em **Gerar página**.
+4. Na lista: copiar link, abrir, editar, prorrogar, pausar e excluir.
+
+Depois da validade (ou pausado), a página mostra "Este imóvel não está mais disponível". Fotos de anúncios vencidos há mais de 30 dias são apagadas sozinhas quando o painel abre a aba Anúncios. A página tem `noindex` (fora do Google).
+
+## Ligar no Supabase (uma vez)
+1. **SQL Editor:** rode o bloco "Anúncios" de `supabase/schema.sql` (tabela `anuncios`, função `anuncio_publico` e bucket `anuncios`).
+2. **Edge Functions → Deploy a new function → Via Editor**, nome `extrair-anuncio`, cole `supabase/functions/extrair-anuncio/index.ts` e publique (precisa de papel Owner, Administrator ou Developer no projeto). Sem ela, o "Extrair" pelo link não funciona, mas colar o texto funciona.
+
+Muitos portais grandes bloqueiam robôs; nesses, use a caixa de colar o texto.
