@@ -130,7 +130,10 @@ Deno.serve(async (req) => {
 
   // Só quem está logado e autorizado no painel
   const auth = req.headers.get("Authorization") || "";
-  const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
+  // Chave pública: a do ambiente da função ou a que o próprio painel envia (projetos com as chaves novas "sb_publishable_").
+  const chave = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || req.headers.get("apikey") || "";
+  if (!auth || !chave) return resposta({ erro: "Acesso não autorizado." }, 403, origem);
+  const sb = createClient(Deno.env.get("SUPABASE_URL")!, chave, { global: { headers: { Authorization: auth } } });
   const { data: autorizado, error: erroAuth } = await sb.rpc("is_crm_admin");
   if (erroAuth || autorizado !== true) return resposta({ erro: "Acesso não autorizado." }, 403, origem);
 
