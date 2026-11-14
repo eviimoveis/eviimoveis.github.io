@@ -236,7 +236,8 @@ function desenhar() {
   const novos = D.leads.filter((l) => l.etapa === "Novo").length;
   $("n-leads").textContent = novos ? `${novos} novo${novos > 1 ? "s" : ""}` : "";
   $("n-corretores").textContent = D.corretores.filter((c) => c.status === "Ativo").length;
-  const pend = D.envios.filter(cobrancaVencida).length + D.tarefas.filter((t) => !t.concluida && t.vence_em <= hoje).length;
+  const pend = D.envios.filter(cobrancaVencida).length + D.tarefas.filter((t) => t.lead_id && !t.concluida && t.vence_em && t.vence_em <= hoje).length;
+  atualizarContadorTarefas();
   $("n-envios").textContent = pend ? `${pend} a cobrar` : "";
   $("n-envios").classList.toggle("crm-aba__n--alerta", pend > 0);
   const saldoDigo = resumoDigo().saldo;
@@ -246,7 +247,7 @@ function desenhar() {
   $("n-anuncios").textContent = vencendo ? `${vencendo} vencendo` : ((D.anuncios || []).filter((a) => a.status === "Ativo" && diasAte(a.expira_em) >= 0).length || "");
   $("n-anuncios").classList.toggle("crm-aba__n--alerta", vencendo > 0);
   document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
-  ({ leads: abaLeads, corretores: abaCorretores, imobiliarias: abaImobiliarias, anuncios: abaAnuncios, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
+  ({ leads: abaLeads, tarefas: abaTarefas, corretores: abaCorretores, imobiliarias: abaImobiliarias, anuncios: abaAnuncios, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
 }
 
 /* ----- Leads ----- */
@@ -364,7 +365,7 @@ function itemTarefa(t, comLead = true) {
 }
 
 function abaEnvios() {
-  const tarefas = D.tarefas.filter((t) => !t.concluida).sort((a, b) => a.vence_em.localeCompare(b.vence_em));
+  const tarefas = D.tarefas.filter((t) => t.lead_id && !t.concluida).sort((a, b) => (a.vence_em || "9999").localeCompare(b.vence_em || "9999"));
   $("conteudo").innerHTML = `
     <h2 class="crm-titulo">Leads enviados a corretores</h2>
     <div class="crm-barra crm-barra--busca">
@@ -490,7 +491,7 @@ function janelaLead(id) {
   const visiveis = verMais ? ranking : ranking.slice(0, TOP);
   const envios = enviosDoLead(id);
   const jaEnviado = (cid) => envios.find((e) => e.corretor_id === cid);
-  const tarefas = D.tarefas.filter((t) => t.lead_id === id).sort((a, b) => a.concluida - b.concluida || a.vence_em.localeCompare(b.vence_em));
+  const tarefas = D.tarefas.filter((t) => t.lead_id === id).sort((a, b) => a.concluida - b.concluida || (a.vence_em || "9999").localeCompare(b.vence_em || "9999"));
   const historico = D.interacoes.filter((i) => i.lead_id === id);
   const zonas = [...new Set([l.bairro1, l.bairro2].map(zonaDe).filter(Boolean))].map((z) => NOME_ZONA[z]).join(" / ");
 
@@ -741,7 +742,7 @@ const ACOES = {
     if (await gravar(sb.from("tarefas").delete().eq("id", b.dataset.id))) await carregar();
   },
 };
-Object.assign(ACOES, IMOB_ACOES, ANUNCIO_ACOES);
+Object.assign(ACOES, IMOB_ACOES, ANUNCIO_ACOES, TAREFA_ACOES);
 
 document.addEventListener("click", (e) => {
   const alvo = e.target.closest("[data-acao]");
