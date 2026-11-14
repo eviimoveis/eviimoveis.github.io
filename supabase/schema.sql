@@ -66,6 +66,37 @@ do $$ begin
   end if;
 end $$;
 
+-- ---------- Imobiliárias (adicionado depois) ----------
+-- A lista de imobiliárias sai do campo "Imobiliária" dos corretores; esta tabela guarda só
+-- o que é completado à mão (contatos, tipos de imóvel, faixas, observações).
+create table if not exists public.imobiliarias (
+  id uuid primary key default gen_random_uuid(),
+  criado_em timestamptz not null default now(),
+  nome text not null check (char_length(nome) between 2 and 120),
+  apelidos text[] not null default '{}' check (cardinality(apelidos) <= 50),
+  telefone text check (char_length(telefone) <= 30),
+  email text check (char_length(email) <= 160),
+  site text check (char_length(site) <= 200),
+  contato text check (char_length(contato) <= 120),
+  categoria text check (categoria in ('Residencial', 'Comercial', 'Ambos')),
+  operacao text check (operacao in ('Locação', 'Venda', 'Ambos')),
+  bairros text[] not null default '{}' check (cardinality(bairros) <= 50),
+  tipos text[] not null default '{}' check (cardinality(tipos) <= 20),
+  faixas_venda text[] not null default '{}' check (cardinality(faixas_venda) <= 10),
+  faixas_locacao text[] not null default '{}' check (cardinality(faixas_locacao) <= 10),
+  observacoes text check (char_length(observacoes) <= 2000)
+);
+alter table public.imobiliarias enable row level security;
+grant select, insert, update, delete on public.imobiliarias to authenticated;
+drop policy if exists "admin imobiliarias" on public.imobiliarias;
+create policy "admin imobiliarias" on public.imobiliarias
+  for all to authenticated using (public.is_crm_admin()) with check (public.is_crm_admin());
+
+-- Imobiliárias da planilha que têm contato (as demais aparecem sozinhas pelos corretores).
+insert into public.imobiliarias (id, nome, telefone, email, site, contato, operacao, bairros, observacoes) values ('aa4b8984-773b-52de-b8ec-a679c6011d52', 'Adbens', '11963173138', null, 'https://adbens.com.br/imobiliaria', 'Angelo e Moises', null, array['Itaim Bibi','Bela Vista','Jardins']::text[], 'Zona informada no cadastro antigo: ZO. Registrado. Região secundária antiga também incluía Moema.') on conflict (id) do nothing;
+insert into public.imobiliarias (id, nome, telefone, email, site, contato, operacao, bairros, observacoes) values ('e61e4fea-16b0-52e6-ac20-b3a0e9af8103', 'Adel Gestão (ADM)', '1130772277', 'gestaovendas@adel.com.br', null, null, 'Locação', '{}', 'Zona informada no cadastro antigo: ZO. Tem vários imóveis para eu somente locar.') on conflict (id) do nothing;
+insert into public.imobiliarias (id, nome, telefone, email, site, contato, operacao, bairros, observacoes) values ('90a22c33-8143-5c99-8d1c-c1b47b92a510', 'Dinâmica', '11981559070', null, 'https://www.dinamicamontepio.com.br', 'Leandro', null, array['Tucuruvi','Santana']::text[], 'Zona informada no cadastro antigo: ZL.') on conflict (id) do nothing;
+
 -- ---------- Leads (clientes) ----------
 create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),

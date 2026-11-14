@@ -2,7 +2,7 @@
 
 const $ = (id) => document.getElementById(id);
 const sb = criarCliente();
-const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], digo_lancamentos: [], digo_pagamentos: [], digo_config: [] };
+const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], digo_lancamentos: [], digo_pagamentos: [], digo_config: [], imobiliarias: [] };
 const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando", buscaEnvio: "" };
 const TOP = 5;            // quantos corretores sugerir
 const DIAS_COBRANCA = 2;  // cobrar o corretor depois de quantos dias
@@ -216,6 +216,10 @@ async function carregar() {
   // Tabelas do Pagamentos Digo são opcionais: se ainda não existirem no banco, o resto do painel segue normal.
   digoAtivo = !tabelas.some((t, i) => t.startsWith("digo_") && respostas[i].error);
   tabelas.forEach((t, i) => { if (t.startsWith("digo_") && respostas[i].error) respostas[i] = { data: [] }; });
+  // Tabela de imobiliárias também é opcional: sem ela, a aba funciona só com o que vem dos corretores.
+  const iImob = tabelas.indexOf("imobiliarias");
+  imobAtivo = !respostas[iImob].error;
+  if (!imobAtivo) respostas[iImob] = { data: [] };
   const falha = respostas.find((r) => r.error);
   if (falha) { console.error(falha.error); aviso("Erro ao carregar dados: " + falha.error.message, true); return; }
   tabelas.forEach((t, i) => { D[t] = respostas[i].data || []; });
@@ -234,8 +238,9 @@ function desenhar() {
   $("n-envios").classList.toggle("crm-aba__n--alerta", pend > 0);
   const saldoDigo = resumoDigo().saldo;
   $("n-digo").textContent = saldoDigo > 0 ? brl(saldoDigo).replace(",00", "") : "";
+  $("n-imobiliarias").textContent = gruposImob().length || "";
   document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
-  ({ leads: abaLeads, corretores: abaCorretores, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
+  ({ leads: abaLeads, corretores: abaCorretores, imobiliarias: abaImobiliarias, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
 }
 
 /* ----- Leads ----- */
@@ -462,7 +467,9 @@ function fecharJanela() { aberto = null; if ($("janela").open) $("janela").close
 function reabrirJanela() {
   if (!aberto || !$("janela").open) return;
   const topo = $("janela").scrollTop;
-  if (aberto.tipo === "lead") janelaLead(aberto.id); else janelaCorretor(aberto.id);
+  if (aberto.tipo === "lead") janelaLead(aberto.id);
+  else if (aberto.tipo === "imobiliaria") janelaImob(aberto.id);
+  else janelaCorretor(aberto.id);
   $("janela").scrollTop = topo;
 }
 const info = (rotulo, valor) => (valor ? `<div><dt>${rotulo}</dt><dd>${valor}</dd></div>` : "");
@@ -564,7 +571,7 @@ function janelaCorretor(id) {
       ${info("WhatsApp", `<a href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noopener">${escapar(formatarTelefone(c.telefone))}</a>`)}
       ${info("E-mail", escapar(c.email))}
       ${info("CRECI", escapar(c.creci))}
-      ${info("Imobiliária", escapar(c.imobiliaria))}
+      ${info("Imobiliária", imobDoCorretor(c).map((i) => `<button class="crm-link-texto" data-acao="abrir-imob" data-id="${escapar(i.id)}">${escapar(i.nome)}</button>`).join(", ") || escapar(c.imobiliaria))}
       ${info("Site / perfil", escapar(c.site))}
       ${info("Atende", escapar(`${c.categoria} · ${c.operacao}`))}
       ${info("Bairros principais", escapar([c.bairro1, c.bairro2].filter(Boolean).join(" / ")))}
@@ -728,10 +735,11 @@ const ACOES = {
     if (await gravar(sb.from("tarefas").delete().eq("id", b.dataset.id))) await carregar();
   },
 };
+Object.assign(ACOES, IMOB_ACOES);
 
 document.addEventListener("click", (e) => {
   const alvo = e.target.closest("[data-acao]");
-  if (!alvo || alvo.dataset.acao !== "menu-linha") fecharMenuLinha();
+  if (!alvo || !["menu-linha", "im-menu"].includes(alvo.dataset.acao)) fecharMenuLinha();
   if (!alvo || alvo.matches("select, input")) return;
   const acao = ACOES[alvo.dataset.acao];
   if (acao) acao(alvo, e);
