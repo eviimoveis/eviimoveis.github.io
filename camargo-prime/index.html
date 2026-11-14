@@ -149,7 +149,7 @@ footer small{display:block;letter-spacing:3px;color:var(--gold);font-weight:700;
 </div>
 
 <script>
-const WHATSAPP = ""; // ex.: "5511999999999"
+const WHATSAPP = "5511911297820";
 const fotos=[["hero","Sala"],["sala2","Sala"],["sala3","Sala · acesso"],["corr","Corredor"],["dorm1","Dormitório"],["dorm2","Dormitório"],["escr","Escritório"],["arm","Armários embutidos"],["coz1","Cozinha"],["coz2","Cozinha"],["serv","Área de serviço"],["tanque","Lavanderia"],["aquec","Aquecedor"],["banh1","Banheiro"],["banh2","Banheiro"],["pia","Lavatório"],["entr","Entrada do prédio"],["jard","Jardim do condomínio"],["fach","Fachada"]];
 const gal=document.getElementById('gal');
 document.getElementById('cnt').textContent=fotos.length;
@@ -169,7 +169,7 @@ st.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
 st.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)step(dx<0?1:-1);sx=null});
 const msg=encodeURIComponent('Olá, Felipe! Tenho interesse no apartamento de 3 dormitórios em Pinheiros (140 m², R$ 6.900/mês). Gostaria de mais informações.');
 document.getElementById('wa').href=WHATSAPP?`https://wa.me/${WHATSAPP}?text=${msg}`:`https://wa.me/?text=${msg}`;
-if(WHATSAPP)document.getElementById('tel').textContent='· WhatsApp +'+WHATSAPP;
+if(WHATSAPP)document.getElementById('tel').textContent='· WhatsApp (11) 91129-7820';
 </script>
 <div id="expirado" style="display:none;position:fixed;inset:0;background:#0F3D2E;color:#fff;z-index:50;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:Montserrat,sans-serif"><div><div style="font-family:'DM Serif Display',serif;font-size:30px;color:#C9A24B">EVI Imóveis</div><p style="color:#fff;margin-top:14px;font-size:17px">Este imóvel não está mais disponível.</p><p style="color:#E8E2D0;font-size:15px">Fale com a EVI Imóveis para conhecer outras opções.</p></div></div>
 <script>
