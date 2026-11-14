@@ -6,7 +6,7 @@ const D = { leads: [], corretores: [], envios: [], tarefas: [], interacoes: [], 
 const filtros = { etapa: "", buscaLead: "", buscaCorretor: "", statusEnvio: "Aguardando", buscaEnvio: "" };
 const TOP = 5;            // quantos corretores sugerir
 const DIAS_COBRANCA = 2;  // cobrar o corretor depois de quantos dias
-let aba = "leads";
+let aba = "tarefas";
 let digoAtivo = false;   // false enquanto o banco não tiver as tabelas do Pagamentos Digo
 let usuario = null;
 let aberto = null;        // { tipo: "lead" | "corretor", id }
@@ -247,6 +247,8 @@ function desenhar() {
   $("n-anuncios").textContent = vencendo ? `${vencendo} vencendo` : ((D.anuncios || []).filter((a) => a.status === "Ativo" && diasAte(a.expira_em) >= 0).length || "");
   $("n-anuncios").classList.toggle("crm-aba__n--alerta", vencendo > 0);
   document.querySelectorAll(".crm-aba[data-aba]").forEach((b) => b.classList.toggle("ativa", b.dataset.aba === aba));
+  // No celular a barra de abas rola para o lado: mantém a aba escolhida à vista.
+  document.querySelector(".crm-aba.ativa")?.scrollIntoView({ block: "nearest", inline: "nearest" });
   ({ leads: abaLeads, tarefas: abaTarefas, corretores: abaCorretores, imobiliarias: abaImobiliarias, anuncios: abaAnuncios, envios: abaEnvios, relatorios: abaRelatorios, digo: abaDigo })[aba]();
 }
 

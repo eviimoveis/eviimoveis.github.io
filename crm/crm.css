@@ -442,3 +442,12 @@ code { background: #efe6d2; }
 /* A aba selecionada continua legível com o mouse em cima */
 .crm-aba.ativa:hover { background: var(--azul); color: #fff; }
 .crm-toast--acao span, .crm-toast--acao button { white-space: nowrap; }
+/* Celular: barra de abas de baixo rola para o lado, com os nomes inteiros */
+@media (max-width: 820px) {
+  .crm-lateral .crm-abas { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(to right, #000 88%, transparent); -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); }
+  .crm-lateral .crm-abas::-webkit-scrollbar { display: none; }
+  .crm-lateral .crm-aba, .crm-lateral.recolhido .crm-aba, .recolhido .crm-lateral .crm-aba { flex: 0 0 auto; width: auto; min-width: 76px; padding: 7px 10px; scroll-snap-align: start; }
+  .crm-lateral .crm-aba__nome { overflow: visible; text-overflow: clip; white-space: nowrap; }
+  .crm-lateral .crm-aba__n { left: calc(50% + 8px); }
+}
