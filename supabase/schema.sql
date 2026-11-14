@@ -173,6 +173,15 @@ drop policy if exists "anuncios fotos apagar" on storage.objects;
 create policy "anuncios fotos apagar" on storage.objects
   for delete to authenticated using (bucket_id = 'anuncios' and public.is_crm_admin());
 
+-- ---------- Tarefas avulsas na aba Tarefas (adicionado depois) ----------
+-- A tabela de lembretes passa a aceitar tarefas sem cliente e sem data, com lista, observação e horário.
+alter table public.tarefas alter column lead_id drop not null;
+alter table public.tarefas alter column vence_em drop not null;
+alter table public.tarefas add column if not exists lista text not null default 'Geral' check (char_length(lista) between 1 and 40);
+alter table public.tarefas add column if not exists notas text check (char_length(notas) <= 2000);
+alter table public.tarefas add column if not exists hora time;
+alter table public.tarefas add column if not exists concluida_em timestamptz;
+
 -- ---------- Leads (clientes) ----------
 create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),
