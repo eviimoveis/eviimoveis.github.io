@@ -86,7 +86,7 @@ const CAMPOS_CORRETOR = [
   { id: "telefone", rotulo: "WhatsApp (com DDD)", tipo: "tel", obrig: true, dica: "(11) 91234-5678" },
   { id: "email", rotulo: "E-mail", tipo: "email", obrig: true, soPublico: true, max: 160 },
   { id: "imobiliaria", rotulo: "Imobiliária (caso tenha)", tipo: "text", max: 120 },
-  { id: "site", rotulo: "Site ou perfil profissional", tipo: "text", max: 200 },
+  { id: "site", rotulo: "Site da imobiliária ou perfil profissional", tipo: "text", max: 200 },
   { id: "creci", rotulo: "CRECI", tipo: "text", obrig: true, soPublico: true, max: 40 },
   { id: "categoria", rotulo: "Categoria de atuação", tipo: "select", opcoes: ["Residencial", "Comercial", "Ambos"], obrig: true, vazio: "Selecione" },
   { id: "operacao", rotulo: "Tipo de operação", tipo: "select", opcoes: ["Locação", "Venda", "Ambos"], obrig: true, vazio: "Selecione" },
