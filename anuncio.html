@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Imóvel – EVI Imóveis</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0F3D2E">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Mesmo visual da página /camargo-prime/ */
+:root{--g:#0F3D2E;--g2:#1C5A44;--gold:#C9A24B;--gold-d:#8A6A22;--cream:#F7F4EC;--ink:#1F2A24;--mut:#55605A;--line:#E6E0CF}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);font-family:Montserrat,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+.wrap{max-width:960px;margin:0 auto}
+header.top{background:var(--g);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-family:'DM Serif Display',serif;color:var(--gold);font-size:24px;letter-spacing:.5px}
+.tag{background:var(--gold);color:var(--g);font-weight:700;font-size:12px;letter-spacing:2px;padding:7px 14px;border-radius:999px}
+.hero{position:relative;height:62vh;min-height:340px;max-height:560px;overflow:hidden;cursor:zoom-in;background:var(--g2)}
+.hero img{width:100%;height:100%;object-fit:cover;object-position:center 60%}
+.hero .grad{position:absolute;inset:auto 0 0 0;height:60%;background:linear-gradient(to top,rgba(10,30,22,.85),rgba(10,30,22,0))}
+.hero .txt{position:absolute;left:20px;right:20px;bottom:22px;color:#fff}
+.hero .loc{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:600;background:rgba(255,255,255,.16);padding:6px 12px;border-radius:999px}
+.hero h1{font-family:'DM Serif Display',serif;font-weight:400;font-size:clamp(30px,6vw,46px);line-height:1.1;margin:12px 0 6px}
+.hero .price{font-size:18px;font-weight:600;color:#F3E2B8}
+.hero .count{position:absolute;right:16px;top:16px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;display:flex;gap:6px;align-items:center}
+section{padding:28px 20px 0}
+h2{margin:0 0 14px;font-size:13px;letter-spacing:3px;color:var(--gold-d);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center}
+.stat b{display:block;font-size:24px;color:var(--g);margin-top:4px}
+.stat span{font-size:12px;color:var(--mut)}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+p{margin:0;font-size:15px;line-height:1.65;color:#2E3A33;white-space:pre-line}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{background:#E7EFEA;color:var(--g);font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px}
+.prices{background:var(--g);border-radius:18px;padding:22px;color:#fff;align-self:start}
+.prices .row{display:flex;justify-content:space-between;margin-top:10px;font-size:15px}
+.prices .row span:first-child{color:#D6E2DB}
+.prices .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(201,162,75,.5);margin-top:14px;padding-top:12px}
+.prices .tot b{font-family:'DM Serif Display',serif;font-weight:400;font-size:34px;color:var(--gold)}
+.lc{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.lc .ic{width:38px;height:38px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#E7EFEA}
+.lc b{display:block;font-size:14px;color:var(--g)}
+.lc span{font-size:12.5px;color:var(--mut)}
+.lc a{color:var(--g2);font-weight:600;font-size:13px}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gal button{all:unset;cursor:zoom-in;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/4;display:block;background:#E7EFEA}
+.gal button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gal img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.gal button:hover img{transform:scale(1.04)}
+.gal .cap{position:absolute;left:8px;bottom:8px;background:rgba(15,61,46,.88);color:#fff;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px}
+footer{margin-top:32px;background:var(--g);padding:26px 20px 110px;color:#E8E2D0;text-align:center}
+footer .n{font-family:'DM Serif Display',serif;font-size:24px;color:#fff;margin-top:4px}
+footer small{display:block;letter-spacing:3px;color:var(--gold);font-weight:700;font-size:12px}
+.cta{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(247,244,236,1) 60%,rgba(247,244,236,0));z-index:5}
+.cta a{display:flex;gap:10px;align-items:center;justify-content:center;max-width:520px;margin:0 auto;background:#1FA855;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:16px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.lb{position:fixed;inset:0;background:rgba(8,16,12,.96);display:none;z-index:10;flex-direction:column}
+.lb.on{display:flex}
+.lb .bar{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;color:#fff;font-weight:600;font-size:14px}
+.lb .stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;touch-action:pan-y;min-height:0}
+.lb .stage img{max-height:100%;max-width:100%;object-fit:contain;user-select:none}
+.lb button{background:rgba(255,255,255,.12);border:0;color:#fff;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb .nav{position:absolute;top:50%;transform:translateY(-50%)}
+.lb .prev{left:10px}.lb .next{right:10px}
+.aviso{position:fixed;inset:0;background:var(--g);color:#fff;z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.aviso .m{font-family:'DM Serif Display',serif;font-size:30px;color:var(--gold)}
+.aviso p{color:#E8E2D0;margin-top:12px}
+.aviso a{display:inline-block;margin-top:22px;background:#1FA855;color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:14px}
+[hidden]{display:none!important}
+@media (max-width:640px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .two{grid-template-columns:1fr}
+ .gal{grid-template-columns:repeat(2,1fr)}
+ .lb .nav{display:none}
+}
+</style>
+</head>
+<body>
+<div class="aviso" id="carregando"><div><div class="m">EVI Imóveis</div><p>Carregando o imóvel…</p></div></div>
+
+<div id="pagina" hidden>
+<header class="top"><div class="brand">EVI Imóveis</div><div class="tag" id="tag"></div></header>
+<main class="wrap">
+<div class="hero" role="button" tabindex="0" aria-label="Ver fotos em tela cheia">
+<img id="heroimg" alt="" fetchpriority="high">
+<div class="grad"></div>
+<div class="count" id="countbox"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg><span id="cnt"></span> fotos</div>
+<div class="txt">
+<span class="loc" id="locbox"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="loc"></span></span>
+<h1 id="titulo"></h1>
+<div class="price" id="price"></div>
+</div>
+</div>
+
+<section id="secstats"><div class="stats" id="stats"></div></section>
+
+<section class="two">
+<div>
+<h2>SOBRE O IMÓVEL</h2>
+<p id="descricao"></p>
+<div class="chips" id="chips"></div>
+</div>
+<div class="prices" id="prices"></div>
+</section>
+
+<section id="secgal">
+<h2>GALERIA</h2>
+<div class="gal" id="gal"></div>
+</section>
+
+<section id="secloc">
+<h2>LOCALIZAÇÃO</h2>
+<div class="lc"><div class="ic"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3D2E" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+<div><b id="locb"></b><span id="loct"></span><div><a id="mapa" target="_blank" rel="noopener noreferrer">Ver região no mapa</a></div></div></div>
+</section>
+</main>
+
+<footer><small>ENTRE EM CONTATO</small><div class="n">Felipe Silveira · Corretor</div><div style="margin-top:6px">EVI Imóveis <span id="tel"></span></div></footer>
+
+<div class="cta"><a id="wa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.3-4.4A9 9 0 1 1 21 12z"/></svg>Entrar em contato</a></div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Fotos do imóvel" tabindex="-1">
+<div class="bar"><span id="lbcap"></span><button id="lbx" aria-label="Fechar"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="stage" id="stage">
+<button class="nav prev" id="lbp" aria-label="Foto anterior"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+<img id="lbimg" alt="">
+<button class="nav next" id="lbn" aria-label="Próxima foto"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+</div>
+</div>
+</div>
+
+<div class="aviso" id="indisponivel" hidden><div><div class="m">EVI Imóveis</div>
+<p style="color:#fff;font-size:17px">Este imóvel não está mais disponível.</p>
+<p>Fale com a EVI Imóveis para conhecer outras opções.</p>
+<a id="wa2" target="_blank" rel="noopener">Falar com a EVI Imóveis</a></div></div>
+
+<script src="crm/config.js"></script>
+<script>
+(() => {
+  const WHATS_PADRAO = "5511911297820";
+  const $ = (id) => document.getElementById(id);
+  const brl = (v) => "R$ " + Math.round(Number(v)).toLocaleString("pt-BR");
+  const soDig = (t) => String(t || "").replace(/\D/g, "");
+  const whats = (num, txt) => { let d = soDig(num) || WHATS_PADRAO; if (d.length <= 11) d = "55" + d; return `https://wa.me/${d}?text=${encodeURIComponent(txt)}`; };
+  const urlFoto = (caminho) => `${CRM_CONFIG.SUPABASE_URL}/storage/v1/object/public/anuncios/${String(caminho).split("/").map(encodeURIComponent).join("/")}`;
+
+  function indisponivel() {
+    $("carregando").hidden = true; $("pagina").hidden = true; $("indisponivel").hidden = false;
+    $("wa2").href = whats(WHATS_PADRAO, "Olá, Felipe! Vi um anúncio da EVI Imóveis que não está mais disponível. Pode me mostrar outras opções?");
+    document.title = "Imóvel indisponível – EVI Imóveis";
+  }
+
+  async function iniciar() {
+    const id = new URLSearchParams(location.search).get("id") || "";
+    if (!/^[0-9a-f-]{36}$/i.test(id) || typeof CRM_CONFIG === "undefined") return indisponivel();
+    let a = null;
+    try {
+      const r = await fetch(`${CRM_CONFIG.SUPABASE_URL}/rest/v1/rpc/anuncio_publico`, {
+        method: "POST",
+        headers: { apikey: CRM_CONFIG.SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ p_id: id }),
+      });
+      if (r.ok) a = await r.json();
+    } catch { /* sem conexão: trata como indisponível */ }
+    if (!a || !a.disponivel) return indisponivel();
+    montar(a);
+  }
+
+  function montar(a) {
+    const locacao = a.operacao !== "Venda";
+    const lugar = [a.bairro, a.cidade].filter(Boolean).join(" · ");
+    document.title = `${a.titulo} – EVI Imóveis`;
+    $("tag").textContent = locacao ? "PARA LOCAÇÃO" : "À VENDA";
+    $("titulo").textContent = a.titulo;
+    $("loc").textContent = lugar; $("locbox").hidden = !lugar;
+
+    // Valores e total
+    const custos = locacao ? [["Aluguel", a.valor], ["Condomínio", a.condominio], ["IPTU", a.iptu], ["Outros", a.outros_custos]]
+                           : [["Valor", a.valor], ["Condomínio", a.condominio], ["IPTU", a.iptu], ["Outros", a.outros_custos]];
+    const linhas = custos.filter(([, v]) => Number(v) > 0);
+    const totalMensal = locacao ? linhas.reduce((s, [, v]) => s + Number(v), 0) : (Number(a.condominio) || 0) + (Number(a.iptu) || 0) + (Number(a.outros_custos) || 0);
+    if (Number(a.valor) > 0) {
+      $("price").textContent = locacao
+        ? `${brl(a.valor)}/mês${linhas.length > 1 ? ` · total ${brl(totalMensal)} com taxas` : ""}`
+        : brl(a.valor);
+    }
+    if (linhas.length) {
+      const box = $("prices");
+      box.innerHTML = `<h2 style="color:var(--gold)">${locacao ? "VALORES MENSAIS" : "VALORES"}</h2>`;
+      for (const [rotulo, v] of linhas) {
+        const row = document.createElement("div"); row.className = "row";
+        row.innerHTML = "<span></span><span></span>";
+        row.children[0].textContent = rotulo; row.children[1].textContent = brl(v) + (!locacao && rotulo !== "Valor" ? "/mês" : "");
+        box.appendChild(row);
+      }
+      if (locacao && linhas.length > 1) {
+        const tot = document.createElement("div"); tot.className = "tot";
+        tot.innerHTML = '<span style="color:var(--gold);font-weight:600">TOTAL</span><b></b>';
+        tot.querySelector("b").textContent = brl(totalMensal);
+        box.appendChild(tot);
+      }
+    } else $("prices").hidden = true;
+
+    // Números do imóvel
+    const stats = [["área", Number(a.area) > 0 ? `${Math.round(a.area)} m²` : ""], ["dormitórios", a.dormitorios], ["suítes", a.suites], ["banheiros", a.banheiros], ["vagas", a.vagas]]
+      .filter(([rot, v]) => (typeof v === "string" ? v !== "" : Number(v) > 0) || (rot === "vagas" && v === 0)).slice(0, 4);
+    if (stats.length) for (const [rot, v] of stats) {
+      const d = document.createElement("div"); d.className = "stat"; d.innerHTML = "<span></span><b></b>";
+      d.children[0].textContent = rot; d.children[1].textContent = v; $("stats").appendChild(d);
+    } else $("secstats").hidden = true;
+
+    $("descricao").textContent = a.descricao || "";
+    for (const c of a.destaques || []) { const s = document.createElement("span"); s.className = "chip"; s.textContent = c; $("chips").appendChild(s); }
+
+    // Localização
+    if (lugar || a.localizacao) {
+      $("locb").textContent = lugar || "Localização";
+      $("loct").textContent = a.localizacao || "";
+      $("mapa").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([a.localizacao, a.bairro, a.cidade].filter(Boolean).join(", "));
+    } else $("secloc").hidden = true;
+
+    // Fotos: a capa grande, miniaturas pequenas e só carregadas quando aparecem na tela;
+    // a foto grande da galeria só é baixada quando a pessoa abre a tela cheia.
+    const fotos = (a.fotos || []).filter((f) => f && f.f);
+    $("cnt").textContent = fotos.length;
+    if (fotos.length) {
+      $("heroimg").src = urlFoto(fotos[0].f);
+      $("heroimg").alt = fotos[0].legenda || a.titulo;
+    } else { $("heroimg").remove(); $("countbox").hidden = true; }
+    if (fotos.length > 1) fotos.forEach((f, i) => {
+      const b = document.createElement("button");
+      b.setAttribute("aria-label", "Ampliar foto" + (f.legenda ? ": " + f.legenda : ` ${i + 1}`));
+      const img = document.createElement("img"); img.loading = "lazy"; img.decoding = "async"; img.src = urlFoto(f.t || f.f); img.alt = f.legenda || "";
+      b.appendChild(img);
+      if (f.legenda) { const c = document.createElement("span"); c.className = "cap"; c.textContent = f.legenda; b.appendChild(c); }
+      b.onclick = () => abrir(i);
+      $("gal").appendChild(b);
+    }); else $("secgal").hidden = true;
+
+    const lb = $("lb"), im = $("lbimg"), cap = $("lbcap"); let cur = 0;
+    const mostrar = () => { const f = fotos[cur]; im.src = urlFoto(f.f); im.alt = f.legenda || ""; cap.textContent = `${f.legenda ? f.legenda + " · " : ""}${cur + 1}/${fotos.length}`; };
+    const abrir = (i) => { if (!fotos.length) return; cur = i; mostrar(); lb.classList.add("on"); lb.focus(); };
+    const passo = (d) => { cur = (cur + d + fotos.length) % fotos.length; mostrar(); };
+    const hero = document.querySelector(".hero");
+    hero.onclick = () => abrir(0);
+    hero.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(0); } };
+    $("lbx").onclick = () => lb.classList.remove("on");
+    $("lbp").onclick = (e) => { e.stopPropagation(); passo(-1); };
+    $("lbn").onclick = (e) => { e.stopPropagation(); passo(1); };
+    lb.addEventListener("keydown", (e) => { if (e.key === "Escape") lb.classList.remove("on"); if (e.key === "ArrowRight") passo(1); if (e.key === "ArrowLeft") passo(-1); });
+    let sx = null; const st = $("stage");
+    st.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    st.addEventListener("touchend", (e) => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) passo(dx < 0 ? 1 : -1); sx = null; });
+
+    // WhatsApp
+    const resumo = [a.tipo, a.bairro && "em " + a.bairro, Number(a.area) > 0 && `${Math.round(a.area)} m²`, Number(a.valor) > 0 && (locacao ? `${brl(a.valor)}/mês` : brl(a.valor))].filter(Boolean).join(", ");
+    $("wa").href = whats(a.whatsapp, `Olá, Felipe! Tenho interesse no imóvel "${a.titulo}"${resumo ? ` (${resumo})` : ""}. Gostaria de mais informações.\n${location.href}`);
+    const tel = soDig(a.whatsapp || WHATS_PADRAO);
+    $("tel").textContent = "· WhatsApp +" + (tel.length <= 11 ? "55" + tel : tel);
+
+    $("carregando").hidden = true; $("pagina").hidden = false;
+  }
+
+  iniciar();
+})();
+</script>
+</body>
+</html>
