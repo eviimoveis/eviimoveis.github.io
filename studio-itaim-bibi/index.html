@@ -46,6 +46,7 @@ p{margin:0;font-size:15px;line-height:1.65;color:#2E3A33}
 .gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .gal button{all:unset;cursor:zoom-in;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/5;display:block}
 .gal button.wide{grid-column:1/-1;aspect-ratio:3/1}
+.gal button.wide2{aspect-ratio:16/9}
 .gal button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .gal img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .gal button:hover img{transform:scale(1.04)}
@@ -147,10 +148,10 @@ footer small{display:block;letter-spacing:3px;color:var(--gold);font-weight:700;
 
 <script>
 const WHATSAPP = "5511911297820";
-const fotos=[["hero","Terraço"],["terr2","Terraço"],["terr3","Terraço"],["sala","Sala"],["dorm","Quarto"],["terr4","Terraço"],["coz1","Cozinha"],["banh","Banheiro"],["serv","Área de serviço"],["terr5","Terraço"],["coz2","Cozinha",1],["coz3","Cozinha",1]];
+const fotos=[["hero","Terraço"],["terr2","Terraço"],["terr3","Terraço"],["sala","Sala"],["dorm","Quarto"],["terr4","Terraço"],["coz1","Cozinha"],["banh","Banheiro"],["serv","Área de serviço"],["terr5","Terraço"],["coz2","Cozinha",1],["coz3","Cozinha",1],["coz4","Cozinha",1],["fach1","Fachada",2],["fach2","Fachada",2]];
 const gal=document.getElementById('gal');
 document.getElementById('cnt').textContent=fotos.length;
-fotos.forEach(([f,c,w],i)=>{const b=document.createElement('button');if(w)b.className='wide';b.setAttribute('aria-label','Ampliar foto: '+c);b.innerHTML=`<img loading="lazy" src="img/${f}.jpg" alt="${c}"><span class="cap">${c}</span>`;b.onclick=()=>open(i);gal.appendChild(b)});
+fotos.forEach(([f,c,w],i)=>{const b=document.createElement('button');if(w)b.className='wide'+(w==2?' wide2':'');b.setAttribute('aria-label','Ampliar foto: '+c);b.innerHTML=`<img loading="lazy" src="img/${f}.jpg" alt="${c}"><span class="cap">${c}</span>`;b.onclick=()=>open(i);gal.appendChild(b)});
 const lb=document.getElementById('lb'),im=document.getElementById('lbimg'),cap=document.getElementById('lbcap');let cur=0;
 function show(){const [f,c]=fotos[cur];im.src=`img/${f}.jpg`;im.alt=c;cap.textContent=`${c} · ${cur+1}/${fotos.length}`}
 function open(i){cur=i;show();lb.classList.add('on')}
