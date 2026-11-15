@@ -40,6 +40,7 @@ async function gravarTarefa(consulta) {
 /* ---------- Aba ---------- */
 function abaTarefas() {
   $("conteudo").innerHTML = `
+    <div class="crm-notif" id="barra-notif" hidden></div>
     <form class="crm-nova-tarefa" data-form-nova-tarefa autocomplete="off">
       <span class="crm-nova-tarefa__mais" aria-hidden="true">+</span>
       <input name="descricao" placeholder="Adicionar tarefa…" maxlength="500" required aria-label="Nova tarefa">
@@ -56,6 +57,7 @@ function abaTarefas() {
     <div class="crm-listas" id="tar-listas"></div>
     <div id="tar-corpo"></div>`;
   listaTarefas();
+  if (typeof notifAtualizar === "function") { desenharBarraNotif(); notifAtualizar(); }
   $("conteudo").querySelector("[name=descricao]").focus();
 }
 

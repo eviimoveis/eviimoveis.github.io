@@ -1,0 +1,16 @@
+{
+  "name": "EVI CRM",
+  "short_name": "EVI CRM",
+  "id": "painel.html",
+  "start_url": "painel.html",
+  "scope": "./",
+  "display": "standalone",
+  "lang": "pt-BR",
+  "background_color": "#0f2a44",
+  "theme_color": "#0f3b2d",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

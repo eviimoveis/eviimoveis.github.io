@@ -395,6 +395,10 @@ code { background: #efe6d2; }
 .crm-link-pronto { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--borda); border-radius: 8px; text-align: center; margin: 10px 0 14px; }
 
 /* Aba Tarefas (inspirada no Google Tarefas) */
+.crm-notif { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; background: #fff8e6; border: 1px solid #ecd9a3; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: .92rem; color: var(--texto); }
+.crm-notif[hidden] { display: none; }
+.crm-notif .botao { padding: 8px 14px; font-size: .88rem; }
+.crm-notif__acoes { display: flex; gap: 14px; }
 .crm-nova-tarefa { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--branco); border: 1px solid var(--borda); border-radius: 14px; padding: 10px 12px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(15,42,68,.05); }
 .crm-nova-tarefa__mais { font-size: 1.5rem; color: var(--azul-claro); width: 26px; text-align: center; line-height: 1; }
 .crm-nova-tarefa > input[name=descricao] { flex: 1 1 240px; border: none; font: inherit; font-size: 1.05rem; padding: 10px 4px; outline: none; background: none; color: var(--texto); }
