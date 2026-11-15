@@ -124,3 +124,18 @@ Depois da validade (ou pausado), a página mostra "Este imóvel não está mais 
 2. **Edge Functions → Deploy a new function → Via Editor**, nome `extrair-anuncio`, cole `supabase/functions/extrair-anuncio/index.ts` e publique (precisa de papel Owner, Administrator ou Developer no projeto). Sem ela, o "Extrair" pelo link não funciona, mas colar o texto funciona.
 
 Muitos portais grandes bloqueiam robôs; nesses, use a caixa de colar o texto.
+
+## Notificações das tarefas no celular (uma vez)
+
+Avisos: resumo às 8h, tarefa esquecida (2 dias ou mais de atraso, um lembrete por dia, à tarde),
+tarefa nova criada pela outra pessoa e tarefa com horário marcado (até 15 min antes). É gratuito.
+
+1. Supabase > SQL Editor: cole e rode o arquivo `supabase/notificacoes.sql`.
+2. Supabase > Edge Functions: crie a função `notificar` com o conteúdo de
+   `supabase/functions/notificar/index.ts` e desligue "Verify JWT".
+3. Em cada celular, abra o CRM pelo ícone da tela inicial, vá em Tarefas e toque em
+   "Ativar notificações". No iPhone (iOS 16.4 ou mais novo) só funciona pelo ícone da Tela de Início;
+   se o ícone foi criado antes desta atualização, apague e adicione de novo.
+
+Nenhuma chave secreta fica no site: as chaves de envio são criadas na primeira ativação e guardadas
+no banco, onde ninguém lê pela internet.

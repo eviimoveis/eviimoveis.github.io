@@ -793,7 +793,7 @@ Object.assign(ACOES, {
     if (await gravar(sb.from("tarefas").delete().eq("id", b.dataset.id))) await carregar();
   },
 });
-Object.assign(ACOES, IMOB_ACOES, ANUNCIO_ACOES, TAREFA_ACOES);
+Object.assign(ACOES, IMOB_ACOES, ANUNCIO_ACOES, TAREFA_ACOES, NOTIF_ACOES);
 
 document.addEventListener("click", (e) => {
   const alvo = e.target.closest("[data-acao]");
