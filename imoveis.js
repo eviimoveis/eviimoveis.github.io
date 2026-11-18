@@ -8,6 +8,37 @@
 */
 
 const IMOVEIS = [
+  // ===== Te0001 - Terreno - Alto de Pinheiros =====
+  {
+    "codigo": "Te0001",
+    "fotos": 5,
+    "titulo": "Terreno à venda, 545 m² em Alto de Pinheiros - São Paulo - SP",
+    "negocio": "venda",
+    "tipo": "Terreno",
+    "regiao": "Zona Oeste",
+    "bairro": "Alto de Pinheiros",
+    "cidade": "São Paulo",
+    "area": 545.0,
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 0,
+    "venda": 4890000.0,
+    "aluguel": 0,
+    "condominio": 0.0,
+    "iptu": 4800.0,
+    "descricao": "Terreno de 545 m² em Alto de Pinheiros, um dos endereços mais valorizados e tranquilos da Zona Oeste, na Rua Antônio de Gouvêa Giudice. Lote plano e amplo, com 16 metros de frente e cerca de 36 metros de profundidade, em rua asfaltada, com rede de água e esgoto e gás encanado. Uma ótima oportunidade para construir a casa dos seus sonhos ou desenvolver um projeto residencial em uma região nobre, arborizada e de fácil acesso.",
+    "beneficios": [
+      "Frente para o norte",
+      "Frente para o sul",
+      "Frente para o leste",
+      "Frente para o oeste",
+      "Gás encanado",
+      "Rede de água e esgoto",
+      "Plano",
+      "Rua asfaltada"
+    ]
+  },
   // ===== SSDSNT - Comercial - Perdizes =====
   {
     "codigo": "SSDSNT",
