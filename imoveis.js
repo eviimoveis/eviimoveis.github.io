@@ -8,6 +8,33 @@
 */
 
 const IMOVEIS = [
+  // ===== SSDSNT - Comercial - Perdizes =====
+  {
+    "codigo": "SSDSNT",
+    "fotos": 21,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 216m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 216.0,
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 2,
+    "vagas": 0,
+    "venda": 0,
+    "aluguel": 19500.0,
+    "condominio": 285.0,
+    "iptu": 1370.0,
+    "descricao": "Ponto comercial em prédio de alto padrão na Avenida Sumaré, a 400 metros da nova estação de metrô Perdizes. Salão amplo e livre, com piso porcelanato cinza, paredes brancas e iluminação de teto embutida. Grandes janelas e fachada de vidro voltadas para a rua deixam o ambiente muito iluminado com luz natural, com entrada por porta de vidro e porta giratória. Conta com copa, banheiros masculino e feminino, quadro de energia e salas internas com acesso pelo salão principal. Pode ser conjugada com a loja ao lado (loja 6).",
+    "beneficios": [
+      "Porcelanato",
+      "Copa",
+      "Janela grande",
+      "Sala grande"
+    ]
+  },
   // ===== MQS383 - Comercial - Vila Madalena =====
   {
     "codigo": "MQS383",
