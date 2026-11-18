@@ -8,6 +8,42 @@
 */
 
 const IMOVEIS = [
+  // ===== MQS383 - Comercial - Vila Madalena =====
+  {
+    "codigo": "MQS383",
+    "fotos": 15,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 292m² - Vila Madalena",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Vila Madalena",
+    "cidade": "São Paulo",
+    "area": 292.0,
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 3,
+    "vagas": 32,
+    "venda": 0,
+    "aluguel": 44500.0,
+    "condominio": 0.0,
+    "iptu": 2200.0,
+    "descricao": "Loja comercial térrea com mezanino, de frente para a Rua João Moura, no Edifício Península (Trisul), em uma das regiões mais valorizadas da Vila Madalena. São 291,72 m² privativos em dois pavimentos, com pé-direito alto, ambientes integrados, janelas amplas e fachada ativa com acesso direto pela calçada. Mezanino com acesso por escada e plataforma elevatória, 3 banheiros (um acessível) e 32 vagas compartilhadas do edifício. Ideal para restaurante, bar, cafeteria, academia, estúdio, clínica, showroom ou varejo. Entregue em estado bruto, permitindo adaptação ao projeto do locatário.",
+    "beneficios": [
+      "Elevador",
+      "Mezanino",
+      "Pé direito alto",
+      "Janela grande",
+      "Ambientes integrados",
+      "Escada",
+      "Vista panorâmica",
+      "Varanda fechada com vidro",
+      "Sala grande",
+      "Ar-condicionado",
+      "Piso frio",
+      "Conexão à internet",
+      "Acesso para cadeirantes"
+    ]
+  },
   // ===== 12DBSNT - Comercial - Perdizes =====
   {
     "codigo": "12DBSNT",
