@@ -11,7 +11,7 @@ const IMOVEIS = [
   // ===== Te0001 - Terreno - Alto de Pinheiros =====
   {
     "codigo": "Te0001",
-    "fotos": 5,
+    "fotos": 4,
     "titulo": "Terreno à venda, 545 m² em Alto de Pinheiros - São Paulo - SP",
     "negocio": "venda",
     "tipo": "Terreno",
