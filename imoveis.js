@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== 1IGO383 - Comercial - Pinheiros =====
+  {
+    "codigo": "1IGO383",
+    "fotos": 24,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 33m² - Pinheiros",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Pinheiros",
+    "cidade": "São Paulo",
+    "area": 33.0, "quartos": 0, "suites": 0, "banheiros": 0, "vagas": 0,
+    "venda": 0, "aluguel": 5000.0, "condominio": 543.0, "iptu": 163.0,
+    "descricao": "Loja de 33 m² em galeria na Rua Teodoro Sampaio, em Pinheiros, dentro de condomínio fechado, com elevador, ar-condicionado, quintal e ambientes integrados. Pé direito alto, forro de gesso com sanca, piso frio, janela grande, móvel planejado, mezanino e conexão à internet.",
+    "beneficios": ["Quintal","Ambientes integrados","Janela grande","Janela de alumínio","Ar-condicionado","Forro de gesso / sanca","Pé direito alto","Escada","Móvel planejado","Conexão à internet","Piso frio","Mezanino"]
+  },
   // ===== OOFSNT - Comercial - Pinheiros =====
   {
     "codigo": "OOFSNT",
