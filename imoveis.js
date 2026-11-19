@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== 1PG1SNT - Comercial - Perdizes =====
+  {
+    "codigo": "1PG1SNT",
+    "fotos": 6,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 60m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 60.0, "quartos": 0, "suites": 0, "banheiros": 1, "vagas": 0,
+    "venda": 0, "aluguel": 5100.0, "condominio": 50.0, "iptu": 150.0,
+    "descricao": "Loja de 60 m² em Perdizes, na Avenida Sumaré, com porcelanato, sala grande, banheiro e quintal próprio. Espaço amplo e bem iluminado, ótimo para comércio, escritório ou serviços.",
+    "beneficios": ["Quintal","Porcelanato","Banheiro de serviço","Sala grande"]
+  },
   // ===== 1NEO383 - Comercial - Perdizes =====
   {
     "codigo": "1NEO383",
