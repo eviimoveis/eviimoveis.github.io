@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== OOFSNT - Comercial - Pinheiros =====
+  {
+    "codigo": "OOFSNT",
+    "fotos": 14,
+    "titulo": "Prédio Comercial para alugar, 216m² na Rua Oscar Freire - Pinheiros",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Pinheiros",
+    "cidade": "São Paulo",
+    "area": 216.0, "quartos": 0, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 15000.0, "condominio": 0.0, "iptu": 1084.0,
+    "descricao": "Prédio comercial de 216 m² em 4 pavimentos, regularizado para uso comercial, na Rua Oscar Freire, próximo à Av. Paulo VI e ao metrô Sumaré. Ideal para escritório, consultório ou estúdio. Térreo com painéis de vidro e parede de tijolinho, salas no 1º pavimento, loft no 2º, subsolo de apoio, escadaria de madeira, 2 banheiros e cozinha com copa.",
+    "beneficios": ["Carpete","Cimento queimado","Janela grande","Copa","Escritório","Armário na cozinha","Escada","Piso de madeira","Móvel planejado","Mezanino"]
+  },
   // ===== Te0001 - Terreno - Alto de Pinheiros =====
   {
     "codigo": "Te0001",
