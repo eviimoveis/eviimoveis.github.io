@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== 1NEO383 - Comercial - Perdizes =====
+  {
+    "codigo": "1NEO383",
+    "fotos": 7,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 120m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 120.0, "quartos": 0, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 10800.0, "condominio": 228.0, "iptu": 1095.0,
+    "descricao": "Loja comercial de 120 m² em Perdizes, na Avenida Sumaré, com espaço amplo e aberto, piso frio, paredes claras e grande vitrine de vidro que garante muita luminosidade natural e boa visibilidade para a fachada. Tem 2 banheiros e uma área externa com vegetação nos fundos, útil para depósito ou apoio. Ótima opção para comércio, escritório ou serviços, em um dos bairros mais procurados de São Paulo. É possível conjugar este imóvel com a loja 5, para quem precisa de uma área maior. Já conta com os equipamentos de incêndio.",
+    "beneficios": ["Piso frio","Grande vitrine de vidro","Banheiro de serviço","Área externa com vegetação","Equipamentos de incêndio"]
+  },
   // ===== 1IGO383 - Comercial - Pinheiros =====
   {
     "codigo": "1IGO383",
