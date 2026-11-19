@@ -11,7 +11,7 @@ const IMOVEIS = [
   // ===== OOFSNT - Comercial - Pinheiros =====
   {
     "codigo": "OOFSNT",
-    "fotos": 14,
+    "fotos": 17,
     "titulo": "Prédio Comercial para alugar, 216m² na Rua Oscar Freire - Pinheiros",
     "negocio": "aluguel",
     "tipo": "Comercial",
