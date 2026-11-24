@@ -257,11 +257,20 @@ grant insert on public.corretores, public.leads to anon;
 grant select, insert, update, delete
   on public.corretores, public.leads, public.envios, public.tarefas, public.interacoes to authenticated;
 
+-- Avaliação do parceiro (só a equipe muda; quem se cadastra entra como "Sem avaliação").
+alter table public.corretores add column if not exists avaliacao text not null default 'Sem avaliação';
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'corretores_avaliacao_valida') then
+    alter table public.corretores add constraint corretores_avaliacao_valida
+      check (avaliacao in ('Sem avaliação', 'Parceiro forte', 'Regular', 'Não responde'));
+  end if;
+end $$;
+
 -- Visitante do link público: só pode ENVIAR um cadastro. Não lê, não altera, não apaga.
 drop policy if exists "publico cadastra corretor" on public.corretores;
 create policy "publico cadastra corretor" on public.corretores
   for insert to anon, authenticated
-  with check (status = 'Ativo' and bairro3 is null);
+  with check (status = 'Ativo' and bairro3 is null and avaliacao = 'Sem avaliação');
 
 drop policy if exists "publico cadastra lead" on public.leads;
 create policy "publico cadastra lead" on public.leads

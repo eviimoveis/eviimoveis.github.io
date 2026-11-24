@@ -23,11 +23,25 @@ const CAMPOS_LEAD_PAINEL = [
   { id: "etapa", rotulo: "Etapa", tipo: "select", opcoes: ETAPAS },
   { id: "observacao_interna", rotulo: "Observação interna (não vai na mensagem)", tipo: "textarea", max: 2000 },
 ];
+/* ---------- Avaliação do corretor (só a equipe vê) ---------- */
+const AVALIACOES = ["Sem avaliação", "Parceiro forte", "Regular", "Não responde"];
+const PONTOS_AVALIACAO = { "Parceiro forte": 20, "Não responde": -30 };
+const DICA_AVALIACAO = {
+  "Sem avaliação": "Corretor novo, ainda não testado",
+  "Parceiro forte": "Responde rápido e traz imóvel que serve",
+  "Regular": "Responde, mas demora ou traz imóvel fora do perfil",
+  "Não responde": "Não responde ou nunca traz nada",
+};
+const avaliacaoDe = (c) => (AVALIACOES.includes(c.avaliacao) ? c.avaliacao : "Sem avaliação");
+const seloAvaliacao = (c) => `<span class="crm-selo crm-selo--${slug(avaliacaoDe(c))}" title="${escapar(DICA_AVALIACAO[avaliacaoDe(c)])}">${escapar(avaliacaoDe(c))}</span>`;
+
 const CAMPOS_CORRETOR_PAINEL = (() => {
   const base = paraPainel(CAMPOS_CORRETOR);
   const i = base.findIndex((c) => c.id === "bairro2");
   base.splice(i + 1, 0, { id: "bairro3", rotulo: "3º bairro (antigo)", tipo: "bairro", livre: true, dica: "Prefira “outros bairros”, abaixo" });
-  return [...base, { id: "status", rotulo: "Situação", tipo: "select", opcoes: STATUS_CORRETOR }];
+  return [...base,
+    { id: "status", rotulo: "Situação", tipo: "select", opcoes: STATUS_CORRETOR },
+    { id: "avaliacao", rotulo: "Avaliação do parceiro", tipo: "select", opcoes: AVALIACOES }];
 })();
 
 /* ---------- Utilidades ---------- */
@@ -162,13 +176,15 @@ function pontuar(lead, c) {
 
   const nivel = regiao >= 50 ? "Excelente" : regiao >= 30 ? "Boa" : "Possível";
   const compat = nivel + (faixa === "Dentro" ? " · na faixa ✓" : faixa === "Fora" ? " · fora da faixa" : "");
-  return { c, score: regiao + bonus + bonusEsp, nivel, compat, notas: [...new Set(notas)] };
+  const bonusAval = PONTOS_AVALIACAO[avaliacaoDe(c)] || 0;
+  return { c, score: regiao + bonus + bonusEsp + bonusAval, nivel, compat, notas: [...new Set(notas)] };
 }
 
 function rankear(lead) {
   return D.corretores.map((c) => pontuar(lead, c)).filter(Boolean)
     .map((r) => ({ ...r, recebidos: enviosDoCorretor(r.c.id).length }))
-    .sort((a, b) => b.score - a.score || a.recebidos - b.recebidos || a.c.nome.localeCompare(b.c.nome, "pt-BR"));
+    .sort((a, b) => (avaliacaoDe(a.c) === "Não responde") - (avaliacaoDe(b.c) === "Não responde") ||
+      b.score - a.score || a.recebidos - b.recebidos || a.c.nome.localeCompare(b.c.nome, "pt-BR"));
 }
 
 /* ---------- Login ---------- */
@@ -314,7 +330,7 @@ function listaCorretores() {
   const vezes = {};
   D.corretores.forEach((c) => { const k = soDigitos(c.telefone).slice(-8); vezes[k] = (vezes[k] || 0) + 1; });
   $("lista").innerHTML = `<div class="crm-tabela-wrap"><table class="crm-tabela">
-    <thead><tr><th>Corretor</th><th>Bairros</th><th>Atende</th><th>Faixas</th><th>Leads recebidos</th><th>Situação</th><th class="crm-col-mais"><span class="crm-so-leitor">Ações</span></th></tr></thead>
+    <thead><tr><th>Corretor</th><th>Bairros</th><th>Atende</th><th>Faixas</th><th>Leads recebidos</th><th>Avaliação</th><th>Situação</th><th class="crm-col-mais"><span class="crm-so-leitor">Ações</span></th></tr></thead>
     <tbody>${itens.map((c) => `<tr data-acao="abrir-corretor" data-id="${c.id}" tabindex="0">
         <td><strong>${escapar(c.nome)}</strong><small>${escapar([formatarTelefone(c.telefone), c.imobiliaria].filter(Boolean).join(" · "))}</small>
           ${vezes[soDigitos(c.telefone).slice(-8)] > 1 ? '<small class="crm-pendente">⚠ telefone repetido em outro cadastro</small>' : ""}</td>
@@ -322,6 +338,7 @@ function listaCorretores() {
         <td>${escapar(c.categoria)}<small>${escapar(c.operacao)}</small></td>
         <td><small>${escapar([...(c.faixas_locacao || []), ...(c.faixas_venda || [])].join(", ") || "Não informou")}</small></td>
         <td>${enviosDoCorretor(c.id).length}</td>
+        <td>${seloAvaliacao(c)}</td>
         <td>${selo(c.status)}</td>
         <td class="crm-col-mais">${botaoMais("corretor", c.id, c.nome)}</td>
       </tr>`).join("")}</tbody></table></div>`;
@@ -500,10 +517,12 @@ function janelaLead(id) {
 
   const linhaRanking = (r, i) => {
     const env = jaEnviado(r.c.id);
-    return `<li class="crm-sugestao${env ? " crm-sugestao--atual" : ""}">
+    const ruim = avaliacaoDe(r.c) === "Não responde";
+    return `<li class="crm-sugestao${env ? " crm-sugestao--atual" : ""}${ruim ? " crm-sugestao--ruim" : ""}">
       <span class="crm-rank">${i + 1}</span>
       <div>
-        <strong>${escapar(r.c.nome)}</strong> <span class="crm-score">${r.score} pts</span>
+        <strong>${escapar(r.c.nome)}</strong> <span class="crm-score">${r.score} pts</span> ${avaliacaoDe(r.c) !== "Sem avaliação" ? seloAvaliacao(r.c) : ""}
+        ${ruim ? '<small class="crm-pendente">⚠ Marcado como “Não responde”: envie só se não houver outro.</small>' : ""}
         <small>${escapar([r.c.bairro1, r.c.bairro2].filter(Boolean).join(" / "))}${r.c.imobiliaria ? " · " + escapar(r.c.imobiliaria) : ""}</small>
         ${r.notas.length ? `<small class="crm-nota-extra">↳ ${escapar(r.notas.join(" · "))}</small>` : ""}
         <small><b class="crm-nivel crm-nivel--${slug(r.nivel)}">${escapar(r.compat)}</b> · já recebeu ${r.recebidos} lead(s)${env ? ` · <b>enviado em ${dataBR(env.criado_em)}</b>` : ""}</small>
@@ -607,7 +626,7 @@ function janelaCorretor(id) {
   const zonas = [...new Set([...todosBairros(c).map(zonaDe), ...extras.zonas].filter(Boolean))].map((z) => NOME_ZONA[z]).join(" / ");
   abrirJanela(`<div class="crm-janela__corpo">
     <header class="crm-janela__topo">
-      <div><h2>${escapar(c.nome)}</h2><p>${selo(c.status)} · cadastrado em ${dataBR(c.criado_em)} · ${escapar(c.origem || "")}</p></div>
+      <div><h2>${escapar(c.nome)}</h2><p>${selo(c.status)} ${seloAvaliacao(c)} · cadastrado em ${dataBR(c.criado_em)} · ${escapar(c.origem || "")}</p></div>
     </header>
     <dl class="crm-info">
       ${info("WhatsApp", `<a href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noopener">${escapar(formatarTelefone(c.telefone))}</a>`)}
@@ -625,6 +644,10 @@ function janelaCorretor(id) {
       ${info("Faixas de venda", escapar((c.faixas_venda || []).join(", ")))}
       ${info("Observações", escapar(c.observacoes))}
     </dl>
+    <div class="crm-avaliar" role="group" aria-label="Avaliação do parceiro">
+      <span>Avaliação:</span>
+      ${AVALIACOES.map((a) => `<button type="button" class="crm-avaliar__op crm-avaliar__op--${slug(a)}${avaliacaoDe(c) === a ? " ativa" : ""}" data-acao="avaliar-corretor" data-valor="${escapar(a)}" title="${escapar(DICA_AVALIACAO[a])}" aria-pressed="${avaliacaoDe(c) === a}">${escapar(a)}</button>`).join("")}
+    </div>
     <div class="crm-acoes">
       <button class="botao botao--detalhes" data-acao="editar-corretor">Editar dados</button>
       <button class="botao crm-perigo" data-acao="excluir-corretor">Excluir corretor</button>
@@ -724,6 +747,21 @@ const ACOES = {
   "novo-corretor": () => { aberto = null; janelaForm("corretor"); },
   "editar-lead": () => janelaForm("lead", leadPorId(aberto.id)),
   "editar-corretor": () => janelaForm("corretor", corretorPorId(aberto.id)),
+  "avaliar-corretor": async (b) => {
+    const c = corretorPorId(aberto?.id);
+    const valor = b.dataset.valor;
+    if (!c || !AVALIACOES.includes(valor) || avaliacaoDe(c) === valor) return;
+    const { error } = await sb.from("corretores").update({ avaliacao: valor }).eq("id", c.id);
+    if (error) {
+      console.error(error);
+      aviso(/avaliacao/i.test(error.message || "") ? "Falta rodar no Supabase o SQL da avaliação dos corretores (passo a passo no README)." : "Erro ao salvar: " + error.message, true);
+      return;
+    }
+    c.avaliacao = valor;
+    aviso(`${c.nome}: ${valor}.`);
+    desenhar();
+    janelaCorretor(c.id);
+  },
   "cancelar-form": () => { if (aberto) reabrirJanela(); else fecharJanela(); },
   "ver-mais": () => { verMais = !verMais; reabrirJanela(); },
   "excluir-lead": () => excluirLead(aberto.id),

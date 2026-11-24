@@ -455,3 +455,17 @@ code { background: #efe6d2; }
   .crm-lateral .crm-aba__nome { overflow: visible; text-overflow: clip; white-space: nowrap; }
   .crm-lateral .crm-aba__n { left: calc(50% + 8px); }
 }
+
+/* Avaliação do corretor */
+.crm-selo--sem-avaliacao { background: #eceff3; color: #56616e; }
+.crm-selo--parceiro-forte { background: #d8f3e6; color: #0a6b48; }
+.crm-selo--regular { background: #fff1d6; color: #8a5a00; }
+.crm-selo--nao-responde { background: #fde2e2; color: #a12626; }
+.crm-avaliar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 14px; font-size: .9rem; }
+.crm-avaliar > span { font-weight: 600; margin-right: 4px; }
+.crm-avaliar__op { font: inherit; font-size: .85rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--borda); background: #fff; color: var(--texto); cursor: pointer; }
+.crm-avaliar__op.ativa.crm-avaliar__op--sem-avaliacao { background: #eceff3; border-color: #c9d0d8; }
+.crm-avaliar__op.ativa.crm-avaliar__op--parceiro-forte { background: #d8f3e6; border-color: #0a6b48; color: #0a6b48; }
+.crm-avaliar__op.ativa.crm-avaliar__op--regular { background: #fff1d6; border-color: #8a5a00; color: #8a5a00; }
+.crm-avaliar__op.ativa.crm-avaliar__op--nao-responde { background: #fde2e2; border-color: #a12626; color: #a12626; }
+.crm-sugestao--ruim { opacity: .75; }

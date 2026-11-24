@@ -139,3 +139,9 @@ tarefa nova criada pela outra pessoa e tarefa com horário marcado (até 15 min 
 
 Nenhuma chave secreta fica no site: as chaves de envio são criadas na primeira ativação e guardadas
 no banco, onde ninguém lê pela internet.
+
+## Avaliação dos corretores (uma vez)
+
+Rode `supabase/avaliacao.sql` no SQL Editor do Supabase. Depois, na ficha do corretor, marque:
+Parceiro forte (+20 pontos no match), Regular, Não responde (vai para o fim da lista, com aviso)
+ou Sem avaliação (padrão de quem se cadastra).
