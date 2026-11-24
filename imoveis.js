@@ -8,6 +8,160 @@
 */
 
 const IMOVEIS = [
+  // ===== 1PG1SNT - Comercial - Perdizes =====
+  {
+    "codigo": "1PG1SNT",
+    "fotos": 6,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 60m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 60.0, "quartos": 0, "suites": 0, "banheiros": 1, "vagas": 0,
+    "venda": 0, "aluguel": 5100.0, "condominio": 50.0, "iptu": 150.0,
+    "descricao": "Loja de 60 m² em Perdizes, na Avenida Sumaré, com porcelanato, sala grande, banheiro e quintal próprio. Espaço amplo e bem iluminado, ótimo para comércio, escritório ou serviços.",
+    "beneficios": ["Quintal","Porcelanato","Banheiro de serviço","Sala grande"]
+  },
+  // ===== 1NEO383 - Comercial - Perdizes =====
+  {
+    "codigo": "1NEO383",
+    "fotos": 7,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 120m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 120.0, "quartos": 0, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 10800.0, "condominio": 228.0, "iptu": 1095.0,
+    "descricao": "Loja comercial de 120 m² em Perdizes, na Avenida Sumaré, com espaço amplo e aberto, piso frio, paredes claras e grande vitrine de vidro que garante muita luminosidade natural e boa visibilidade para a fachada. Tem 2 banheiros e uma área externa com vegetação nos fundos, útil para depósito ou apoio. Ótima opção para comércio, escritório ou serviços, em um dos bairros mais procurados de São Paulo. É possível conjugar este imóvel com a loja 5, para quem precisa de uma área maior. Já conta com os equipamentos de incêndio.",
+    "beneficios": ["Piso frio","Grande vitrine de vidro","Banheiro de serviço","Área externa com vegetação","Equipamentos de incêndio"]
+  },
+  // ===== 1IGO383 - Comercial - Pinheiros =====
+  {
+    "codigo": "1IGO383",
+    "fotos": 24,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 33m² - Pinheiros",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Pinheiros",
+    "cidade": "São Paulo",
+    "area": 33.0, "quartos": 0, "suites": 0, "banheiros": 0, "vagas": 0,
+    "venda": 0, "aluguel": 5000.0, "condominio": 543.0, "iptu": 163.0,
+    "descricao": "Loja de 33 m² em galeria na Rua Teodoro Sampaio, em Pinheiros, dentro de condomínio fechado, com elevador, ar-condicionado, quintal e ambientes integrados. Pé direito alto, forro de gesso com sanca, piso frio, janela grande, móvel planejado, mezanino e conexão à internet.",
+    "beneficios": ["Quintal","Ambientes integrados","Janela grande","Janela de alumínio","Ar-condicionado","Forro de gesso / sanca","Pé direito alto","Escada","Móvel planejado","Conexão à internet","Piso frio","Mezanino"]
+  },
+  // ===== OOFSNT - Comercial - Pinheiros =====
+  {
+    "codigo": "OOFSNT",
+    "fotos": 17,
+    "titulo": "Prédio Comercial para alugar, 216m² na Rua Oscar Freire - Pinheiros",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Pinheiros",
+    "cidade": "São Paulo",
+    "area": 216.0, "quartos": 0, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 15000.0, "condominio": 0.0, "iptu": 1084.0,
+    "descricao": "Prédio comercial de 216 m² em 4 pavimentos, regularizado para uso comercial, na Rua Oscar Freire, próximo à Av. Paulo VI e ao metrô Sumaré. Ideal para escritório, consultório ou estúdio. Térreo com painéis de vidro e parede de tijolinho, salas no 1º pavimento, loft no 2º, subsolo de apoio, escadaria de madeira, 2 banheiros e cozinha com copa.",
+    "beneficios": ["Carpete","Cimento queimado","Janela grande","Copa","Escritório","Armário na cozinha","Escada","Piso de madeira","Móvel planejado","Mezanino"]
+  },
+  // ===== Te0001 - Terreno - Alto de Pinheiros =====
+  {
+    "codigo": "Te0001",
+    "fotos": 4,
+    "titulo": "Terreno à venda, 545 m² em Alto de Pinheiros - São Paulo - SP",
+    "negocio": "venda",
+    "tipo": "Terreno",
+    "regiao": "Zona Oeste",
+    "bairro": "Alto de Pinheiros",
+    "cidade": "São Paulo",
+    "area": 545.0,
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 0,
+    "vagas": 0,
+    "venda": 4890000.0,
+    "aluguel": 0,
+    "condominio": 0.0,
+    "iptu": 4800.0,
+    "descricao": "Terreno de 545 m² em Alto de Pinheiros, um dos endereços mais valorizados e tranquilos da Zona Oeste, na Rua Antônio de Gouvêa Giudice. Lote plano e amplo, com 16 metros de frente e cerca de 36 metros de profundidade, em rua asfaltada, com rede de água e esgoto e gás encanado. Uma ótima oportunidade para construir a casa dos seus sonhos ou desenvolver um projeto residencial em uma região nobre, arborizada e de fácil acesso.",
+    "beneficios": [
+      "Frente para o norte",
+      "Frente para o sul",
+      "Frente para o leste",
+      "Frente para o oeste",
+      "Gás encanado",
+      "Rede de água e esgoto",
+      "Plano",
+      "Rua asfaltada"
+    ]
+  },
+  // ===== SSDSNT - Comercial - Perdizes =====
+  {
+    "codigo": "SSDSNT",
+    "fotos": 21,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 216m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 216.0,
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 2,
+    "vagas": 0,
+    "venda": 0,
+    "aluguel": 19500.0,
+    "condominio": 285.0,
+    "iptu": 1370.0,
+    "descricao": "Ponto comercial em prédio de alto padrão na Avenida Sumaré, a 400 metros da nova estação de metrô Perdizes. Salão amplo e livre, com piso porcelanato cinza, paredes brancas e iluminação de teto embutida. Grandes janelas e fachada de vidro voltadas para a rua deixam o ambiente muito iluminado com luz natural, com entrada por porta de vidro e porta giratória. Conta com copa, banheiros masculino e feminino, quadro de energia e salas internas com acesso pelo salão principal. Pode ser conjugada com a loja ao lado (loja 6).",
+    "beneficios": [
+      "Porcelanato",
+      "Copa",
+      "Janela grande",
+      "Sala grande"
+    ]
+  },
+  // ===== MQS383 - Comercial - Vila Madalena =====
+  {
+    "codigo": "MQS383",
+    "fotos": 15,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 292m² - Vila Madalena",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Vila Madalena",
+    "cidade": "São Paulo",
+    "area": 292.0,
+    "quartos": 0,
+    "suites": 0,
+    "banheiros": 3,
+    "vagas": 32,
+    "venda": 0,
+    "aluguel": 44500.0,
+    "condominio": 0.0,
+    "iptu": 2200.0,
+    "descricao": "Loja comercial térrea com mezanino, de frente para a Rua João Moura, no Edifício Península (Trisul), em uma das regiões mais valorizadas da Vila Madalena. São 291,72 m² privativos em dois pavimentos, com pé-direito alto, ambientes integrados, janelas amplas e fachada ativa com acesso direto pela calçada. Mezanino com acesso por escada e plataforma elevatória, 3 banheiros (um acessível) e 32 vagas compartilhadas do edifício. Ideal para restaurante, bar, cafeteria, academia, estúdio, clínica, showroom ou varejo. Entregue em estado bruto, permitindo adaptação ao projeto do locatário.",
+    "beneficios": [
+      "Elevador",
+      "Mezanino",
+      "Pé direito alto",
+      "Janela grande",
+      "Ambientes integrados",
+      "Escada",
+      "Vista panorâmica",
+      "Varanda fechada com vidro",
+      "Sala grande",
+      "Ar-condicionado",
+      "Piso frio",
+      "Conexão à internet",
+      "Acesso para cadeirantes"
+    ]
+  },
   // ===== 12DBSNT - Comercial - Perdizes =====
   {
     "codigo": "12DBSNT",
