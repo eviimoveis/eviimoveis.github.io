@@ -293,6 +293,14 @@ function abrirDetalhe(i) {
     procurar(2);
   }
   c.append(galeria);
+  // Clique em qualquer foto abre o visor em tela cheia
+  galeria.onclick = (e) => {
+    const foto = e.target.closest(".foto");
+    if (!foto) return;
+    const imgs = [...galeria.querySelectorAll(".foto:not(.oculto) img")];
+    const n = imgs.indexOf(foto.querySelector("img"));
+    if (n >= 0) abrirVisor(i, imgs, n);
+  };
 
   const corpo = document.createElement("div");
   corpo.className = "detalhe__corpo";
@@ -309,6 +317,51 @@ function abrirDetalhe(i) {
   $("detalhe").showModal();
   $("detalhe").scrollTop = 0;
 }
+/* ---------- Visor de fotos em tela cheia ---------- */
+const visor = { imgs: [], n: 0 };
+function mostrarFoto(n) {
+  const total = visor.imgs.length;
+  visor.n = (n + total) % total;
+  const img = visor.imgs[visor.n];
+  $("visor-foto").src = img.currentSrc || img.src;
+  $("visor-foto").alt = img.alt;
+  $("visor-contador").textContent = `${visor.n + 1} / ${total}`;
+  const varias = total > 1;
+  $("visor-ant").hidden = !varias;
+  $("visor-prox").hidden = !varias;
+}
+function abrirVisor(imovel, imgs, n) {
+  visor.imgs = imgs;
+  $("visor-whats").href = linkWhats(imovel);
+  mostrarFoto(n);
+  $("visor").showModal();
+  // botão "voltar" do celular fecha só o visor
+  history.pushState({ visor: true }, "");
+}
+function fecharVisor() {
+  if (!$("visor").open) return;
+  $("visor").close();
+}
+$("visor-ant").onclick = () => mostrarFoto(visor.n - 1);
+$("visor-prox").onclick = () => mostrarFoto(visor.n + 1);
+$("visor-fechar").onclick = fecharVisor;
+$("visor").addEventListener("click", (e) => { if (e.target.id === "visor") fecharVisor(); });
+$("visor").addEventListener("close", () => { if (history.state && history.state.visor) history.back(); });
+window.addEventListener("popstate", fecharVisor);
+document.addEventListener("keydown", (e) => {
+  if (!$("visor").open) return;
+  if (e.key === "ArrowLeft") mostrarFoto(visor.n - 1);
+  if (e.key === "ArrowRight") mostrarFoto(visor.n + 1);
+});
+let toqueX = null;
+$("visor").addEventListener("touchstart", (e) => { toqueX = e.touches[0].clientX; }, { passive: true });
+$("visor").addEventListener("touchend", (e) => {
+  if (toqueX === null) return;
+  const dx = e.changedTouches[0].clientX - toqueX;
+  toqueX = null;
+  if (Math.abs(dx) > 50) mostrarFoto(visor.n + (dx < 0 ? 1 : -1));
+});
+
 $("detalhe").addEventListener("click", (e) => { if (e.target.id === "detalhe") e.target.close(); });
 
 /* ---------- Abas ---------- */
