@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== 60S383 - Comercial - Perdizes =====
+  {
+    "codigo": "60S383",
+    "fotos": 9,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 312m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 312.0, "quartos": 0, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 23000.0, "condominio": 119.0, "iptu": 571.0,
+    "descricao": "Imóvel comercial de 312 m² na Rua João Ramalho, em Perdizes, com salão amplo, ambientes integrados e planta livre, que permite montar loja, escritório, clínica ou outra operação com layout próprio. Piso de cimento queimado, forro de gesso com sanca e teto rebaixado, janelas de alumínio, porcelanato e banheiros com vaso sanitário e pia. Várias janelas garantem boa iluminação natural. Imóvel de fácil acesso, ideal para quem busca um espaço versátil.",
+    "beneficios": ["Cimento queimado","Forro de gesso / sanca","Porcelanato","Sala grande","Ambientes integrados","Janela de alumínio","Planta livre","Boa iluminação natural"]
+  },
   // ===== 1PG1SNT - Comercial - Perdizes =====
   {
     "codigo": "1PG1SNT",
