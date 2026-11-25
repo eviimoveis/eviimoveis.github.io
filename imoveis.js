@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== 1EBVSNT - Galpão - Casa Verde =====
+  {
+    "codigo": "1EBVSNT",
+    "fotos": 8,
+    "titulo": "Galpão para alugar, 700m² - Casa Verde",
+    "negocio": "aluguel",
+    "tipo": "Galpão",
+    "regiao": "Zona Norte",
+    "bairro": "Casa Verde",
+    "cidade": "São Paulo",
+    "area": 700.0, "quartos": 4, "suites": 0, "banheiros": 6, "vagas": 10,
+    "venda": 0, "aluguel": 18900.0, "condominio": 0.0, "iptu": 1400.0,
+    "descricao": "Galpão comercial/industrial de esquina, moderno e pronto para uso, na Rua Doutor Mário Pinto Serva, com acesso também pela Rua Zilda e ligação com a Av. Engenheiro Caetano Álvares e a Marginal Tietê. Pé-direito de cerca de 7 m, doca de carga e descarga, energia trifásica, mezaninos/escritório, ar-condicionado, exaustores, garagem coberta e dois portões. Ideal para indústria, logística leve, oficina, gráfica, estoque ou operação comercial.",
+    "beneficios": ["Imóvel de esquina","Pé-direito de cerca de 7 m","Doca de carga e descarga","Energia trifásica","Mezaninos e escritório","Ar-condicionado e exaustores","Garagem coberta","Dois portões","Estrutura para máquinas de grande porte","Boa rota para a Marginal Tietê"]
+  },
   // ===== S9Q383 - Comercial - Perdizes =====
   {
     "codigo": "S9Q383",
