@@ -70,3 +70,6 @@ body.tema-evi {
 @keyframes evi-seta-pulo { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(5px, -5px); } }
 @media (max-width: 640px) { .evi-seta { top: 82px; right: 16px; } }
 @media (prefers-reduced-motion: reduce) { .evi-seta svg { animation: none; } }
+
+/* Espaço no fim para o botão do WhatsApp não cobrir o "Enviar cadastro" */
+.tema-evi .crm-publico { padding-bottom: 96px; }

@@ -21,8 +21,23 @@ const el = (id) => document.getElementById(id);
 const sb = criarCliente();
 let perfilAtual = null;
 
+/* Botão verde do WhatsApp: mensagem pronta conforme a tela */
+const WHATS_EVI = "5511911297820"; // (11) 91129-7820
+const MSG_WHATS = {
+  inicio: "Olá! Vim pelo link de cadastro da EVI Imóveis.",
+  lead: "Olá! Quero ajuda para encontrar um imóvel.",
+  corretor: "Olá! Sou corretor e quero ser parceiro da EVI Imóveis.",
+};
+function atualizarWhats(passo) {
+  const a = el("whats-cadastro");
+  if (!a) return;
+  const msg = passo === "passo-escolha" || !perfilAtual ? MSG_WHATS.inicio : MSG_WHATS[perfilAtual];
+  a.href = `https://wa.me/${WHATS_EVI}?text=${encodeURIComponent(msg)}`;
+}
+
 function mostrarPasso(id) {
   ["passo-escolha", "passo-form", "passo-ok", "passo-config"].forEach((p) => el(p).classList.toggle("oculto", p !== id));
+  atualizarWhats(id);
   window.scrollTo({ top: 0 });
   const seta = el("ok-seta");
   if (seta) seta.classList.toggle("oculto", !(id === "passo-ok" && perfilAtual === "corretor"));
