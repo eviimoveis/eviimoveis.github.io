@@ -82,7 +82,7 @@ footer small{display:block;letter-spacing:3px;color:var(--gold);font-weight:700;
 <header class="top"><div class="brand">EVI Imóveis</div><div class="tag">PARA ALUGAR</div></header>
 <main class="wrap">
 <div class="hero" data-open="0" role="button" tabindex="0" aria-label="Ver fotos em tela cheia">
-<img src="img/hero.jpg" alt="Salão da loja com fachada de vidro e parede amarela">
+<img src="img/hero.jpg" alt="Entrada da loja com fachada de vidro e moldura amarela">
 <div class="grad"></div>
 <div class="count"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg><span id="cnt"></span> fotos</div>
 <div class="txt">
@@ -152,7 +152,7 @@ footer small{display:block;letter-spacing:3px;color:var(--gold);font-weight:700;
 
 <script>
 const WHATSAPP = "5511911297820";
-const fotos=[["hero","Salão e fachada"],["sala1","Salão"],["entrada","Entrada"],["coz1","Cozinha com coifa"],["coz2","Cozinha"],["coz3","Escada"],["escada","Escada"],["int1","Ambiente interno"],["int2","Ambiente interno"],["int3","Ambiente interno"],["int4","Ambiente interno"],["int5","Ambiente interno"],["wc","Banheiro"],["lav","Lavabo"],["rua1","Rua Itapeva"],["rua2","Entorno"]];
+const fotos=[["hero","Entrada da loja"],["sala1","Salão"],["entrada","Salão e fachada"],["coz1","Cozinha com coifa"],["coz2","Cozinha"],["coz3","Escada"],["escada","Escada"],["int1","Ambiente interno"],["int2","Ambiente interno"],["int3","Ambiente interno"],["int4","Ambiente interno"],["int5","Ambiente interno"],["wc","Banheiro"],["lav","Lavabo"],["rua1","Rua Itapeva"],["rua2","Entorno"]];
 const gal=document.getElementById('gal');
 document.getElementById('cnt').textContent=fotos.length;
 fotos.forEach(([f,c,w],i)=>{const b=document.createElement('button');if(w)b.className='wide'+(w==2?' wide2':'');b.setAttribute('aria-label','Ampliar foto: '+c);b.innerHTML=`<img loading="lazy" src="img/${f}.jpg" alt="${c}"><span class="cap">${c}</span>`;b.onclick=()=>open(i);gal.appendChild(b)});
