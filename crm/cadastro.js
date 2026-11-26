@@ -12,7 +12,7 @@ const PERFIS = {
     tabela: "corretores",
     campos: CAMPOS_CORRETOR,
     titulo: "Cadastro de Corretor Parceiro",
-    sub: "Somente indicação de cliente: 40%. Se também fizer vistoria, contrato e análise cadastral: 50%.",
+    sub: "Somente indicação de cliente: <strong>(40%)</strong><br>Se também fizer vistoria, contrato e análise cadastral <strong>(50%)</strong>",
     ok: "Recebemos seu cadastro. Quando surgir um cliente nos bairros em que você atua, entraremos em contato pelo WhatsApp.",
   },
 };
@@ -47,7 +47,7 @@ function abrirForm(perfil) {
   perfilAtual = perfil;
   const p = PERFIS[perfil];
   el("form-titulo").textContent = p.titulo;
-  el("form-sub").textContent = p.sub;
+  el("form-sub").innerHTML = p.sub; // textos fixos definidos acima (sem entrada do usuário)
   el("campos").innerHTML = montarCampos(p.campos);
   ativarForm(el("form"), p.campos);
   el("erro").classList.add("oculto");
