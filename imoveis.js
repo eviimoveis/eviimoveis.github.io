@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== LO0001 - Comercial - Pompeia =====
+  {
+    "codigo": "LO0001",
+    "fotos": 18,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 210m² - Pompéia",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Pompeia",
+    "cidade": "São Paulo",
+    "area": 210.0, "quartos": 0, "suites": 0, "banheiros": 4, "vagas": 0,
+    "venda": 0, "aluguel": 15500.0, "condominio": 237.0, "iptu": 192.0,
+    "descricao": "Loja premium no térreo de um prédio recém-construído na Avenida Pompeia, com 210 m² e possibilidade de instalação de um mezanino adicional de 70 m². Tem 9 m de fachada com frente para a avenida, alta visibilidade e acesso independente dos apartamentos. Conta com 4 banheiros, sendo 2 com acessibilidade, e segurança integrada à portaria 24 horas do condomínio. Fica a cerca de 500 m da futura estação SESC-Pompeia e perto do metrô Vila Madalena, na região nobre da Pompeia.",
+    "beneficios": ["Térreo de prédio novo", "9 m de fachada para a Av. Pompeia", "Acesso independente dos apartamentos", "Pé-direito alto", "Possibilidade de mezanino de 70 m²", "Muro de vidro", "Ventilação natural", "4 banheiros, 2 com acessibilidade", "Portaria 24 horas", "Entrada de serviço", "Elevador", "Perto do metrô Vila Madalena"]
+  },
   // ===== LO0002 - Comercial - Pinheiros =====
   {
     "codigo": "LO0002",
