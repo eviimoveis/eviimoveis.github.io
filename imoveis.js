@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== GA00001 - Galpão - Casa Verde =====
+  {
+    "codigo": "GA00001",
+    "fotos": 32,
+    "titulo": "Galpão / Depósito / Armazém com 2 Quartos para alugar, 476m² - Casa Verde",
+    "negocio": "aluguel",
+    "tipo": "Galpão",
+    "regiao": "Zona Norte",
+    "bairro": "Casa Verde",
+    "cidade": "São Paulo",
+    "area": 476.0, "quartos": 2, "suites": 0, "banheiros": 5, "vagas": 4,
+    "venda": 0, "aluguel": 14500.0, "condominio": 0.0, "iptu": 995.0,
+    "descricao": "Galpão bem estruturado de 476 m² na Rua Antônio Vera Cruz, com 4 vagas na frente, portão elétrico, edícula nos fundos, iluminação completa e tomadas. Rua sem declive e fácil acesso às vias de escoamento da cidade.",
+    "beneficios": ["Portão elétrico","4 vagas na frente","Edícula nos fundos","Cozinha","Iluminação completa e tomadas","Rua sem declive","Fácil acesso às vias de escoamento"]
+  },
   // ===== CA0005 - Casa - Pinheiros =====
   {
     "codigo": "CA0005",
