@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== AP0001 - Apartamento - Vila Madalena =====
+  {
+    "codigo": "AP0001",
+    "fotos": 31,
+    "titulo": "Apartamento com 2 Quartos para alugar, 75m² - Vila Madalena",
+    "negocio": "aluguel",
+    "tipo": "Apartamento",
+    "regiao": "Zona Oeste",
+    "bairro": "Vila Madalena",
+    "cidade": "São Paulo",
+    "area": 75.0, "quartos": 2, "suites": 1, "banheiros": 2, "vagas": 1,
+    "venda": 0, "aluguel": 5500.0, "condominio": 1100.0, "iptu": 0.0,
+    "descricao": "Apartamento reformado no último andar, com 2 dormitórios (1 suíte) e marcenaria sob medida. A cozinha é ampla e iluminada, com bancada em mármore e cooktop, integrada à área de serviço. Os ambientes são bem ventilados e recebem luz natural o dia todo. O condomínio tem playground, quadra esportiva e área de lazer arborizada, e o apartamento conta com 1 vaga com manobrista. Fica perto do Parque da Água Branca, do Allianz Parque e da futura estação de metrô.",
+    "beneficios": ["Reformado", "Último andar", "Marcenaria sob medida", "Cozinha americana", "Bancada de mármore com cooktop", "Área de serviço integrada", "Luz natural e boa ventilação", "Elevador", "Aceita animais", "Playground", "Quadra esportiva", "Área de lazer arborizada"]
+  },
   // ===== So0001 - Comercial - Butantã =====
   {
     "codigo": "So0001",
