@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== So0001 - Comercial - Butantã =====
+  {
+    "codigo": "So0001",
+    "fotos": 22,
+    "titulo": "Loja / Salão / Ponto Comercial com 2 Quartos para alugar, 220m² - Butantã",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Butantã",
+    "cidade": "São Paulo",
+    "area": 220.0, "quartos": 2, "suites": 1, "banheiros": 3, "vagas": 10,
+    "venda": 0, "aluguel": 6600.0, "condominio": 0.0, "iptu": 1630.0,
+    "descricao": "Casa comercial de dois andares na Av. Corifeu de Azevedo Marques, 1701, recém-reformada e pronta para uso, numa das avenidas mais movimentadas da Zona Oeste. Boa visibilidade e acesso, com 10 vagas de garagem e infraestrutura elétrica e hidráulica completa. Indicada para clínicas, escritórios, centros de serviços e comércio em geral.",
+    "beneficios": ["Recém-reformada", "Ambiente amplo e aberto", "Ar-condicionado no térreo", "Rampa para cadeirantes", "10 vagas de garagem", "Banheiro adaptado para PCD e um com chuveiro", "Câmeras e alarme Verisure", "Varanda fechada com vidro", "Cozinha grande, copa e área de serviço", "Avenida de alto fluxo"]
+  },
   // ===== CA0003 - Casa - Perdizes =====
   {
     "codigo": "CA0003",
