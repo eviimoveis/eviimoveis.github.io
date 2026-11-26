@@ -268,3 +268,37 @@ a { color: inherit; text-decoration: none; }
   .visor__seta--esq { left: 6px; }
   .visor__seta--dir { right: 6px; }
 }
+
+/* Modo administrador (só o dono vê) */
+.admin-barra {
+  position: relative; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #7a1f1f; color: #fff; font-size: .9rem; padding: 8px max(16px, env(safe-area-inset-left, 0px));
+}
+.admin-barra__sair { background: #fff; color: #7a1f1f; border: none; border-radius: 999px; padding: 6px 14px; font-weight: 700; cursor: pointer; }
+.admin-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: #fdf2e3; border-bottom: 1px solid #f0d9b5; padding: 8px 12px;
+}
+.admin-card__selo { font-size: .75rem; font-weight: 800; letter-spacing: .5px; color: #fff; background: #b42318; padding: 3px 10px; border-radius: 999px; }
+.admin-card__selo--ativo { background: var(--aluguel); }
+.admin-card__botao {
+  border: 2px solid #b42318; background: #fff; color: #b42318; font: inherit; font-weight: 700;
+  padding: 6px 16px; border-radius: 999px; cursor: pointer;
+}
+.admin-card__botao--reativar { border-color: var(--aluguel); color: var(--aluguel); }
+.admin-card__botao:disabled { opacity: .6; cursor: wait; }
+.card--inativo { opacity: .55; }
+.card--inativo .admin-card { opacity: 1; }
+.admin-aviso {
+  position: fixed; left: 50%; bottom: 90px; transform: translate(-50%, 20px); z-index: 60;
+  background: #1f2933; color: #fff; padding: 12px 18px; border-radius: 10px; max-width: calc(100% - 32px);
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; text-align: center;
+}
+.admin-aviso--visivel { opacity: 1; transform: translate(-50%, 0); }
+.admin-login { border: none; border-radius: var(--raio); padding: 24px; width: min(420px, 92vw); }
+.admin-login::backdrop { background: rgba(10, 20, 35, .6); }
+.admin-login h2 { color: var(--azul); margin-bottom: 6px; }
+.admin-login p { color: var(--cinza); font-size: .9rem; margin-bottom: 12px; }
+.admin-login input { width: 100%; font: inherit; padding: 10px; border: 1px solid var(--borda); border-radius: 8px; margin-bottom: 8px; }
+.admin-login__erro { color: #b42318 !important; }
+.admin-login__acoes { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }

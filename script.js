@@ -174,6 +174,7 @@ function criarCard(i) {
     </div>`;
   corpo.querySelector(".botao--detalhes").onclick = () => abrirDetalhe(i);
   card.append(corpo);
+  if (window.EVI_ADMIN) window.EVI_ADMIN.decorarCard(card, i);
   return card;
 }
 
@@ -387,6 +388,9 @@ $("ano").textContent = new Date().getFullYear();
    Um código por linha. Linhas vazias ou começando com # são ignoradas.
    Os imóveis da lista somem do site inteiro (cards, abas, filtros e link direto). */
 async function aplicarInativos() {
+  // Modo administrador (admin.js): mostra todos, marcando os inativos
+  const doAdmin = window.EVI_ADMIN ? await window.EVI_ADMIN.iniciar() : null;
+  if (doAdmin) return;
   try {
     const resp = await fetch("inativos.txt", { cache: "no-store" });
     if (!resp.ok) return;
