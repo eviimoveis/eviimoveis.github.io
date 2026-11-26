@@ -74,6 +74,6 @@ body.tema-evi {
 /* Espaço no fim para o botão do WhatsApp não cobrir o "Enviar cadastro" */
 .tema-evi .crm-publico { padding-bottom: 96px; }
 /* Botão do WhatsApp no cadastro: canto superior direito, logo abaixo do "Ver imóveis" */
-.tema-evi .whats-fixo { width: 120px; height: 120px; right: 14px; top: 76px; bottom: auto; }
-.tema-evi .whats-fixo svg { width: 60px; height: 60px; }
+.tema-evi .whats-fixo { position: absolute; width: 80px; height: 80px; right: 14px; top: 70px; bottom: auto; }
+.tema-evi .whats-fixo svg { width: 40px; height: 40px; }
 .tema-evi .evi-hero { padding-top: 20px; }
