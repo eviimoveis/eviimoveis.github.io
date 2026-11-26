@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== CA0003 - Casa - Perdizes =====
+  {
+    "codigo": "CA0003",
+    "fotos": 23,
+    "titulo": "Sobrado com 3 Quartos para alugar, 120m² - Perdizes",
+    "negocio": "aluguel",
+    "tipo": "Casa",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 120.0, "quartos": 3, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 3800.0, "condominio": 0.0, "iptu": 415.0,
+    "descricao": "Sobrado de 120 m² na Rua João Ramalho, com fachada colorida e boa visibilidade, versátil para uso comercial ou residencial. No térreo, sala ampla, clara e arejada, banheiro, cozinha grande com muita luz natural e área de serviço espaçosa. No andar superior, três quartos do mesmo tamanho, bem iluminados e ventilados, sendo um deles com varandinha. Aceita animais.",
+    "beneficios": ["Uso comercial ou residencial","Aceita animais","Varanda","Escritório","Cozinha grande","Área de serviço","Closet","Pé-direito alto","Janelas grandes e boa ventilação","Ar-condicionado"]
+  },
   // ===== GA00001 - Galpão - Casa Verde =====
   {
     "codigo": "GA00001",
