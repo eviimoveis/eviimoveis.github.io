@@ -38,6 +38,8 @@ function atualizarWhats(passo) {
 function mostrarPasso(id) {
   ["passo-escolha", "passo-form", "passo-ok", "passo-config"].forEach((p) => el(p).classList.toggle("oculto", p !== id));
   atualizarWhats(id);
+  const rodape = el("rodape-contato");
+  if (rodape) rodape.classList.toggle("oculto", id !== "passo-escolha");
   window.scrollTo({ top: 0 });
   const seta = el("ok-seta");
   if (seta) seta.classList.toggle("oculto", !(id === "passo-ok" && perfilAtual === "corretor"));
