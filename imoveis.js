@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== PSM383 - Comercial - Perdizes =====
+  {
+    "codigo": "PSM383",
+    "fotos": 23,
+    "titulo": "Loja / Salão / Ponto Comercial para venda ou aluguel, 590m² - Perdizes",
+    "negocio": "ambos",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Perdizes",
+    "cidade": "São Paulo",
+    "area": 590.0, "quartos": 0, "suites": 0, "banheiros": 4, "vagas": 8,
+    "venda": 7150000.0, "aluguel": 40000.0, "condominio": 2530.0, "iptu": 0.0,
+    "descricao": "Loja de aproximadamente 590 m² na Avenida Pompeia, 700, sob empreendimento residencial de alto padrão, projetada para operações de grande porte que buscam visibilidade e estrutura. Fachada ativa ampla e moderna, pé-direito duplo de cerca de 6 m, mezanino integrado, elevador interno, 4 banheiros e amplas áreas em vão livre. Permite entrada de veículos no interior da loja, estacionamento exclusivo e vagas para visitantes. Indicada para concessionária, showroom automotivo, galeria, academia, mercado ou varejo de alto padrão. Perto do metrô, do Allianz Parque e do Shopping Bourbon.",
+    "beneficios": ["Pé-direito duplo de cerca de 6 m","Mezanino","Vão livre","Elevador interno","Entrada de veículos na loja","Estacionamento exclusivo e vagas para visitantes","Fachada ativa com grandes vitrines","Ar-condicionado","Vista panorâmica","Piso elevado"]
+  },
   // ===== 1EBVSNT - Galpão - Casa Verde =====
   {
     "codigo": "1EBVSNT",
