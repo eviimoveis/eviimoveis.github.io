@@ -80,10 +80,10 @@ body.tema-evi {
 
 /* Rodapé de contato para proprietários (tela inicial do cadastro) */
 .evi-rodape-contato { background: linear-gradient(135deg, #0b3b2c 0%, #14694d 100%); color: #fff; text-align: center; padding: 48px 20px 72px; margin-top: 40px; border-top: 1px solid #b8862f; }
-.evi-rodape-contato h2 { margin: 0 0 8px; font-size: 1.6rem; }
+.evi-rodape-contato h2 { margin: 0 0 16px; font-size: 1.6rem; }
 .evi-rodape-contato p { opacity: .9; margin: 0 0 22px; }
 .evi-rodape-contato__linha { display: flex; align-items: center; justify-content: center; gap: 14px; }
-.evi-rodape-contato__seta { color: #e3bd62; font-size: 1.1rem; animation: evi-seta-dir 1.2s ease-in-out infinite; }
+.evi-rodape-contato__seta { color: #fff; font-size: 1.1rem; animation: evi-seta-dir 1.2s ease-in-out infinite; }
 .evi-rodape-contato__seta--esq { animation-name: evi-seta-esq; }
 @keyframes evi-seta-dir { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 @keyframes evi-seta-esq { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-6px); } }
