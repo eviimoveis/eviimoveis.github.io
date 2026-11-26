@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== LO0002 - Comercial - Pinheiros =====
+  {
+    "codigo": "LO0002",
+    "fotos": 20,
+    "titulo": "Loja / Sobrado Comercial com 6 Quartos para alugar, 160m² - Pinheiros",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Pinheiros",
+    "cidade": "São Paulo",
+    "area": 160.0, "quartos": 6, "suites": 1, "banheiros": 3, "vagas": 3,
+    "venda": 0, "aluguel": 10500.0, "condominio": 0.0, "iptu": 745.0,
+    "descricao": "Loja/sobrado comercial em dois andares na Rua Henrique Schaumann, entre Perdizes e Vila Madalena, mobiliado e com ar-condicionado em cada cômodo. No térreo ficam o salão de vendas, um banheiro e a cozinha. No andar superior ficam dois banheiros, o escritório ou sala de reuniões, um ambiente integrado com varanda e uma área de descanso com teto customizável. Tem 3 vagas em frente e fica numa avenida de grande fluxo, cercada de prédios, restaurantes e comércio.",
+    "beneficios": ["Mobiliado", "Ar-condicionado em todos os cômodos", "Aceita animais", "Varanda gourmet", "Fachada visível da rua", "Avenida de grande fluxo", "Salão amplo no térreo", "Cozinha planejada", "Escritório", "Closet", "Lavabo", "Despensa e área de serviço", "Vista panorâmica", "Imóvel de esquina", "3 vagas em frente"]
+  },
   // ===== AP0001 - Apartamento - Vila Madalena =====
   {
     "codigo": "AP0001",
