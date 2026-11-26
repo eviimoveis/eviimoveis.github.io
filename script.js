@@ -383,9 +383,32 @@ $("limpar").onclick = () => { $("filtros").reset(); atualizarBairros(); renderiz
 document.querySelectorAll("[data-whats]").forEach((a) => { a.href = linkWhats(); a.target = "_blank"; a.rel = "noopener"; });
 $("ano").textContent = new Date().getFullYear();
 
-montarFiltros();
-$("campo-valor-de").classList.remove("oculto");
-renderizar();
+/* ---------- Imóveis inativos (arquivo inativos.txt) ----------
+   Um código por linha. Linhas vazias ou começando com # são ignoradas.
+   Os imóveis da lista somem do site inteiro (cards, abas, filtros e link direto). */
+async function aplicarInativos() {
+  try {
+    const resp = await fetch("inativos.txt", { cache: "no-store" });
+    if (!resp.ok) return;
+    const codigos = new Set((await resp.text()).split(/\r?\n/)
+      .map((l) => l.replace(/#.*/, "").trim().toUpperCase())
+      .filter(Boolean));
+    for (let k = IMOVEIS.length - 1; k >= 0; k--) {
+      if (codigos.has(String(IMOVEIS[k].codigo).toUpperCase())) IMOVEIS.splice(k, 1);
+    }
+  } catch (e) {
+    console.warn("Não foi possível ler inativos.txt", e);
+  }
+}
+
+async function iniciar() {
+  await aplicarInativos();
+  montarFiltros();
+  $("campo-valor-de").classList.remove("oculto");
+  renderizar();
+  abrirPeloLink();
+}
+iniciar();
 
 /* ---------- Link direto para um imóvel (#imovel-CODIGO) ---------- */
 function abrirPeloLink() {
@@ -395,5 +418,4 @@ function abrirPeloLink() {
   const i = IMOVEIS.find((x) => String(x.codigo).toUpperCase() === cod);
   if (i) abrirDetalhe(i);
 }
-abrirPeloLink();
 window.addEventListener("hashchange", abrirPeloLink);

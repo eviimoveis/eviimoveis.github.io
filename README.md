@@ -145,3 +145,11 @@ no banco, onde ninguém lê pela internet.
 Rode `supabase/avaliacao.sql` no SQL Editor do Supabase. Depois, na ficha do corretor, marque:
 Parceiro forte (+20 pontos no match), Regular, Não responde (vai para o fim da lista, com aviso)
 ou Sem avaliação (padrão de quem se cadastra).
+
+## Como INATIVAR um imóvel (alugado, vendido ou pausado)
+1. No GitHub, abra o arquivo **`inativos.txt`** e clique no lápis ✏️.
+2. Escreva o **código** do imóvel numa linha nova (ex.: `LO003`), um por linha.
+3. Clique em **Commit changes**. Em 1 a 2 minutos o imóvel some do site (cards, abas, filtros e link direto).
+4. Para **reativar**, apague a linha do código e salve de novo.
+
+> O imóvel some do site, mas os dados continuam no `imoveis.js` (público no GitHub). Se não puder aparecer de jeito nenhum, apague o bloco do imóvel no `imoveis.js`.

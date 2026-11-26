@@ -1,0 +1,8 @@
+# IMÓVEIS INATIVOS (alugados, vendidos ou pausados)
+# Escreva o CÓDIGO do imóvel, um por linha, abaixo destas instruções.
+# O imóvel some do site em 1 a 2 minutos. Para reativar, apague a linha.
+# Linhas começando com # são só explicação e não contam.
+#
+# Exemplo (sem o # na frente para valer):
+# LO003
+
