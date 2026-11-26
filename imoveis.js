@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== CA0005 - Casa - Pinheiros =====
+  {
+    "codigo": "CA0005",
+    "fotos": 30,
+    "titulo": "Casa de Vila com 3 Quartos para alugar, 160m² - Pinheiros",
+    "negocio": "aluguel",
+    "tipo": "Casa",
+    "regiao": "Zona Oeste",
+    "bairro": "Pinheiros",
+    "cidade": "São Paulo",
+    "area": 160.0, "quartos": 3, "suites": 0, "banheiros": 2, "vagas": 2,
+    "venda": 0, "aluguel": 6300.0, "condominio": 0.0, "iptu": 480.0,
+    "descricao": "Sobrado de aproximadamente 160 m² em três pavimentos, na Rua Cristiano Viana, uma rua residencial tranquila e sem saída. Tem 2 quartos grandes, sala espaçosa, cozinha ampla, área de serviço e um quarto adicional nos fundos com banheiro, ideal para home office, ateliê ou hóspedes. Varanda com vista aberta, jardim, área externa, duas vagas de garagem e quartinho de depósito. Totalmente mobiliada, com camas, armários, TV, geladeira, fogão e máquina de lavar. A 500 m do metrô Sumaré e a 200 m da Praça Horácio Sabino, perto da Av. Sumaré e da Rua Heitor Penteado.",
+    "beneficios": ["Totalmente mobiliada","Varanda com vista aberta","Jardim e área externa","Escritório","Quartinho de depósito","Dependência de empregados","Cozinha ampla","Área de serviço","Rua tranquila e sem saída","500 m do metrô Sumaré"]
+  },
   // ===== PSM383 - Comercial - Perdizes =====
   {
     "codigo": "PSM383",
