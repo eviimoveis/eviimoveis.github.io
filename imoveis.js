@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== OB1SNT - Comercial - Sumarezinho =====
+  {
+    "codigo": "OB1SNT",
+    "fotos": 21,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 130m² - Sumarezinho",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Zona Oeste",
+    "bairro": "Sumarezinho",
+    "cidade": "São Paulo",
+    "area": 130.0, "quartos": 0, "suites": 0, "banheiros": 2, "vagas": 0,
+    "venda": 0, "aluguel": 6800.0, "condominio": 0, "iptu": 260.0,
+    "descricao": "Loja de 130 m² na Rua Heitor Penteado, no Sumarezinho, com sala grande, sala pequena, copa, 2 banheiros e quintal. Tem piso frio, porcelanato, ar-condicionado, divisória, armário na cozinha e janela de alumínio.",
+    "beneficios": ["Quintal", "Piso frio", "Sala grande", "Ar-condicionado", "Divisória", "Sala pequena", "Copa", "Janela de alumínio", "Armário na cozinha", "Porcelanato"]
+  },
   // ===== JI383 - Apartamento - Jardim Paulista =====
   {
     "codigo": "JI383",
