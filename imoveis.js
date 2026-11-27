@@ -49,7 +49,7 @@ const IMOVEIS = [
     "bairro": "Sumarezinho",
     "cidade": "São Paulo",
     "area": 80.0, "quartos": 0, "suites": 0, "banheiros": 0, "vagas": 0,
-    "venda": 0, "aluguel": 12000.0, "condominio": 0, "iptu": 600.0,
+    "venda": 0, "aluguel": 12000.0, "condominio": 0, "iptu": 300.0,
     "descricao": "O imóvel está localizado no bairro Sumarezinho, na Rua Paulistânia, e possui 80 metros quadrados. Está em um condomínio protegido por grades.",
     "beneficios": ["Pé-direito alto", "Janela grande", "Portão eletrônico", "Portaria 24h", "Condomínio protegido por grades"]
   },
