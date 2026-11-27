@@ -41,7 +41,7 @@ const IMOVEIS = [
   // ===== JI383 - Apartamento - Jardim Paulista =====
   {
     "codigo": "JI383",
-    "fotos": 30,
+    "fotos": 19,
     "titulo": "Apartamento com 2 Quartos para alugar, 95m² - Jardim Paulista",
     "negocio": "aluguel",
     "tipo": "Apartamento",
