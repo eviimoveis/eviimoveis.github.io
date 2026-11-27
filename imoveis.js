@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== 1OCO383 - Comercial - Cerqueira César =====
+  {
+    "codigo": "1OCO383",
+    "fotos": 7,
+    "titulo": "Loja / Salão / Ponto Comercial para alugar, 120m² - Cerqueira César",
+    "negocio": "aluguel",
+    "tipo": "Comercial",
+    "regiao": "Centro / Jardins",
+    "bairro": "Cerqueira César",
+    "cidade": "São Paulo",
+    "area": 120.0, "quartos": 0, "suites": 0, "banheiros": 0, "vagas": 0,
+    "venda": 0, "aluguel": 25000.0, "condominio": 0, "iptu": 989.0,
+    "descricao": "Loja de rua comercial com 120 m² na Rua Dr. Melo Alves, em Cerqueira César, região nobre e de grande movimento de São Paulo. Salão amplo e integrado, com piso porcelanato de grandes placas, teto rebaixado em gesso com iluminação embutida em LED, escada escultural em dois níveis e parede com nichos iluminados que valorizam o ambiente. Ótima opção para clínica, estúdio, showroom, escritório ou comércio de alto padrão. Garantias aceitas: seguro fiança ou fiador.",
+    "beneficios": ["Gesso, sanca e teto rebaixado", "Porcelanato", "Escada", "Ambientes integrados", "Iluminação embutida em LED", "Nichos iluminados"]
+  },
   // ===== OB1SNT - Comercial - Sumarezinho =====
   {
     "codigo": "OB1SNT",
