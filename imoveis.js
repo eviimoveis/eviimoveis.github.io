@@ -8,6 +8,21 @@
 */
 
 const IMOVEIS = [
+  // ===== JI383 - Apartamento - Jardim Paulista =====
+  {
+    "codigo": "JI383",
+    "fotos": 30,
+    "titulo": "Apartamento com 2 Quartos para alugar, 95m² - Jardim Paulista",
+    "negocio": "aluguel",
+    "tipo": "Apartamento",
+    "regiao": "Centro / Jardins",
+    "bairro": "Jardim Paulista",
+    "cidade": "São Paulo",
+    "area": 95.0, "quartos": 2, "suites": 0, "banheiros": 1, "vagas": 0,
+    "venda": 0, "aluguel": 5200.0, "condominio": 1500.0, "iptu": 300.0,
+    "descricao": "Apartamento de 95 m² na Alameda Lorena, no Jardim Paulista, com 2 quartos e cozinha americana integrada à sala. Tem armário embutido no quarto, móvel planejado, porcelanato, ar-condicionado, box blindex, chuveiro a gás e armário na cozinha. O prédio conta com elevador, interfone, espaço jardinado e condomínio protegido por muros.",
+    "beneficios": ["Elevador", "Cozinha americana", "Armário embutido no quarto", "Box blindex", "Ar-condicionado", "Porcelanato", "Móvel planejado", "Janela de alumínio", "Fogão", "Ambientes integrados", "Interfone", "Armário na cozinha", "Chuveiro a gás", "Espaço jardinado", "Condomínio protegido por muros"]
+  },
   // ===== N6FSNT - Comercial - Sumarezinho =====
   {
     "codigo": "N6FSNT",
