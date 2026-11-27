@@ -151,7 +151,7 @@ footer small{display:block;letter-spacing:3px;color:var(--gold);font-weight:700;
 
 <script>
 const WHATSAPP = "5511911297820";
-const fotos=[["hero","Hall de entrada"],["esc","Escada"],["sala1","Sala"],["sala2","Sala"],["sala3","Sala"],["coz","Cozinha"],["mad1","Sala com piso de madeira"],["mad2","Sala com piso de madeira"],["terraco","Terraço"],["wc","Banheiro"],["quintal1","Quintal"],["quintal2","Quintal"],["portao","Entrada"]];
+const fotos=[["hero","Hall de entrada"],["esc","Escada"],["sala1","Sala"],["sala2","Sala"],["sala3","Sala"],["coz","Cozinha"],["mad1","Sala com piso de madeira"],["mad2","Sala com piso de madeira"],["mad3","Sala com piso de madeira"],["mad4","Sala com piso de madeira"],["terraco","Terraço"],["wc","Banheiro"],["wc2","Banheiro"],["quintal1","Quintal"],["quintal2","Quintal"],["portao","Entrada"]];
 const gal=document.getElementById('gal');
 document.getElementById('cnt').textContent=fotos.length;
 fotos.forEach(([f,c,w],i)=>{const b=document.createElement('button');if(w)b.className='wide'+(w==2?' wide2':'');b.setAttribute('aria-label','Ampliar foto: '+c);b.innerHTML=`<img loading="lazy" src="img/${f}.jpg" alt="${c}"><span class="cap">${c}</span>`;b.onclick=()=>open(i);gal.appendChild(b)});
