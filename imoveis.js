@@ -64,7 +64,7 @@ const IMOVEIS = [
     "bairro": "Vila Madalena",
     "cidade": "São Paulo",
     "area": 851.0, "quartos": 0, "suites": 0, "banheiros": 1, "vagas": 14,
-    "venda": 14000000.0, "aluguel": 85100.0, "condominio": 1276.0, "iptu": 0.0,
+    "venda": 14000000.0, "aluguel": 85100.0, "condominio": 1276.0, "iptu": 1609.0,
     "descricao": "Loja de esquina na Rua Harmonia, na Vila Madalena, com 851 m² de planta livre, fachada envidraçada e janelas grandes. Ambientes integrados, escada, copa, banheiro com acessibilidade, drywall e ar-condicionado. Conta com 14 vagas de garagem.",
     "beneficios": ["Esquina", "Fachada envidraçada", "Planta livre", "14 vagas de garagem", "Ar-condicionado", "Drywall", "Copa", "Escada", "Janelas grandes", "Ambientes integrados", "Banheiro com acessibilidade"]
   },
